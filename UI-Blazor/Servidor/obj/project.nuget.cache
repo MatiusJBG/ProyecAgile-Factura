@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "q4kdvU/E/Qo=",
+  "dgSpecHash": "2SZGcZnMKsA=",
   "success": true,
   "projectFilePath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj",
   "expectedPackageFiles": [
@@ -10,9 +10,9 @@
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.forms\\9.0.10\\microsoft.aspnetcore.components.forms.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.web\\9.0.10\\microsoft.aspnetcore.components.web.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly\\9.0.10\\microsoft.aspnetcore.components.webassembly.9.0.10.nupkg.sha512",
-    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly.server\\9.0.10\\microsoft.aspnetcore.components.webassembly.server.9.0.10.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly.server\\9.0.0-preview.3.24172.13\\microsoft.aspnetcore.components.webassembly.server.9.0.0-preview.3.24172.13.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.metadata\\9.0.10\\microsoft.aspnetcore.metadata.9.0.10.nupkg.sha512",
-    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.10\\microsoft.aspnetcore.openapi.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.configuration\\9.0.10\\microsoft.extensions.configuration.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\9.0.10\\microsoft.extensions.configuration.abstractions.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.configuration.binder\\9.0.10\\microsoft.extensions.configuration.binder.9.0.10.nupkg.sha512",
@@ -29,11 +29,7 @@
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.10\\microsoft.extensions.primitives.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.jsinterop\\9.0.10\\microsoft.jsinterop.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.jsinterop.webassembly\\9.0.10\\microsoft.jsinterop.webassembly.9.0.10.nupkg.sha512",
-    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.openapi\\1.6.14\\microsoft.openapi.1.6.14.nupkg.sha512",
-    "C:\\Users\\Matius\\.nuget\\packages\\swashbuckle.aspnetcore\\6.7.0\\swashbuckle.aspnetcore.6.7.0.nupkg.sha512",
-    "C:\\Users\\Matius\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.7.0\\swashbuckle.aspnetcore.swagger.6.7.0.nupkg.sha512",
-    "C:\\Users\\Matius\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.7.0\\swashbuckle.aspnetcore.swaggergen.6.7.0.nupkg.sha512",
-    "C:\\Users\\Matius\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.7.0\\swashbuckle.aspnetcore.swaggerui.6.7.0.nupkg.sha512"
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
   ],
   "logs": []
 }

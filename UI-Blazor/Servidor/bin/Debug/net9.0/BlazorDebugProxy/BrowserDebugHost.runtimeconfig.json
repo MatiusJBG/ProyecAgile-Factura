@@ -5,11 +5,11 @@
     "frameworks": [
       {
         "name": "Microsoft.NETCore.App",
-        "version": "9.0.0"
+        "version": "9.0.0-preview.1.24080.9"
       },
       {
         "name": "Microsoft.AspNetCore.App",
-        "version": "9.0.0"
+        "version": "9.0.0-preview.1.24081.5"
       }
     ],
     "configProperties": {
