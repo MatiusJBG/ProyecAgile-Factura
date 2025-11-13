@@ -20,3 +20,113 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+
+===================================================================
+
+Plantilla de .gitignore para una solución .NET (incluyendo Blazor y API)
+
+===================================================================
+
+-------------------------------------------------------------------
+
+Archivos de IDE y configuración de usuario (Visual Studio, VS Code, Rider)
+
+-------------------------------------------------------------------
+
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln.iml
+
+-------------------------------------------------------------------
+
+¡Lo más importante: Artefactos de Compilación (Build)!
+
+Ignora las carpetas 'bin' y 'obj' en CUALQUIER directorio.
+
+-------------------------------------------------------------------
+
+[Bb]in/
+[Oo]bj/
+
+-------------------------------------------------------------------
+
+Archivos de Paquetes (NuGet)
+
+-------------------------------------------------------------------
+
+packages/
+*.nupkg
+*.nupkg.sha512
+*.nuspec
+
+No ignorar el 'packages.config' o 'project.json'
+
+!packages.config
+!project.json
+
+-------------------------------------------------------------------
+
+Artefactos del Sistema Operativo
+
+-------------------------------------------------------------------
+
+macOS
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+Windows
+
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+-------------------------------------------------------------------
+
+Archivos de Log, Reportes y Temporales
+
+-------------------------------------------------------------------
+
+*.log
+*.tmp
+*.bak
+*.trx
+TestResults/
+
+-------------------------------------------------------------------
+
+Archivos de Configuración Local (¡NUNCA subas secretos!)
+
+-------------------------------------------------------------------
+
+Usado por 'user-secrets' (aunque el 'secrets.json' no está aquí)
+
+secrets.json
+*.secrets.json
+
+Configuraciones locales que sobreescriben 'appsettings.json'
+
+appsettings.Local.json
+appsettings.*.Local.json
+
+-------------------------------------------------------------------
+
+Archivos específicos de Blazor
+
+-------------------------------------------------------------------
+
+Archivos generados por Blazor (aunque 'obj/' ya los cubre)
+
+*.razor.css
+*.razor.js
+*.sourcelink.json
+
+Directorio de publicación (si usas 'dotnet publish')
+
+publish/
