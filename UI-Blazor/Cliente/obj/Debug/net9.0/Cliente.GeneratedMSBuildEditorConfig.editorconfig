@@ -28,16 +28,16 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Counter.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291bnRlci5yYXpvcg==
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Clientes.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xpZW50ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Home.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSG9tZS5yYXpvcg==
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Inicio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5pY2lvLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Weather.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV2VhdGhlci5yYXpvcg==
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Productos.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdG9zLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/_Imports.razor]
