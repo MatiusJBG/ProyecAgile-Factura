@@ -1,0 +1,38 @@
+@using UI_Blazor.Client.Models
+
+<div class="summary-cards-container">
+    <div class="summary-card total">
+        <span class="card-title">Clientes Totales</span>
+        <span class="card-value">@TotalClientes</span>
+        <span class="card-info-detail">@ClientesActivos Activos</span>
+    </div>
+    <div class="summary-card persona-natural">
+        <span class="card-title">Personas Naturales (CI)</span>
+        <span class="card-value">@ClientesPersona</span>
+        <span class="card-info-detail">@ClientesPersonaConSaldo con Saldo</span>
+    </div>
+    <div class="summary-card empresa">
+        <span class="card-title">Empresas (RUC)</span>
+        <span class="card-value">@ClientesEmpresa</span>
+        <span class="card-info-detail">$@SaldoTotalEmpresas.ToString("N2") Pendiente</span>
+    </div>
+    <div class="summary-card extranjero">
+        <span class="card-title">Extranjeros (Pasaporte)</span>
+        <span class="card-value">@ClientesExtranjero</span>
+        <span class="card-info-detail">@ClientesExtranjeroInactivos Inactivos</span>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<Cliente> Clientes { get; set; } = new();
+
+    private int TotalClientes => Clientes.Count;
+    private int ClientesActivos => Clientes.Count(c => c.Estado == "Activo");
+    private int ClientesPersona => Clientes.Count(c => c.Tipo == TipoCliente.PersonaNatural);
+    private int ClientesEmpresa => Clientes.Count(c => c.Tipo == TipoCliente.Empresa);
+    private int ClientesExtranjero => Clientes.Count(c => c.Tipo == TipoCliente.Extranjero);
+    private int ClientesPersonaConSaldo => Clientes.Count(c => c.Tipo == TipoCliente.PersonaNatural && c.Saldo > 0);
+    private decimal SaldoTotalEmpresas => Clientes.Where(c => c.Tipo == TipoCliente.Empresa).Sum(c => c.Saldo);
+    private int ClientesExtranjeroInactivos => Clientes.Count(c => c.Tipo == TipoCliente.Extranjero && c.Estado == "Inactivo");
+}

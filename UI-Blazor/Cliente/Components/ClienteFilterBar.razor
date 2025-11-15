@@ -1,0 +1,59 @@
+@using UI_Blazor.Client.Models
+
+<div class="filter-bar-container">
+    <div class="search-section">
+        <input type="text"
+               class="search-input"
+               placeholder="Buscar por Nombre, Apellido, CI, RUC, Pasaporte, Teléfono o Email..."
+               @bind-value="SearchTerm"
+               @bind-value:event="oninput" 
+               @onkeyup="OnSearchInput" />
+        <button class="add-client-button" @onclick="() => OnNuevoCliente.InvokeAsync()">
+            <span class="oi oi-plus" aria-hidden="true"></span> Nuevo Cliente
+        </button>
+    </div>
+
+    <div class="filter-section">
+        <div class="filter-group">
+            <span class="filter-label">Estado</span>
+            <button class="filter-button active">Activos</button>
+            <button class="filter-button">Inactivos</button>
+        </div>
+        <div class="filter-group type-filter">
+            <span class="filter-label">Tipo de Cliente</span>
+            <button class="filter-button @(CurrentTipoFilter == null ? "active" : "")" @onclick="() => SetTipoFilter(null)">Todos</button>
+            <button class="filter-button @(CurrentTipoFilter == TipoCliente.PersonaNatural ? "active" : "")" @onclick="() => SetTipoFilter(TipoCliente.PersonaNatural)">Persona (CI)</button>
+            <button class="filter-button @(CurrentTipoFilter == TipoCliente.Empresa ? "active" : "")" @onclick="() => SetTipoFilter(TipoCliente.Empresa)">Empresa (RUC)</button>
+            <button class="filter-button @(CurrentTipoFilter == TipoCliente.Extranjero ? "active" : "")" @onclick="() => SetTipoFilter(TipoCliente.Extranjero)">Extranjero (Pasaporte)</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback OnNuevoCliente { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSearchChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<TipoCliente?> OnFilterByTipoChanged { get; set; }
+
+    private string SearchTerm { get; set; } = string.Empty;
+    private TipoCliente? CurrentTipoFilter { get; set; } = null; 
+
+    // Solo se invoca si se pulsa una tecla de búsqueda o se pierde el foco para evitar spam de eventos
+    private async Task OnSearchInput(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            await OnSearchChanged.InvokeAsync(SearchTerm);
+        }
+    }
+    
+    private async Task SetTipoFilter(TipoCliente? filter)
+    {
+        CurrentTipoFilter = filter;
+        await OnFilterByTipoChanged.InvokeAsync(filter);
+    }
+}
