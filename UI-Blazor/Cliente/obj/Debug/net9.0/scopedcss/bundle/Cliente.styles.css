@@ -1,3 +1,193 @@
+/* /Components/ClienteFilterBar.razor.rz.scp.css */
+/* UI-Blazor/Client/Components/ClienteFilterBar.razor.css */
+.filter-bar-container[b-fv2ksfns28] {
+    background-color: var(--card-bg-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-small);
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.search-section[b-fv2ksfns28] {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.search-input[b-fv2ksfns28] {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus[b-fv2ksfns28] {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    outline: none;
+}
+
+.add-client-button[b-fv2ksfns28] {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.add-client-button:hover[b-fv2ksfns28] {
+    background-color: var(--primary-dark-color);
+    transform: translateY(-1px);
+}
+
+.filter-section[b-fv2ksfns28] {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 1.5rem; /* Aumenta el espacio entre grupos de filtros */
+    align-items: center;
+}
+
+.filter-group[b-fv2ksfns28] {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-label[b-fv2ksfns28] {
+    font-size: 0.9rem;
+    color: #495057;
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.filter-button[b-fv2ksfns28] {
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 0.6rem 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.filter-button:hover:not(.active)[b-fv2ksfns28] {
+    background-color: #dee2e6;
+}
+
+.filter-button.active[b-fv2ksfns28] {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+/* /Components/ClienteSummaryCards.razor.rz.scp.css */
+/* /Components/ClienteTable.razor.rz.scp.css */
+/* UI-Blazor/Client/Components/ClienteTable.razor.css */
+.client-table-container[b-lq4oz6uz2n] {
+    background-color: var(--card-bg-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-small);
+    overflow-x: auto;
+    border: 1px solid #e9ecef;
+}
+
+.table-header[b-lq4oz6uz2n], .table-row[b-lq4oz6uz2n] {
+    display: grid;
+    /* Ajuste de columnas para nuevos campos: Checkbox(30px) ID(60px) Nombre(2.5fr) TipoDoc(1fr) Identificacion(1.5fr) Contacto(2fr) Saldo(1fr) Estado(1fr) Acciones(0.8fr) */
+    grid-template-columns: 30px 60px 2.5fr 1fr 1.5fr 2fr 1fr 1fr 0.8fr; 
+    align-items: center;
+    padding: 0.8rem 1.5rem;
+    gap: 0.5rem;
+    min-width: 900px; /* Asegura un ancho mínimo para evitar compresión excesiva */
+}
+
+.table-header[b-lq4oz6uz2n] {
+    background-color: var(--header-bg-color);
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+    border-bottom: 2px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table-row[b-lq4oz6uz2n] {
+    color: #495057;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease;
+}
+
+.table-row:hover[b-lq4oz6uz2n] {
+    background-color: #f8f9fa;
+}
+
+/* Estilos de badges/tags */
+.status-badge[b-lq4oz6uz2n] {
+    padding: 0.3em 0.7em;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: fit-content;
+}
+
+.status-badge.active[b-lq4oz6uz2n] {
+    background-color: #e6f7ea; /* Verde claro */
+    color: var(--success-color); /* Verde oscuro */
+}
+
+.status-badge.inactive[b-lq4oz6uz2n] {
+    background-color: #fdedf0; /* Rojo claro */
+    color: var(--danger-color); /* Rojo oscuro */
+}
+
+.type-tag[b-lq4oz6uz2n] {
+    padding: 0.2em 0.5em;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: fit-content;
+    text-transform: uppercase;
+}
+.type-tag.ci[b-lq4oz6uz2n] { background-color: #e3f2fd; color: #1e88e5; } /* Azul claro */
+.type-tag.ruc[b-lq4oz6uz2n] { background-color: #fffde7; color: #fbc02d; } /* Amarillo claro */
+.type-tag.pasaporte[b-lq4oz6uz2n] { background-color: #e1f5fe; color: #03a9f4; } /* Celeste claro */
+
+/* Alineación de precio */
+.row-item.price[b-lq4oz6uz2n] {
+    font-weight: 700;
+}
+.text-danger[b-lq4oz6uz2n] { color: var(--danger-color); }
+.text-success[b-lq4oz6uz2n] { color: var(--success-color); }
+
+/* Estilos de botones de acción con íconos de Blazor Icons (oi) */
+.action-icon-button[b-lq4oz6uz2n] {
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    color: #6c757d;
+    cursor: pointer;
+    margin: 0 0.3rem;
+    padding: 0.3rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.action-icon-button:hover[b-lq4oz6uz2n] {
+    background-color: #e9ecef;
+    color: var(--primary-color);
+}
 /* /Layout/MainLayout.razor.rz.scp.css */
 .page[b-i3e7c00b33] {
     position: relative;
@@ -160,3 +350,4 @@ main[b-i3e7c00b33] {
         overflow-y: auto;
     }
 }
+/* /Pages/Clientes.razor.rz.scp.css */

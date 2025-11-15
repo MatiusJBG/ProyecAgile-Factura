@@ -1,6 +1,7 @@
 using UI_Blazor.Client.Models;
 
 namespace UI_Blazor.Client.Services
+
 {
     public interface IClientService
     {
