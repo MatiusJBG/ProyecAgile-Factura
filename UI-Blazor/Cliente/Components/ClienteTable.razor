@@ -1,0 +1,90 @@
+@using UI_Blazor.Client.Models
+
+<div class="client-table-container">
+    <div class="table-header">
+        <label class="checkbox-container select-all">
+            <input type="checkbox" @onchange="ToggleAllSelected" />
+            <span class="checkmark"></span>
+        </label>
+        <span class="header-item id">ID</span>
+        <span class="header-item nombre">Nombre / Razón Social</span>
+        <span class="header-item tipo-doc">Tipo Documento</span>
+        <span class="header-item identificacion">Identificación</span>
+        <span class="header-item contacto">Contacto (Email)</span>
+        <span class="header-item saldo">Saldo Pendiente</span>
+        <span class="header-item estado">Estado</span>
+        <span class="header-item acciones">Acciones</span>
+    </div>
+
+    <div class="table-body">
+        @if (Clientes == null || !Clientes.Any())
+        {
+            <div class="no-data-message">
+                <p>No se encontraron clientes para los filtros aplicados. 🔎</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var cliente in Clientes)
+            {
+                <div class="table-row">
+                    <label class="checkbox-container">
+                        <input type="checkbox" @bind="cliente.IsSelected" />
+                        <span class="checkmark"></span>
+                    </label>
+                    <span class="row-item id">@cliente.Id</span>
+                    <span class="row-item nombre">
+                        <strong>@cliente.NombreCompleto</strong>
+                    </span>
+                    <span class="row-item tipo-doc">
+                        <span class="type-tag @cliente.TipoDocumento.ToLower()">@cliente.TipoDocumento</span>
+                    </span>
+                    <span class="row-item identificacion">@cliente.NumeroIdentificacion</span>
+                    <span class="row-item contacto">@cliente.Email</span>
+                    <span class="row-item saldo price @(cliente.Saldo > 0 ? "text-danger" : "text-success")">
+                        $@cliente.Saldo.ToString("N2")
+                    </span>
+                    <span class="row-item estado">
+                        <span class="status-badge @(cliente.Estado == "Activo" ? "active" : "inactive")">
+                            @cliente.Estado
+                        </span>
+                    </span>
+                    <span class="row-item acciones">
+                        <button class="action-icon-button view-btn" @onclick="() => OnViewClient.InvokeAsync(cliente.Id)">
+                            <span class="oi oi-eye" aria-hidden="true"></span>
+                        </button>
+                        <button class="action-icon-button edit-btn" @onclick="() => OnEditClient.InvokeAsync(cliente.Id)">
+                            <span class="oi oi-pencil" aria-hidden="true"></span>
+                        </button>
+                    </span>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<Cliente> Clientes { get; set; } = new();
+
+    [Parameter]
+    public string SearchTerm { get; set; } = string.Empty; // Se mantiene por si se quiere hacer pre-filtrado
+    
+    [Parameter]
+    public EventCallback<int> OnViewClient { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnEditClient { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnDeleteClient { get; set; } // Aunque no se usa en markup, se mantiene para consistencia
+
+    private void ToggleAllSelected(ChangeEventArgs e)
+    {
+        bool isChecked = (bool)(e.Value ?? false);
+        foreach (var cliente in Clientes)
+        {
+            cliente.IsSelected = isChecked;
+        }
+    }
+}
