@@ -1,0 +1,107 @@
+@page "/facturas"
+@attribute [Authorize]
+
+<PageTitle>Facturas | Dashboard</PageTitle>
+
+<div class="facturas-page">
+    <div class="page-header">
+        <div class="header-title-section">
+            <h2 class="page-title">Gestión de Facturas</h2>
+            <p class="page-subtitle">Administra y visualiza todas tus facturas</p>
+        </div>
+        <div class="header-actions">
+            <button class="action-btn primary-btn">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Nueva Factura
+            </button>
+        </div>
+    </div>
+
+    <div class="summary-cards">
+        <div class="summary-card blue">
+            <div class="card-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                    <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="card-content">
+                <span class="card-label">Total Facturas</span>
+                <span class="card-value">145</span>
+                <span class="card-change positive">+12% este mes</span>
+            </div>
+        </div>
+
+        <div class="summary-card green">
+            <div class="card-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="card-content">
+                <span class="card-label">Facturado</span>
+                <span class="card-value">$45,230.50</span>
+                <span class="card-change positive">+8.5% este mes</span>
+            </div>
+        </div>
+
+        <div class="summary-card orange">
+            <div class="card-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="card-content">
+                <span class="card-label">Pendientes</span>
+                <span class="card-value">$8,450.00</span>
+                <span class="card-change negative">23 facturas</span>
+            </div>
+        </div>
+
+        <div class="summary-card purple">
+            <div class="card-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="card-content">
+                <span class="card-label">Promedio</span>
+                <span class="card-value">$312.00</span>
+                <span class="card-change">por factura</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-card">
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h3 class="empty-title">Módulo de Facturas en Desarrollo</h3>
+            <p class="empty-description">
+                Próximamente podrás crear, editar y gestionar todas tus facturas desde aquí.
+            </p>
+            <button class="primary-btn">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Crear Primera Factura
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Lógica de facturas se implementará aquí
+}

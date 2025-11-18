@@ -1,35 +1,194 @@
 ﻿@page "/clientes"
+@page "/clientes/lista"
+@attribute [Authorize]
 @using Cliente.Components 
 @using UI_Blazor.Client.Models
 @using UI_Blazor.Client.Services
 @inject IClientService ClientService
+@inject NavigationManager NavigationManager
 
 <PageTitle>Clientes | Dashboard</PageTitle>
 
-<div class="dashboard-header">
-    <h2>Gestión de Clientes</h2>
-    <div class="header-actions">
-        <button class="export-button">Exportar (CSV)</button>
-        <button class="import-button">Importar Clientes</button>
+<div class="clientes-page">
+    <!-- Header con navegación por pestañas -->
+    <div class="page-header">
+        <div class="header-title-section">
+            <h2 class="page-title">Gestión de Clientes</h2>
+            <p class="page-subtitle">Administra y visualiza todos tus clientes</p>
+        </div>
+        <div class="header-actions">
+            <button class="action-btn export-btn">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Exportar CSV
+            </button>
+            <button class="action-btn import-btn">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="17 8 12 3 7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Importar
+            </button>
+        </div>
     </div>
-</div>
 
-<ClienteSummaryCards Clientes="listaClientes" />
+    <!-- Navegación por pestañas -->
+    <div class="tabs-navigation">
+        <button class="tab-btn @(currentView == "lista" ? "active" : "")" @onclick='() => ChangeView("lista")'>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Lista General
+        </button>
+        <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                <line x1="20" y1="8" x2="20" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="23" y1="11" x2="17" y2="11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Añadir Cliente
+        </button>
+    </div>
 
-<div class="dashboard-content">
-    <ClienteFilterBar 
-        OnSearchChanged="HandleSearchChanged" 
-        OnFilterByTipoChanged="HandleFilterByTipoChanged"
-        OnNuevoCliente="HandleNuevoCliente" 
-    />
-    
-    <ClienteTable 
-        Clientes="ClientesFiltrados" 
-        SearchTerm="@searchTerm"
-        OnViewClient="HandleViewClient"
-        OnEditClient="HandleEditClient"
-        OnDeleteClient="HandleDeleteClient"
-    />
+    <!-- Contenido condicional según la vista -->
+    @if (currentView == "lista")
+    {
+        <div class="content-section">
+            <ClienteSummaryCards Clientes="listaClientes" />
+
+            <div class="dashboard-content">
+                <ClienteFilterBar 
+                    OnSearchChanged="HandleSearchChanged" 
+                    OnFilterByTipoChanged="HandleFilterByTipoChanged"
+                    OnNuevoCliente='() => ChangeView("nuevo")'
+                />
+                
+                <ClienteTable 
+                    Clientes="ClientesFiltrados" 
+                    SearchTerm="@searchTerm"
+                    OnViewClient="HandleViewClient"
+                    OnEditClient="HandleEditClient"
+                    OnDeleteClient="HandleDeleteClient"
+                />
+
+                @if (ClientesFiltrados.Any())
+                {
+                    <div class="pagination-section">
+                        <div class="pagination-info">
+                            Mostrando <strong>@ClientesFiltrados.Count</strong> de <strong>@listaClientes.Count</strong> clientes
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn">2</button>
+                            <button class="pagination-btn">3</button>
+                            <button class="pagination-btn">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <polyline points="9 18 15 12 9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else if (currentView == "nuevo")
+    {
+        <div class="content-section">
+            <div class="form-container">
+                <div class="form-header">
+                    <h3 class="form-title">Nuevo Cliente</h3>
+                    <p class="form-subtitle">Complete la información del cliente</p>
+                </div>
+
+                <form class="client-form" @onsubmit="HandleSubmitNuevoCliente">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Cliente *</label>
+                            <select class="form-control" @bind="nuevoCliente.Tipo">
+                                <option value="@TipoCliente.PersonaNatural">Persona Natural (CI)</option>
+                                <option value="@TipoCliente.Empresa">Empresa (RUC)</option>
+                                <option value="@TipoCliente.Extranjero">Extranjero (Pasaporte)</option>
+                            </select>
+                        </div>
+
+                        @if (nuevoCliente.Tipo == TipoCliente.Empresa)
+                        {
+                            <div class="form-group full-width">
+                                <label class="form-label">Razón Social / Nombre Comercial *</label>
+                                <input type="text" class="form-control" @bind="nuevoCliente.NombreComercial" placeholder="Ej: Distribuciones XYZ S.A." required />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                <label class="form-label">Nombres *</label>
+                                <input type="text" class="form-control" @bind="nuevoCliente.Nombres" placeholder="Ej: Juan Carlos" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Apellidos *</label>
+                                <input type="text" class="form-control" @bind="nuevoCliente.Apellidos" placeholder="Ej: Pérez García" required />
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label class="form-label">Número de Identificación *</label>
+                            <input type="text" class="form-control" @bind="nuevoCliente.NumeroIdentificacion" 
+                                   placeholder="@GetPlaceholderIdentificacion()" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-control" @bind="nuevoCliente.Email" placeholder="ejemplo@correo.com" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Teléfono *</label>
+                            <input type="tel" class="form-control" @bind="nuevoCliente.Telefono" placeholder="0991234567" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Estado</label>
+                            <select class="form-control" @bind="nuevoCliente.Estado">
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" @onclick='() => ChangeView("lista")'>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="17 21 17 13 7 13 7 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="7 3 7 8 15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Guardar Cliente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
@@ -37,37 +196,65 @@
     private List<Cliente> ClientesFiltrados { get; set; } = new();
     private string searchTerm = string.Empty;
     private TipoCliente? filterTipo = null;
+    private string currentView = "lista";
+    
+    private Cliente nuevoCliente = new Cliente 
+    { 
+        Tipo = TipoCliente.PersonaNatural,
+        Estado = "Activo",
+        Saldo = 0,
+        UltimaFactura = DateTime.Now
+    };
 
     protected override async Task OnInitializedAsync()
     {
         listaClientes = await ClientService.GetClientsAsync();
         ApplyFilters();
     }
-    
+
+    private void ChangeView(string view)
+    {
+        currentView = view;
+        if (view == "nuevo")
+        {
+            nuevoCliente = new Cliente 
+            { 
+                Tipo = TipoCliente.PersonaNatural,
+                Estado = "Activo",
+                Saldo = 0,
+                UltimaFactura = DateTime.Now
+            };
+        }
+    }
+
+    private string GetPlaceholderIdentificacion()
+    {
+        return nuevoCliente.Tipo switch
+        {
+            TipoCliente.PersonaNatural => "Ej: 1710000001",
+            TipoCliente.Empresa => "Ej: 0990000000001",
+            TipoCliente.Extranjero => "Ej: A1234567",
+            _ => "Número de identificación"
+        };
+    }
+
     private void ApplyFilters()
     {
         var tempClientes = listaClientes.AsEnumerable();
         
-        // 1. Filtrado por tipo de cliente (Dropdown/Botones)
         if (filterTipo.HasValue)
         {
             tempClientes = tempClientes.Where(c => c.Tipo == filterTipo.Value);
         }
         
-        // 2. Filtrado por texto (Search Box) - La lógica de búsqueda amplia está en ClienteTable.razor
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            // Para mantener la lógica de búsqueda en un solo lugar (ClienteTable),
-            // delegamos la tarea de filtrar por la barra de búsqueda al componente hijo
-            // y aquí solo se filtran los Tipos si se seleccionó uno.
-            // Opcionalmente, podemos aplicar el filtro de búsqueda aquí antes de pasarlo al componente.
             tempClientes = FilterBySearchTerm(tempClientes.ToList(), searchTerm);
         }
         
         ClientesFiltrados = tempClientes.ToList();
     }
 
-    // Lógica para la búsqueda de texto
     private List<Cliente> FilterBySearchTerm(List<Cliente> source, string term)
     {
         if (string.IsNullOrWhiteSpace(term))
@@ -81,14 +268,12 @@
             c.Nombres.ToLowerInvariant().Contains(normalizedTerm) ||
             c.Apellidos.ToLowerInvariant().Contains(normalizedTerm) ||
             c.NombreComercial.ToLowerInvariant().Contains(normalizedTerm) ||
-            c.NumeroIdentificacion.Contains(normalizedTerm) || // Búsqueda exacta en ID (CI, RUC, Pasaporte)
+            c.NumeroIdentificacion.Contains(normalizedTerm) ||
             c.Telefono.Contains(normalizedTerm) ||
             c.Email.ToLowerInvariant().Contains(normalizedTerm)
         ).ToList();
     }
 
-
-    // Handlers
     private void HandleSearchChanged(string newSearchTerm)
     {
         searchTerm = newSearchTerm;
@@ -101,10 +286,13 @@
         ApplyFilters();
     }
 
-    private void HandleNuevoCliente()
+    private void HandleSubmitNuevoCliente()
     {
-        // Lógica: Navegar a la página de nuevo cliente o abrir un modal
-        Console.WriteLine("Abrir formulario para nuevo cliente");
+        nuevoCliente.Id = listaClientes.Max(c => c.Id) + 1;
+        listaClientes.Add(nuevoCliente);
+        ApplyFilters();
+        ChangeView("lista");
+        Console.WriteLine($"Cliente guardado: {nuevoCliente.NombreCompleto}");
     }
 
     private void HandleViewClient(int clientId)

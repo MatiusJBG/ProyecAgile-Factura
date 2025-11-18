@@ -1,0 +1,42 @@
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+
+@{
+    var isLoginPage = RouteData.PageType?.Name == "Login";
+    var selectedLayout = isLoginPage ? typeof(EmptyLayout) : typeof(MainLayout);
+    
+    // Si no está autenticado y no está en login, redirigir
+    if (!AuthService.IsAuthenticated && !isLoginPage)
+    {
+        NavigationManager.NavigateTo("/login", forceLoad: true);
+    }
+    // Si está autenticado y está en login, redirigir al inicio
+    else if (AuthService.IsAuthenticated && isLoginPage)
+    {
+        NavigationManager.NavigateTo("/", forceLoad: true);
+    }
+}
+
+<AuthorizeRouteView RouteData="@RouteData" DefaultLayout="@selectedLayout">
+    <NotAuthorized>
+        @if (!isLoginPage)
+        {
+            <RedirectToLogin />
+        }
+        else
+        {
+            <RouteView RouteData="@RouteData" DefaultLayout="@selectedLayout" />
+        }
+    </NotAuthorized>
+    <Authorizing>
+        <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+            <p>Cargando...</p>
+        </div>
+    </Authorizing>
+</AuthorizeRouteView>
+
+@code {
+    [Parameter]
+    public RouteData RouteData { get; set; } = default!;
+}
+

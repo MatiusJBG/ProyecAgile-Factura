@@ -28,8 +28,24 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Inicio.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5pY2lvLnJhem9y
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/AppRouter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHBSb3V0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/CustomRouteView.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDdXN0b21Sb3V0ZVZpZXcucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/RedirectToLogin.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSZWRpcmVjdFRvTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Layout/EmptyLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XEVtcHR5TGF5b3V0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Factura.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmFjdHVyYS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Productos.razor]
@@ -63,3 +79,11 @@ build_metadata.AdditionalFiles.CssScope = b-m59xcf0ggv
 [C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Clientes.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xpZW50ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-xsk7vf95p7
+
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Inicio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5pY2lvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-3px9rhgnc2
+
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-qzpkpmkt52
