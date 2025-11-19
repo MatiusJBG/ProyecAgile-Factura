@@ -40,7 +40,12 @@ namespace UI_Blazor.Client.Models
         public string CodigoAuxiliar { get; set; } = string.Empty;
         public TipoProducto TipoProducto { get; set; }
         public string Nombre { get; set; } = string.Empty;
-        public decimal ValorUnitario { get; set; }
+        
+        // Información de Lote
+        public string NumeroLote { get; set; } = string.Empty;
+        public int CantidadEnLote { get; set; } = 1;
+        public DateTime? FechaLote { get; set; }
+        public decimal PrecioLote { get; set; }
         
         // Impuestos Aplicables
         public TipoIVA IVA { get; set; }

@@ -11,12 +11,9 @@
             </div>
             <span class="logo-text">FACTURACIÓN</span>
         </div>
-        <button class="menu-toggle" @onclick="ToggleNavMenu">
-            <span class="toggle-icon">☰</span>
-        </button>
     </div>
 
-    <nav class="@NavMenuCssClass sidebar-nav">
+    <nav class="sidebar-nav">
         <div class="nav-section">
             <span class="section-title">PRINCIPAL</span>
             
@@ -75,19 +72,6 @@
             </NavLink>
         </div>
 
-        <div class="nav-section">
-            <span class="section-title">CONFIGURACIÓN</span>
-            
-            <NavLink class="nav-item" href="configuracion">
-                <span class="nav-icon">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M12 1v6m0 6v6m6-12.928V10m-12 4v6M18.364 5.636l-4.243 4.243m0 4.242l4.243 4.243M5.636 5.636l4.243 4.243m0 4.242l-4.243 4.243" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </span>
-                <span class="nav-text">Configuración</span>
-            </NavLink>
-        </div>
     </nav>
 
     <div class="sidebar-footer">
@@ -111,14 +95,6 @@
 </div>
 
 @code {
-    private bool collapseNavMenu = true;
-    private string? NavMenuCssClass => collapseNavMenu ? "collapsed" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-
     private async Task HandleLogout()
     {
         await AuthService.LogoutAsync();

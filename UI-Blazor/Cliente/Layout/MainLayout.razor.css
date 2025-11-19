@@ -55,10 +55,28 @@ main {
 @media (max-width: 640.98px) {
     .top-row {
         justify-content: space-between;
+        height: 3rem;
+        padding: 0 1rem;
     }
 
     .top-row ::deep a, .top-row ::deep .btn-link {
         margin-left: 0;
+        font-size: 0.875rem;
+    }
+
+    main {
+        padding: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .top-row {
+        height: 2.5rem;
+        padding: 0 0.75rem;
+    }
+
+    .top-row ::deep a, .top-row ::deep .btn-link {
+        font-size: 0.8rem;
     }
 }
 

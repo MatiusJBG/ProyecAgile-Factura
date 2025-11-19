@@ -3,6 +3,7 @@
 @attribute [Authorize]
 @using UI_Blazor.Client.Models
 @using UI_Blazor.Client.Services
+@using Cliente.Components
 @inject IProductoService ProductoService
 @inject NavigationManager NavigationManager
 
@@ -32,16 +33,37 @@
                 </svg>
                 Importar
             </button>
-            <button class="action-btn primary-btn" @onclick="AbrirModalNuevoProducto">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Nuevo Producto
-            </button>
         </div>
     </div>
 
+    <!-- Navegación por pestañas -->
+    <div class="tabs-navigation">
+        <button class="tab-btn @(currentView == "lista" ? "active" : "")" @onclick='() => ChangeView("lista")'>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Lista General
+        </button>
+        <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="20" y1="8" x2="20" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="23" y1="11" x2="17" y2="11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Nuevo Producto
+        </button>
+    </div>
+
+    <!-- Contenido condicional según la vista -->
+    @if (currentView == "lista")
+    {
     <!-- Barra de búsqueda y filtros -->
     <div class="search-filter-bar">
         <div class="search-box">
@@ -54,7 +76,7 @@
                    placeholder="Buscar por código, nombre..."
                    @bind="searchTerm"
                    @bind:event="oninput"
-                   @oninput="HandleSearchChange" />
+                   @bind:after="ApplyFilters" />
             @if (!string.IsNullOrEmpty(searchTerm))
             {
                 <button class="clear-btn" @onclick="ClearSearch">×</button>
@@ -153,7 +175,9 @@
                     <th>Código</th>
                     <th>Nombre</th>
                     <th>Tipo</th>
-                    <th>Valor Unitario</th>
+                    <th>Número de Lote</th>
+                    <th>Cantidad en Lote</th>
+                    <th>Precio del Lote</th>
                     <th>IVA</th>
                     <th>Stock</th>
                     <th>Estado</th>
@@ -164,7 +188,7 @@
                 @if (!productosFiltrados.Any())
                 {
                     <tr>
-                        <td colspan="9" class="no-data">
+                        <td colspan="11" class="no-data">
                             <div class="empty-state">
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
@@ -199,7 +223,9 @@
                                     @producto.TipoProductoTexto
                                 </span>
                             </td>
-                            <td class="precio-col">$@producto.ValorUnitario.ToString("N2")</td>
+                            <td>@producto.NumeroLote</td>
+                            <td>@producto.CantidadEnLote</td>
+                            <td class="precio-col">$@producto.PrecioLote.ToString("N2")</td>
                             <td>
                                 <span class="iva-badge">@producto.IVATexto</span>
                             </td>
@@ -267,14 +293,17 @@
             </div>
         }
     </div>
-
-    <!-- Modal Nuevo/Editar Producto -->
-    @if (mostrarModal)
+    }
+    else if (currentView == "nuevo")
     {
-        <div class="modal-overlay" @onclick="CerrarModal">
-            <div class="modal-container-large" @onclick:stopPropagation>
-                <button class="modal-close-btn" @onclick="CerrarModal">×</button>
-                <ProductoForm Producto="productoActual" OnGuardar="GuardarProducto" OnCancelar="CerrarModal" />
+        <div class="content-section">
+            <div class="form-container">
+                <div class="form-header">
+                    <h3 class="form-title">Nuevo Producto</h3>
+                    <p class="form-subtitle">Complete la información del producto en lote</p>
+                </div>
+
+                <ProductoForm Producto="productoActual" OnGuardar="GuardarProducto" OnCancelar='() => ChangeView("lista")' />
             </div>
         </div>
     }
@@ -287,7 +316,7 @@
     private string filterTipo = string.Empty;
     private string filterIVA = string.Empty;
     private string filterActivo = string.Empty;
-    private bool mostrarModal = false;
+    private string currentView = "lista";
     private Producto productoActual = new();
 
     protected override async Task OnInitializedAsync()
@@ -350,23 +379,22 @@
         }
     }
 
-    private void AbrirModalNuevoProducto()
+    private void ChangeView(string view)
     {
-        productoActual = new Producto
+        currentView = view;
+        if (view == "nuevo")
         {
-            TipoProducto = TipoProducto.BIEN,
-            IVA = TipoIVA.Gravado12,
-            ICE = TipoICE.SinICE,
-            IRBPNR = TipoIRBPNR.SinIRBPNR,
-            Activo = true,
-            Stock = 0
-        };
-        mostrarModal = true;
-    }
-
-    private void CerrarModal()
-    {
-        mostrarModal = false;
+            productoActual = new Producto
+            {
+                TipoProducto = TipoProducto.BIEN,
+                IVA = TipoIVA.Gravado12,
+                ICE = TipoICE.SinICE,
+                IRBPNR = TipoIRBPNR.SinIRBPNR,
+                Activo = true,
+                Stock = 0,
+                CantidadEnLote = 1
+            };
+        }
     }
 
     private async Task GuardarProducto()
@@ -382,7 +410,7 @@
         
         productos = await ProductoService.GetProductosAsync();
         ApplyFilters();
-        CerrarModal();
+        ChangeView("lista");
     }
 
     private void VerProducto(int id)
@@ -396,7 +424,7 @@
         if (producto != null)
         {
             productoActual = producto;
-            mostrarModal = true;
+            currentView = "nuevo";
         }
     }
 
@@ -414,7 +442,7 @@
     {
         return productosFiltrados
             .Where(p => p.TipoProducto == TipoProducto.BIEN)
-            .Sum(p => p.ValorUnitario * p.Stock);
+            .Sum(p => p.PrecioLote);
     }
 
     private bool confirm(string message)

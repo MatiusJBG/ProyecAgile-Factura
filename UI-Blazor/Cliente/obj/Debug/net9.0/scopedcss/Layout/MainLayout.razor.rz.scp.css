@@ -55,10 +55,28 @@ main[b-i3e7c00b33] {
 @media (max-width: 640.98px) {
     .top-row[b-i3e7c00b33] {
         justify-content: space-between;
+        height: 3rem;
+        padding: 0 1rem;
     }
 
     .top-row[b-i3e7c00b33]  a, .top-row[b-i3e7c00b33]  .btn-link {
         margin-left: 0;
+        font-size: 0.875rem;
+    }
+
+    main[b-i3e7c00b33] {
+        padding: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .top-row[b-i3e7c00b33] {
+        height: 2.5rem;
+        padding: 0 0.75rem;
+    }
+
+    .top-row[b-i3e7c00b33]  a, .top-row[b-i3e7c00b33]  .btn-link {
+        font-size: 0.8rem;
     }
 }
 
