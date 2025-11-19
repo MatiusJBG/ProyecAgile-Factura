@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "2SZGcZnMKsA=",
+  "dgSpecHash": "Zvqm4LjwETA=",
   "success": true,
   "projectFilePath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.authorization\\9.0.10\\microsoft.aspnetcore.authorization.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components\\9.0.10\\microsoft.aspnetcore.components.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\9.0.10\\microsoft.aspnetcore.components.analyzers.9.0.10.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.authorization\\9.0.0\\microsoft.aspnetcore.components.authorization.9.0.0.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.forms\\9.0.10\\microsoft.aspnetcore.components.forms.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.web\\9.0.10\\microsoft.aspnetcore.components.web.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly\\9.0.10\\microsoft.aspnetcore.components.webassembly.9.0.10.nupkg.sha512",
