@@ -1,0 +1,240 @@
+/* Página de Inicio */
+.inicio-page {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header de la página */
+.page-header {
+    margin-bottom: 3rem;
+}
+
+.header-title-section {
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.5px;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Grid de tarjetas del dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.card-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.card-icon svg {
+    width: 32px;
+    height: 32px;
+}
+
+.card-icon.blue {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card-icon.green {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+}
+
+.card-icon.orange {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.card-content h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.card-content p {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.card-button {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.card-button:hover {
+    color: white;
+    background: #667eea;
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .inicio-page {
+        padding: 1.5rem;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .inicio-page {
+        padding: 1rem;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .page-subtitle {
+        font-size: 1rem;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .dashboard-card {
+        padding: 1.5rem;
+    }
+
+    .card-icon {
+        width: 56px;
+        height: 56px;
+    }
+
+    .card-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .card-content h3 {
+        font-size: 1.25rem;
+    }
+
+    .card-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .inicio-page {
+        padding: 0.75rem;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .dashboard-card {
+        padding: 1.25rem;
+    }
+
+    .card-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .card-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .card-content h3 {
+        font-size: 1.1rem;
+    }
+
+    .card-content p {
+        font-size: 0.875rem;
+    }
+}
+

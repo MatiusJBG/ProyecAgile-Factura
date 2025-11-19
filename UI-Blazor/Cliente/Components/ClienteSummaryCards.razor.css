@@ -1,0 +1,144 @@
+/* Contenedor de tarjetas de resumen */
+.summary-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Tarjeta de resumen */
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.summary-card.total::before {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.summary-card.persona-natural::before {
+    background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+}
+
+.summary-card.empresa::before {
+    background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.summary-card.extranjero::before {
+    background: linear-gradient(90deg, #f39c12 0%, #e67e22 100%);
+}
+
+.card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+}
+
+.card-info-detail {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Colores específicos por tipo */
+.summary-card.total .card-value {
+    color: #667eea;
+}
+
+.summary-card.persona-natural .card-value {
+    color: #3498db;
+}
+
+.summary-card.empresa .card-value {
+    color: #2ecc71;
+}
+
+.summary-card.extranjero .card-value {
+    color: #f39c12;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .summary-cards-container {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .summary-cards-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .summary-card {
+        padding: 1.25rem;
+    }
+
+    .card-title {
+        font-size: 0.8rem;
+    }
+
+    .card-value {
+        font-size: 2rem;
+    }
+
+    .card-info-detail {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-cards-container {
+        gap: 0.875rem;
+    }
+
+    .summary-card {
+        padding: 1rem;
+    }
+
+    .card-title {
+        font-size: 0.75rem;
+    }
+
+    .card-value {
+        font-size: 1.75rem;
+    }
+
+    .card-info-detail {
+        font-size: 0.75rem;
+    }
+}
+

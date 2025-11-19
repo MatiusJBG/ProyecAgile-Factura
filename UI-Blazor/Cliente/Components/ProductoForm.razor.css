@@ -1,0 +1,464 @@
+.producto-form-container {
+    padding: 2rem;
+    background: white;
+}
+
+/* Tabs */
+.form-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: #6c757d;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+}
+
+.tab-btn:hover {
+    color: #2c3e50;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.tab-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+/* Form Container */
+.producto-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Section Boxes */
+.form-section-box {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Grid Layout */
+.form-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
+}
+
+.form-column-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-column-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Product Image Placeholder */
+.product-image-placeholder {
+    width: 180px;
+    height: 180px;
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.product-image-placeholder:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.image-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+}
+
+.product-image-placeholder p {
+    color: #666;
+    font-size: 0.85rem;
+    margin: 0;
+    text-align: center;
+}
+
+/* Form Rows */
+.form-row-inline {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.form-group label {
+    color: #333;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.form-control {
+    padding: 0.75rem 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    background: white;
+    min-width: 180px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.wide-input {
+    min-width: 400px;
+}
+
+/* Impuestos Section */
+.impuestos-section {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border-color: #667eea;
+}
+
+.impuestos-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.impuesto-group {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    align-items: center;
+    gap: 1rem;
+}
+
+.impuesto-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.impuesto-select {
+    max-width: 300px;
+}
+
+/* Información Adicional */
+.info-adicional-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.atributo-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.5rem;
+    align-items: flex-end;
+}
+
+.atributo-label,
+.atributo-descripcion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.atributo-label label,
+.atributo-descripcion label {
+    color: #333;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.atributo-input {
+    min-width: auto;
+}
+
+.descripcion-input {
+    min-width: auto;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px;
+    justify-content: center;
+}
+
+.btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-guardar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-guardar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.btn-cancelar {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.btn-cancelar:hover {
+    background: #e9ecef;
+    color: #2c3e50;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .producto-form-container {
+        padding: 1.5rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 180px 1fr;
+        gap: 1.25rem;
+    }
+
+    .form-section-box {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .producto-form-container {
+        padding: 1rem;
+    }
+
+    .form-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+    }
+
+    .tab-btn {
+        white-space: nowrap;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.875rem;
+    }
+
+    .form-section-title {
+        font-size: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .section-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .form-column-left {
+        margin-bottom: 1rem;
+        align-items: flex-start;
+    }
+
+    .product-image-placeholder {
+        width: 150px;
+        height: 150px;
+    }
+
+    .image-icon {
+        font-size: 2.5rem;
+    }
+
+    .form-row-inline {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .wide-input {
+        min-width: 100%;
+    }
+
+    .form-control {
+        min-width: 100%;
+    }
+
+    .atributo-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .impuesto-group {
+        grid-template-columns: 80px 1fr;
+        gap: 0.75rem;
+    }
+
+    .impuesto-select {
+        max-width: 100%;
+    }
+
+    .form-section-box {
+        padding: 1.25rem;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+    }
+
+    .btn {
+        width: 100%;
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .producto-form-container {
+        padding: 0.875rem;
+    }
+
+    .form-section-title {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-section-box {
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .product-image-placeholder {
+        width: 120px;
+        height: 120px;
+    }
+
+    .image-icon {
+        font-size: 2rem;
+    }
+
+    .form-group label {
+        font-size: 0.8rem;
+    }
+
+    .form-control {
+        font-size: 0.875rem;
+        padding: 0.625rem 0.875rem;
+    }
+
+    .impuesto-group {
+        grid-template-columns: 70px 1fr;
+    }
+
+    .tab-btn {
+        padding: 0.625rem 1rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Select Styling */
+select.form-control {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+}
+
+/* Input Number Styling */
+input[type="number"].form-control {
+    text-align: left;
+}
+
+/* Focus States */
+.form-control:focus,
+select.form-control:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+}
+
+/* Required Field Indicator */
+.form-group.required label::after {
+    content: " *";
+    color: #e74c3c;
+}
