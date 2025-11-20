@@ -1,7 +1,66 @@
 ﻿@page "/"
+@attribute [Authorize]
 
-<PageTitle>Inicio</PageTitle>
+<PageTitle>Inicio | Dashboard</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="inicio-page">
+    <div class="page-header">
+        <div class="header-title-section">
+            <h2 class="page-title">Bienvenido al Sistema de Facturación</h2>
+            <p class="page-subtitle">Gestiona tus clientes, facturas y productos desde un solo lugar</p>
+        </div>
+    </div>
 
-Welcome to your new app.
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <div class="card-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="card-content">
+                <h3>Clientes</h3>
+                <p>Gestiona tu base de clientes</p>
+                <a href="/clientes" class="card-button">Ver Clientes</a>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-icon green">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="card-content">
+                <h3>Facturas</h3>
+                <p>Crea y gestiona facturas</p>
+                <a href="/facturas" class="card-button">Ver Facturas</a>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-icon orange">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="card-content">
+                <h3>Productos</h3>
+                <p>Administra tu catálogo de productos</p>
+                <a href="/productos" class="card-button">Ver Productos</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Lógica adicional del dashboard se puede agregar aquí
+}

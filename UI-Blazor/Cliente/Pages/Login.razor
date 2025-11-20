@@ -1,0 +1,130 @@
+@page "/login"
+@layout EmptyLayout
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Sign In | Sistema de Facturación</PageTitle>
+
+<div class="login-container">
+    <div class="login-header">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
+        <nav class="top-nav">
+            <a href="#" class="nav-link">CONTACT</a>
+            <a href="#" class="nav-link">THEME MARKETPLACE</a>
+        </nav>
+    </div>
+
+    <div class="login-content">
+        <div class="login-box">
+            <h1 class="login-title">SIGN IN</h1>
+            
+            <form class="login-form" @onsubmit="HandleLogin" @onsubmit:preventDefault="true">
+                <div class="form-group">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" 
+                           id="name" 
+                           class="form-input" 
+                           @bind="username" 
+                           placeholder="" 
+                           required />
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" 
+                           id="password" 
+                           class="form-input" 
+                           @bind="password" 
+                           placeholder="" 
+                           required />
+                </div>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="error-message">
+                        @errorMessage
+                    </div>
+                }
+
+                <button type="submit" class="btn-signin" disabled="@isLoading">
+                    @if (isLoading)
+                    {
+                        <span>Cargando...</span>
+                    }
+                    else
+                    {
+                        <span>SIGN IN</span>
+                    }
+                </button>
+
+                <div class="form-footer">
+                    <label class="remember-me">
+                        <input type="checkbox" @bind="rememberMe" />
+                        <span class="checkbox-label">Remember Me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot password</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string username = string.Empty;
+    private string password = string.Empty;
+    private bool rememberMe = false;
+    private string errorMessage = string.Empty;
+    private bool isLoading = false;
+
+    protected override void OnInitialized()
+    {
+        // Si ya está autenticado, redirigir al inicio
+        if (AuthService.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/", forceLoad: true);
+        }
+    }
+
+    private async Task HandleLogin()
+    {
+        errorMessage = string.Empty;
+        
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "Por favor, ingrese usuario y contraseña";
+            return;
+        }
+
+        isLoading = true;
+        
+        try
+        {
+            var success = await AuthService.LoginAsync(username, password);
+            
+            if (success)
+            {
+                // Redirigir al inicio después del login exitoso
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                errorMessage = "Usuario o contraseña incorrectos";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error al iniciar sesión. Por favor, intente nuevamente.";
+            Console.WriteLine($"Error en login: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

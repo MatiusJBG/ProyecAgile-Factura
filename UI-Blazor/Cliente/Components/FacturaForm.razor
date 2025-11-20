@@ -1,0 +1,171 @@
+@using UI_Blazor.Client.Services
+@using UI_Blazor.Client.Models
+@using FacturaModel = UI_Blazor.Client.Models.Factura
+@using Models = UI_Blazor.Client.Models
+@inject IClienteService ClienteService
+@inject IProductoService ProductoService
+
+<div class="factura-form-container">
+    <h3 class="modal-title">@(Factura.Id == 0 ? "Nueva Factura" : "Editar Factura")</h3>
+
+    <EditForm Model="@Factura" OnValidSubmit="CalcularTotales">
+        <div class="form-grid">
+            <!-- Primera fila: Serie, Fechas, Cliente -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Serie / Número</label>
+                    <InputText @bind-Value="Factura.Serie" placeholder="F001" />
+                </div>
+                <div class="form-group">
+                    <label>Fecha Emisión</label>
+                    <InputDate @bind-Value="Factura.FechaEmision" />
+                </div>
+                <div class="form-group">
+                    <label>Fecha Vencimiento</label>
+                    <InputDate @bind-Value="Factura.FechaVencimiento" />
+                </div>
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <InputSelect @bind-Value="Factura.ClienteId">
+                        <option value="0">Seleccionar cliente...</option>
+                        @foreach (var c in clientes)
+                        {
+                            <option value="@c.Id">@c.NombreCompleto - @c.NumeroIdentificacion</option>
+                        }
+                    </InputSelect>
+                    <button type="button" class="btn-small">+ Nuevo cliente</button>
+                </div>
+            </div>
+
+            <!-- Establecimiento y Punto de Venta -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Establecimiento</label>
+                    <InputSelect @bind-Value="Factura.Establecimiento">
+                        <option value="">Seleccionar establecimiento...</option>
+                        @foreach (var est in establecimientos)
+                        {
+                            <option value="@est">@est</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="form-group">
+                    <label>Punto de Emisión</label>
+                    <InputSelect @bind-Value="Factura.PuntoEmision">
+                        <option value="">Seleccionar punto de emisión...</option>
+                        @foreach (var pe in puntosEmision)
+                        {
+                            <option value="@pe">@pe</option>
+                        }
+                    </InputSelect>
+                </div>
+            </div>
+
+            <!-- Líneas de productos -->
+            <h4>Líneas de Factura</h4>
+            <table class="lineas-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unit.</th>
+                        <th>Descuento</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var linea in Factura.Lineas)
+                    {
+                        <tr>
+                            <td>
+                                <InputText @bind-Value="linea.Descripcion" placeholder="Descripción o código" style="width:100%" />
+                            </td>
+                            <td><InputNumber @bind-Value="linea.Cantidad" /></td>
+                            <td><InputNumber @bind-Value="linea.PrecioUnitario" step="0.01" /></td>
+                            <td><InputNumber @bind-Value="linea.Descuento" step="0.01" /></td>
+                            <td>@linea.Subtotal.ToString("N2")</td>
+                            <td>
+                                <button type="button" @onclick="() => Factura.Lineas.Remove(linea)" class="btn-danger-small">×</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="button" @onclick="AgregarLinea" class="btn-add-line">
+                + Agregar línea
+            </button>
+
+            <!-- Formas de pago -->
+            <h4>Formas de Pago</h4>
+            @foreach (var fp in Factura.FormasPago)
+            {
+                <div class="forma-pago-row">
+                    <InputSelect @bind-Value="fp.Tipo">
+                        <option value="">Seleccionar forma de pago...</option>
+                        @foreach (var forma in formasPago)
+                        {
+                            <option value="@forma">@forma</option>
+                        }
+                    </InputSelect>
+                    <InputNumber @bind-Value="fp.Valor" step="0.01" />
+                    <button type="button" @onclick="() => Factura.FormasPago.Remove(fp)" class="btn-danger-small">×</button>
+                </div>
+            }
+            <button type="button" @onclick="() => Factura.FormasPago.Add(new())" class="btn-small">
+                + Agregar forma de pago
+            </button>
+
+            <!-- Totales -->
+            <div class="totales-section">
+                <div class="total-line"><span>Subtotal:</span> <strong>@Factura.Subtotal.ToString("C")</strong></div>
+                <div class="total-line"><span>Descuento:</span> <strong>@Factura.Descuento.ToString("C")</strong></div>
+                <div class="total-line"><span>IVA 12%:</span> <strong>@((Factura.Subtotal * 0.12m).ToString("C"))</strong></div>
+                <div class="total-line highlight"><span>TOTAL A PAGAR:</span> <strong>@Factura.Total.ToString("C")</strong></div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="action-btn secondary" @onclick="OnCancelar">Cancelar</button>
+                <button type="submit" class="action-btn primary-btn">Guardar y Enviar</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter] public FacturaModel Factura { get; set; } = new();
+    [Parameter] public EventCallback OnGuardar { get; set; }
+    [Parameter] public EventCallback OnCancelar { get; set; }
+
+    private List<Models.Cliente> clientes = new();
+    private List<string> establecimientos = new() { "001 - CAMINO", "002 - CENTRO", "003 - NORTE" };
+    private List<string> puntosEmision = new() { "001", "002", "003", "004", "005" };
+    private List<string> formasPago = new() 
+    { 
+        "SIN UTILIZACION DE MEDIO", 
+        "EFECTIVO", 
+        "TRANSFERENCIA", 
+        "TARJETA DE CRÉDITO", 
+        "TARJETA DE DÉBITO", 
+        "CHEQUE", 
+        "DEPÓSITO" 
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await ClienteService.GetClientesAsync();
+    }
+
+    private void AgregarLinea()
+    {
+        Factura.Lineas.Add(new FacturaLinea());
+    }
+
+    private void CalcularTotales()
+    {
+        Factura.Subtotal = Factura.Lineas.Sum(l => l.Subtotal);
+        Factura.Descuento = Factura.Lineas.Sum(l => l.Descuento);
+        Factura.Total = Factura.Subtotal - Factura.Descuento + (Factura.Subtotal * 0.12m);
+        OnGuardar.InvokeAsync();
+    }
+}

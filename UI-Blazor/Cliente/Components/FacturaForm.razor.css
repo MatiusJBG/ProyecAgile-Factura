@@ -1,0 +1,402 @@
+/* Formulario de Factura */
+.factura-form-container {
+    padding: 2rem;
+    background: white;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 2rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.75rem 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: white;
+    color: #2c3e50;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-small {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-small:hover {
+    background: #e9ecef;
+    color: #2c3e50;
+}
+
+/* Líneas de Factura */
+h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 1.5rem 0 1rem 0;
+}
+
+.lineas-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.lineas-table thead {
+    background: #f8f9fa;
+}
+
+.lineas-table th {
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.lineas-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 0.9rem;
+}
+
+.lineas-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.lineas-table input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.btn-add-line {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.btn-add-line:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-danger-small {
+    width: 32px;
+    height: 32px;
+    background: rgba(231, 76, 60, 0.1);
+    border: none;
+    border-radius: 6px;
+    color: #e74c3c;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-danger-small:hover {
+    background: rgba(231, 76, 60, 0.2);
+}
+
+/* Formas de Pago */
+.forma-pago-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    margin-bottom: 0.75rem;
+}
+
+.forma-pago-row input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+/* Totales */
+.totales-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.total-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #495057;
+}
+
+.total-line span {
+    font-weight: 500;
+}
+
+.total-line strong {
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.total-line.highlight {
+    padding-top: 0.75rem;
+    border-top: 2px solid #dee2e6;
+    margin-top: 0.5rem;
+}
+
+.total-line.highlight span,
+.total-line.highlight strong {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #667eea;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-btn.secondary {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.action-btn.secondary:hover {
+    background: #e9ecef;
+    color: #2c3e50;
+}
+
+.action-btn.primary-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.action-btn.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .factura-form-container {
+        padding: 1.5rem;
+    }
+
+    .form-row {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .lineas-table {
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .factura-form-container {
+        padding: 1rem;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .form-group label {
+        font-size: 0.875rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        font-size: 0.9rem;
+        padding: 0.625rem 0.875rem;
+    }
+
+    .lineas-table {
+        font-size: 0.8rem;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .lineas-table thead,
+    .lineas-table tbody,
+    .lineas-table tr {
+        display: block;
+    }
+
+    .lineas-table th,
+    .lineas-table td {
+        padding: 0.5rem;
+        display: inline-block;
+        min-width: 100px;
+    }
+
+    .btn-add-line {
+        width: 100%;
+        justify-content: center;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+    }
+
+    .forma-pago-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .totales-section {
+        padding: 1.25rem;
+    }
+
+    .total-line {
+        font-size: 0.9rem;
+    }
+
+    .total-line.highlight span,
+    .total-line.highlight strong {
+        font-size: 1.1rem;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .factura-form-container {
+        padding: 0.875rem;
+    }
+
+    .modal-title {
+        font-size: 1.1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .form-row {
+        gap: 1rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .lineas-table {
+        font-size: 0.75rem;
+    }
+
+    .lineas-table th,
+    .lineas-table td {
+        padding: 0.375rem;
+        min-width: 80px;
+    }
+
+    .totales-section {
+        padding: 1rem;
+    }
+
+    .total-line {
+        font-size: 0.85rem;
+    }
+
+    .total-line.highlight span,
+    .total-line.highlight strong {
+        font-size: 1rem;
+    }
+}
+

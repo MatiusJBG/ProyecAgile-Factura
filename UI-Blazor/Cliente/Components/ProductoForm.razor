@@ -1,0 +1,254 @@
+@using UI_Blazor.Client.Models
+@using UI_Blazor.Client.Services
+@using Microsoft.AspNetCore.Components
+
+<div class="producto-form-container">
+    <form class="producto-form" @onsubmit="HandleSubmit" @onsubmit:preventDefault>
+        <h3 class="form-section-title">Detalle del producto / servicio</h3>
+
+        <!-- Características Generales -->
+        <div class="form-section-box">
+            <h4 class="section-subtitle">Características Generales</h4>
+            
+            <div class="form-grid">
+                <div class="form-column-left">
+                    <!-- Área para imagen/logo del producto -->
+                    <div class="product-image-placeholder">
+                        <div class="image-icon">📦</div>
+                        <p>Imagen del producto</p>
+                    </div>
+                </div>
+                
+                <div class="form-column-right">
+                    <div class="form-row-inline">
+                        <div class="form-group">
+                            <label>Código Principal</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   @bind="Producto.CodigoPrincipal" 
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="form-row-inline">
+                        <div class="form-group">
+                            <label>Código Auxiliar</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   @bind="Producto.CodigoAuxiliar" />
+                        </div>
+                    </div>
+
+                    <div class="form-row-inline">
+                        <div class="form-group">
+                            <label>Tipo de producto</label>
+                            <select class="form-control" @bind="Producto.TipoProducto">
+                                <option value="@TipoProducto.BIEN">BIEN</option>
+                                <option value="@TipoProducto.SERVICIO">SERVICIO</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row-inline">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" 
+                                   class="form-control wide-input" 
+                                   @bind="Producto.Nombre" 
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="form-row-inline">
+                        <div class="form-group">
+                            <label>Número de Lote *</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   @bind="Producto.NumeroLote" 
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="form-row-inline">
+                        <div class="form-group">
+                            <label>Cantidad en Lote *</label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   @bind="Producto.CantidadEnLote" 
+                                   min="1"
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="form-row-inline">
+                        <div class="form-group">
+                            <label>Fecha de Lote</label>
+                            <input type="date" 
+                                   class="form-control" 
+                                   @bind="Producto.FechaLote" />
+                        </div>
+                    </div>
+
+                    <div class="form-row-inline">
+                        <div class="form-group">
+                            <label>Precio del Lote *</label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   @bind="Producto.PrecioLote" 
+                                   step="0.01" 
+                                   min="0"
+                                   required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impuestos Aplicables -->
+        <div class="form-section-box impuestos-section">
+            <h4 class="section-subtitle">Impuestos Aplicables</h4>
+            
+            <div class="impuestos-grid">
+                <div class="impuesto-group">
+                    <label>IVA</label>
+                    <select class="form-control impuesto-select" @bind="Producto.IVA">
+                        <option value="">Seleccione...</option>
+                        <option value="@TipoIVA.Gravado0">Gravado 0%</option>
+                        <option value="@TipoIVA.Gravado12">Gravado 12%</option>
+                        <option value="@TipoIVA.Gravado14">Gravado 14%</option>
+                        <option value="@TipoIVA.NoObjetoIVA">No Objeto de IVA</option>
+                        <option value="@TipoIVA.ExentoIVA">Exento de IVA</option>
+                    </select>
+                </div>
+
+                <div class="impuesto-group">
+                    <label>ICE</label>
+                    <select class="form-control impuesto-select" @bind="Producto.ICE">
+                        <option value="@TipoICE.SinICE">Seleccione...</option>
+                        <option value="@TipoICE.Con3">ICE 3%</option>
+                        <option value="@TipoICE.Con5">ICE 5%</option>
+                        <option value="@TipoICE.Con10">ICE 10%</option>
+                    </select>
+                </div>
+
+                <div class="impuesto-group">
+                    <label>IRBPNR</label>
+                    <select class="form-control impuesto-select" @bind="Producto.IRBPNR">
+                        <option value="@TipoIRBPNR.SinIRBPNR">Seleccione...</option>
+                        <option value="@TipoIRBPNR.Con1">IRBPNR 1%</option>
+                        <option value="@TipoIRBPNR.Con2">IRBPNR 2%</option>
+                        <option value="@TipoIRBPNR.Con5">IRBPNR 5%</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="form-section-box">
+            <h4 class="section-subtitle">Información Adicional</h4>
+            
+            <div class="info-adicional-grid">
+                <div class="atributo-row">
+                    <div class="atributo-label">
+                        <label>1. Atributo</label>
+                        <input type="text" 
+                               class="form-control atributo-input" 
+                               @bind="Producto.Atributo1Nombre" 
+                               placeholder="Ej: Marca, Color, Talla..." />
+                    </div>
+                    <div class="atributo-descripcion">
+                        <label>Descripción</label>
+                        <input type="text" 
+                               class="form-control descripcion-input" 
+                               @bind="Producto.Atributo1Descripcion" 
+                               placeholder="Descripción del atributo" />
+                    </div>
+                </div>
+
+                <div class="atributo-row">
+                    <div class="atributo-label">
+                        <label>2. Atributo</label>
+                        <input type="text" 
+                               class="form-control atributo-input" 
+                               @bind="Producto.Atributo2Nombre" />
+                    </div>
+                    <div class="atributo-descripcion">
+                        <label>Descripción</label>
+                        <input type="text" 
+                               class="form-control descripcion-input" 
+                               @bind="Producto.Atributo2Descripcion" />
+                    </div>
+                </div>
+
+                <div class="atributo-row">
+                    <div class="atributo-label">
+                        <label>3. Atributo</label>
+                        <input type="text" 
+                               class="form-control atributo-input" 
+                               @bind="Producto.Atributo3Nombre" />
+                    </div>
+                    <div class="atributo-descripcion">
+                        <label>Descripción</label>
+                        <input type="text" 
+                               class="form-control descripcion-input" 
+                               @bind="Producto.Atributo3Descripcion" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-guardar">Guardar Producto</button>
+            <button type="button" class="btn btn-cancelar" @onclick="() => OnCancelar.InvokeAsync()">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter]
+    public Producto Producto { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnGuardar { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancelar { get; set; }
+
+    private async Task HandleSubmit()
+    {
+        // Validar que los campos requeridos estén completos
+        if (string.IsNullOrWhiteSpace(Producto.CodigoPrincipal))
+        {
+            // Mostrar mensaje de error
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Producto.Nombre))
+        {
+            // Mostrar mensaje de error
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Producto.NumeroLote))
+        {
+            // Mostrar mensaje de error
+            return;
+        }
+
+        if (Producto.CantidadEnLote <= 0)
+        {
+            // Mostrar mensaje de error
+            return;
+        }
+
+        if (Producto.PrecioLote <= 0)
+        {
+            // Mostrar mensaje de error
+            return;
+        }
+
+        Producto.FechaActualizacion = DateTime.Now;
+        await OnGuardar.InvokeAsync();
+    }
+}

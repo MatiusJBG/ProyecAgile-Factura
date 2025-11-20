@@ -1,132 +1,271 @@
-### AL ###
-#Template for AL projects for Dynamics 365 Business Central
-#launch.json folder
-.vscode/
-#Cache folder
-.alcache/
-#Symbols folder
-.alpackages/
-#Snapshots folder
-.snapshots/
-#Testing Output folder
-.output/
-#Extension App-file
-*.app
-#Rapid Application Development File
-rad.json
-#Translation Base-file
-*.g.xlf
-#License-file
-*.flf
-#Test results file
-TestResults.xml
+## Ignorar archivos de compilación y build
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
 
-===================================================================
+## Archivos compilados
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
 
-Plantilla de .gitignore para una solución .NET (incluyendo Blazor y API)
-
-===================================================================
-
--------------------------------------------------------------------
-
-Archivos de IDE y configuración de usuario (Visual Studio, VS Code, Rider)
-
--------------------------------------------------------------------
-
+## Archivos de Visual Studio
 .vs/
 .vscode/
-.idea/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+## Archivos de Rider
+.idea/
 *.sln.iml
 
--------------------------------------------------------------------
-
-¡Lo más importante: Artefactos de Compilación (Build)!
-
-Ignora las carpetas 'bin' y 'obj' en CUALQUIER directorio.
-
--------------------------------------------------------------------
-
-[Bb]in/
-[Oo]bj/
-
--------------------------------------------------------------------
-
-Archivos de Paquetes (NuGet)
-
--------------------------------------------------------------------
-
+## Archivos de NuGet
 packages/
 *.nupkg
+*.snupkg
 *.nupkg.sha512
-*.nuspec
+*.snupkg.sha512
+**/packages/*
+!**/packages/build/
+project.lock.json
+project.fragment.lock.json
+artifacts/
 
-No ignorar el 'packages.config' o 'project.json'
+## Archivos del sistema operativo
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
 
-!packages.config
-!project.json
-
--------------------------------------------------------------------
-
-Artefactos del Sistema Operativo
-
--------------------------------------------------------------------
-
-macOS
-
+# macOS
 .DS_Store
 .AppleDouble
 .LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
 
-Windows
+# Linux
+*~
+.directory
+.Trash-*
 
-Thumbs.db
-ehthumbs.db
-desktop.ini
-
--------------------------------------------------------------------
-
-Archivos de Log, Reportes y Temporales
-
--------------------------------------------------------------------
-
+## Archivos de logs y temporales
 *.log
 *.tmp
 *.bak
+*.swp
+*~.nib
 *.trx
 TestResults/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.tlog
 
--------------------------------------------------------------------
-
-Archivos de Configuración Local (¡NUNCA subas secretos!)
-
--------------------------------------------------------------------
-
-Usado por 'user-secrets' (aunque el 'secrets.json' no está aquí)
-
+## Archivos de configuración local y secretos
+# User secrets (nunca subir secretos)
 secrets.json
 *.secrets.json
+**/Properties/launchSettings.json.user
 
-Configuraciones locales que sobreescriben 'appsettings.json'
+# Configuraciones locales (opcional, descomentar si no quieres subir appsettings.Development.json)
+# appsettings.Development.json
+# appsettings.*.Local.json
+# appsettings.Local.json
 
-appsettings.Local.json
-appsettings.*.Local.json
-
--------------------------------------------------------------------
-
-Archivos específicos de Blazor
-
--------------------------------------------------------------------
-
-Archivos generados por Blazor (aunque 'obj/' ya los cubre)
-
-*.razor.css
+## Archivos específicos de Blazor
+# Archivos generados por Blazor
 *.razor.js
+*.razor.g.cs
 *.sourcelink.json
 
-Directorio de publicación (si usas 'dotnet publish')
-
+# Directorio de publicación
 publish/
+publish-*/
+
+## Archivos de Azure y cloud
+.azure/
+*.azurePubxml
+*.pubxml
+*.publishproj
+
+## Archivos de Node (si usas npm/yarn en wwwroot)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+## Archivos de TypeScript
+*.tsbuildinfo
+
+## Archivos de JetBrains
+.idea/
+*.sln.iml
+
+## Archivos de CodeRush
+.cr/
+*.cr/aggregatedcache/*
+
+## Archivos de Python (si hay scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+## Archivos de configuración de usuario específicos
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Archivos de Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+## Archivos de ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+## Archivos de dotCover
+*.dotCover
+
+## Archivos de NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+## Archivos de MightyMoose
+*.mm.*
+AutoTest.Net/
+
+## Archivos de Web workbench
+.sass-cache/
+
+## Archivos de Visual Studio database
+*.dbmdl
+*.dbproj.schemaview
+*.jfm
+*.pfx
+*.publishsettings
+*.sql
+*.sqlproj
+*.sqlproj.user
+
+## Archivos de Click-Once
+*.application
+*.manifest
+*.publish
+
+## Archivos de Windows Azure
+ServiceConfiguration.*.cscfg
+ServiceConfiguration.*.csdef
+ServiceConfiguration.Local.*.cscfg
+ServiceConfiguration.Local.*.csdef
+
+## Archivos de Entity Framework
+*.edmx.diagram
+*.edmx.sql
+
+## Archivos de OpenCover
+coverage*.xml
+coverage*.json
+coverage*.html
+*.coverage
+*.coveragexml
+
+## Archivos de ReportUnit
+ReportUnit.html
+
+## Archivos de NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+## Archivos de MSTest
+*.Test.dll
+*.Test.pdb
+TestResults/
+
+## Archivos de BenchmarkDotNet
+BenchmarkDotNet.Artifacts/
+
+## Archivos de StyleCop
+StyleCopReport.xml
+
+## Archivos de SonarQube
+.sonarqube/
+
+## Archivos de Docker
+.dockerignore
+
+## Archivos de Git
+*.orig
+
+## Archivos de backup
+*.backup
+*.old

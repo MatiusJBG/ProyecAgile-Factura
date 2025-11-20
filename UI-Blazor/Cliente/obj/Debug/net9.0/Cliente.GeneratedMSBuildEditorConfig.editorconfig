@@ -1,0 +1,97 @@
+is_global = true
+build_property.EnableAotAnalyzer = 
+build_property.EnableSingleFileAnalyzer = 
+build_property.EnableTrimAnalyzer = false
+build_property.IncludeAllContentForSelfExtract = 
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = browser
+build_property.RootNamespace = Cliente
+build_property.RootNamespace = Cliente
+build_property.ProjectDir = C:\Users\Elizabeth\Desktop\AGILES\ProyecAgile-Factura\UI-Blazor\Cliente\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = false
+build_property.RazorLangVersion = 9.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\Elizabeth\Desktop\AGILES\ProyecAgile-Factura\UI-Blazor\Cliente
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/AppRouter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHBSb3V0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/CustomRouteView.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDdXN0b21Sb3V0ZVZpZXcucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/RedirectToLogin.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSZWRpcmVjdFRvTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Layout/EmptyLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XEVtcHR5TGF5b3V0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/ClienteFilterBar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDbGllbnRlRmlsdGVyQmFyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-fv2ksfns28
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/ClienteSummaryCards.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDbGllbnRlU3VtbWFyeUNhcmRzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-vx81rkpgu1
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/ClienteTable.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDbGllbnRlVGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-lq4oz6uz2n
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/FacturaForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGYWN0dXJhRm9ybS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-ov3ucpgjd3
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/ProductoForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQcm9kdWN0b0Zvcm0ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-dd00b7uyrd
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-i3e7c00b33
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Layout/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-m59xcf0ggv
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Clientes.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xpZW50ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-xsk7vf95p7
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Factura.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmFjdHVyYS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-uypv3bz6sc
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Inicio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5pY2lvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-3px9rhgnc2
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-qzpkpmkt52
+
+[C:/Users/Elizabeth/Desktop/AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Pages/Productos.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdG9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-740ck2emdq

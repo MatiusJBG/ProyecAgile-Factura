@@ -8,9 +8,6 @@
                @bind-value="SearchTerm"
                @bind-value:event="oninput" 
                @onkeyup="OnSearchInput" />
-        <button class="add-client-button" @onclick="() => OnNuevoCliente.InvokeAsync()">
-            <span class="oi oi-plus" aria-hidden="true"></span> Nuevo Cliente
-        </button>
     </div>
 
     <div class="filter-section">
