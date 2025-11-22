@@ -37,20 +37,37 @@
     color: #2c3e50;
 }
 
+/* Estilos mejorados para TODOS los campos de formulario */
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group ::deep input,
+.form-group ::deep select,
+.forma-pago-row input,
+.forma-pago-row select,
+.forma-pago-row ::deep input,
+.forma-pago-row ::deep select,
+.lineas-table input,
+.lineas-table ::deep input {
     padding: 0.75rem 1rem;
     border: 1px solid #dee2e6;
     border-radius: 8px;
     font-size: 0.95rem;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     background: white;
     color: #2c3e50;
+    outline: none;
 }
 
 .form-group input:focus,
-.form-group select:focus {
-    outline: none;
+.form-group select:focus,
+.form-group ::deep input:focus,
+.form-group ::deep select:focus,
+.forma-pago-row input:focus,
+.forma-pago-row select:focus,
+.forma-pago-row ::deep input:focus,
+.forma-pago-row ::deep select:focus,
+.lineas-table input:focus,
+.lineas-table ::deep input:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
@@ -64,7 +81,7 @@
     font-size: 0.85rem;
     color: #6c757d;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
 }
 
 .btn-small:hover {
@@ -122,18 +139,20 @@ h4 {
 
 .btn-add-line {
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
 }
 
 .btn-add-line:hover {
+    background: #5568d3;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
@@ -147,7 +166,7 @@ h4 {
     color: #e74c3c;
     font-size: 1.25rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -165,7 +184,8 @@ h4 {
     margin-bottom: 0.75rem;
 }
 
-.forma-pago-row input {
+.forma-pago-row input,
+.forma-pago-row select {
     flex: 1;
     padding: 0.75rem 1rem;
     border: 1px solid #dee2e6;
@@ -234,7 +254,7 @@ h4 {
     font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
 }
 
 .action-btn.secondary {
@@ -249,14 +269,15 @@ h4 {
 }
 
 .action-btn.primary-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
 }
 
 .action-btn.primary-btn:hover {
+    background: #5568d3;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 /* Responsive */
@@ -399,4 +420,3 @@ h4 {
         font-size: 1rem;
     }
 }
-

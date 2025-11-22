@@ -65,12 +65,12 @@
 }
 
 .export-btn:hover {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #3b82f6;
     color: white;
 }
 
 .import-btn:hover {
-    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    background: #10b981;
     color: white;
 }
 
@@ -234,14 +234,16 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #3b82f6;
     color: white;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transition: all 0.25s ease;
 }
 
 .btn-primary:hover {
+    background: #2563eb;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }
 
 /* Paginación */
@@ -290,9 +292,9 @@
 }
 
 .pagination-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #3b82f6;
     color: white;
-    border-color: transparent;
+    border-color: #3b82f6;
 }
 
 .pagination-btn:disabled {
@@ -427,4 +429,3 @@
         font-size: 0.875rem;
     }
 }
-
