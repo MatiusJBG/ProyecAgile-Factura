@@ -8,7 +8,7 @@
 
         <!-- Características Generales -->
         <div class="form-section-box">
-            <h4 class="section-subtitle">Características Generales</h4>
+            <h4 class="section-subtitle">Información del Producto</h4>
             
             <div class="form-grid">
                 <div class="form-column-left">
@@ -22,81 +22,33 @@
                 <div class="form-column-right">
                     <div class="form-row-inline">
                         <div class="form-group">
-                            <label>Código Principal</label>
+                            <label>Tipo de Producto *</label>
                             <input type="text" 
                                    class="form-control" 
-                                   @bind="Producto.CodigoPrincipal" 
+                                   @bind="Producto.Tip_Pro" 
+                                   placeholder="Ej: Alimenticio, Bebida, Limpieza..."
                                    required />
                         </div>
                     </div>
 
                     <div class="form-row-inline">
                         <div class="form-group">
-                            <label>Código Auxiliar</label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   @bind="Producto.CodigoAuxiliar" />
-                        </div>
-                    </div>
-
-                    <div class="form-row-inline">
-                        <div class="form-group">
-                            <label>Tipo de producto</label>
-                            <select class="form-control" @bind="Producto.TipoProducto">
-                                <option value="@TipoProducto.BIEN">BIEN</option>
-                                <option value="@TipoProducto.SERVICIO">SERVICIO</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row-inline">
-                        <div class="form-group">
-                            <label>Nombre</label>
+                            <label>Nombre del Producto *</label>
                             <input type="text" 
                                    class="form-control wide-input" 
-                                   @bind="Producto.Nombre" 
+                                   @bind="Producto.Nom_Pro" 
+                                   placeholder="Ej: Coca Cola 750ml"
                                    required />
                         </div>
                     </div>
 
                     <div class="form-row-inline">
                         <div class="form-group">
-                            <label>Número de Lote *</label>
+                            <label>Marca *</label>
                             <input type="text" 
                                    class="form-control" 
-                                   @bind="Producto.NumeroLote" 
-                                   required />
-                        </div>
-                    </div>
-
-                    <div class="form-row-inline">
-                        <div class="form-group">
-                            <label>Cantidad en Lote *</label>
-                            <input type="number" 
-                                   class="form-control" 
-                                   @bind="Producto.CantidadEnLote" 
-                                   min="1"
-                                   required />
-                        </div>
-                    </div>
-
-                    <div class="form-row-inline">
-                        <div class="form-group">
-                            <label>Fecha de Lote</label>
-                            <input type="date" 
-                                   class="form-control" 
-                                   @bind="Producto.FechaLote" />
-                        </div>
-                    </div>
-
-                    <div class="form-row-inline">
-                        <div class="form-group">
-                            <label>Precio del Lote *</label>
-                            <input type="number" 
-                                   class="form-control" 
-                                   @bind="Producto.PrecioLote" 
-                                   step="0.01" 
-                                   min="0"
+                                   @bind="Producto.Marca" 
+                                   placeholder="Ej: Coca Cola Company"
                                    required />
                         </div>
                     </div>
@@ -104,95 +56,68 @@
             </div>
         </div>
 
-        <!-- Impuestos Aplicables -->
-        <div class="form-section-box impuestos-section">
-            <h4 class="section-subtitle">Impuestos Aplicables</h4>
+        <!-- Información de Lotes y Precios -->
+        <div class="form-section-box lote-section">
+            <h4 class="section-subtitle">
+                📦 Información de Precios y Lotes
+                <span class="info-badge">Tabla separada: lotes</span>
+            </h4>
             
-            <div class="impuestos-grid">
-                <div class="impuesto-group">
-                    <label>IVA</label>
-                    <select class="form-control impuesto-select" @bind="Producto.IVA">
-                        <option value="">Seleccione...</option>
-                        <option value="@TipoIVA.Gravado0">Gravado 0%</option>
-                        <option value="@TipoIVA.Gravado12">Gravado 12%</option>
-                        <option value="@TipoIVA.Gravado14">Gravado 14%</option>
-                        <option value="@TipoIVA.NoObjetoIVA">No Objeto de IVA</option>
-                        <option value="@TipoIVA.ExentoIVA">Exento de IVA</option>
-                    </select>
+            <div class="form-grid-2col">
+                <div class="form-group">
+                    <label>Fecha de Entrada</label>
+                    <input type="date" 
+                           class="form-control" 
+                           @bind="LoteInfo.Fec_Ent" />
+                    <small class="form-hint">Fecha de recepción del lote</small>
                 </div>
 
-                <div class="impuesto-group">
-                    <label>ICE</label>
-                    <select class="form-control impuesto-select" @bind="Producto.ICE">
-                        <option value="@TipoICE.SinICE">Seleccione...</option>
-                        <option value="@TipoICE.Con3">ICE 3%</option>
-                        <option value="@TipoICE.Con5">ICE 5%</option>
-                        <option value="@TipoICE.Con10">ICE 10%</option>
-                    </select>
+                <div class="form-group">
+                    <label>Fecha de Expiración</label>
+                    <input type="date" 
+                           class="form-control" 
+                           @bind="LoteInfo.Fec_Exp" />
+                    <small class="form-hint">Fecha de vencimiento del producto</small>
                 </div>
 
-                <div class="impuesto-group">
-                    <label>IRBPNR</label>
-                    <select class="form-control impuesto-select" @bind="Producto.IRBPNR">
-                        <option value="@TipoIRBPNR.SinIRBPNR">Seleccione...</option>
-                        <option value="@TipoIRBPNR.Con1">IRBPNR 1%</option>
-                        <option value="@TipoIRBPNR.Con2">IRBPNR 2%</option>
-                        <option value="@TipoIRBPNR.Con5">IRBPNR 5%</option>
-                    </select>
+                <div class="form-group">
+                    <label>Cantidad Recibida</label>
+                    <input type="number" 
+                           class="form-control" 
+                           @bind="LoteInfo.Cantidad_Recibida" 
+                           placeholder="Ej: 100"
+                           min="1" />
+                    <small class="form-hint">Unidades recibidas en el lote</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Cantidad Disponible</label>
+                    <input type="number" 
+                           class="form-control" 
+                           @bind="LoteInfo.Cantidad_Disponible" 
+                           placeholder="Ej: 100"
+                           min="0" />
+                    <small class="form-hint">Unidades actualmente disponibles</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Precio Unitario (USD)</label>
+                    <input type="number" 
+                           class="form-control" 
+                           @bind="LoteInfo.Precio_Unitario" 
+                           placeholder="0.00"
+                           step="0.01"
+                           min="0" />
+                    <small class="form-hint">Precio por unidad individual</small>
                 </div>
             </div>
-        </div>
 
-        <!-- Información Adicional -->
-        <div class="form-section-box">
-            <h4 class="section-subtitle">Información Adicional</h4>
-            
-            <div class="info-adicional-grid">
-                <div class="atributo-row">
-                    <div class="atributo-label">
-                        <label>1. Atributo</label>
-                        <input type="text" 
-                               class="form-control atributo-input" 
-                               @bind="Producto.Atributo1Nombre" 
-                               placeholder="Ej: Marca, Color, Talla..." />
-                    </div>
-                    <div class="atributo-descripcion">
-                        <label>Descripción</label>
-                        <input type="text" 
-                               class="form-control descripcion-input" 
-                               @bind="Producto.Atributo1Descripcion" 
-                               placeholder="Descripción del atributo" />
-                    </div>
-                </div>
-
-                <div class="atributo-row">
-                    <div class="atributo-label">
-                        <label>2. Atributo</label>
-                        <input type="text" 
-                               class="form-control atributo-input" 
-                               @bind="Producto.Atributo2Nombre" />
-                    </div>
-                    <div class="atributo-descripcion">
-                        <label>Descripción</label>
-                        <input type="text" 
-                               class="form-control descripcion-input" 
-                               @bind="Producto.Atributo2Descripcion" />
-                    </div>
-                </div>
-
-                <div class="atributo-row">
-                    <div class="atributo-label">
-                        <label>3. Atributo</label>
-                        <input type="text" 
-                               class="form-control atributo-input" 
-                               @bind="Producto.Atributo3Nombre" />
-                    </div>
-                    <div class="atributo-descripcion">
-                        <label>Descripción</label>
-                        <input type="text" 
-                               class="form-control descripcion-input" 
-                               @bind="Producto.Atributo3Descripcion" />
-                    </div>
+            <div class="lote-info-display">
+                <div class="calculated-info">
+                    <span class="info-label">Precio Total del Lote:</span>
+                    <span class="info-value">
+                        $@LoteInfo.Precio_Lote.ToString("N2")
+                    </span>
                 </div>
             </div>
         </div>
@@ -205,6 +130,70 @@
     </form>
 </div>
 
+<style>
+    .lote-section {
+        background: linear-gradient(135deg, #f8f9ff 0%, #fff5f5 100%);
+        border-left: 4px solid #6366f1;
+        margin-top: 1.5rem;
+    }
+
+    .info-badge {
+        font-size: 0.75rem;
+        background: #6366f1;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        margin-left: 1rem;
+        font-weight: 500;
+    }
+
+    .form-grid-2col {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .form-hint {
+        display: block;
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+        font-style: italic;
+    }
+
+    .lote-info-display {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        border: 2px dashed #6366f1;
+    }
+
+    .calculated-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .info-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #6366f1;
+    }
+
+    @@media (max-width: 768px) {
+        .form-grid-2col {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
 @code {
     [Parameter]
     public Producto Producto { get; set; } = new();
@@ -215,40 +204,27 @@
     [Parameter]
     public EventCallback OnCancelar { get; set; }
 
+    // Información del lote (solo visual, se guardará separadamente)
+    private Lote LoteInfo { get; set; } = new();
+
     private async Task HandleSubmit()
     {
         // Validar que los campos requeridos estén completos
-        if (string.IsNullOrWhiteSpace(Producto.CodigoPrincipal))
+        if (string.IsNullOrWhiteSpace(Producto.Tip_Pro))
         {
-            // Mostrar mensaje de error
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(Producto.Nombre))
+        if (string.IsNullOrWhiteSpace(Producto.Nom_Pro))
         {
-            // Mostrar mensaje de error
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(Producto.NumeroLote))
+        if (string.IsNullOrWhiteSpace(Producto.Marca))
         {
-            // Mostrar mensaje de error
             return;
         }
 
-        if (Producto.CantidadEnLote <= 0)
-        {
-            // Mostrar mensaje de error
-            return;
-        }
-
-        if (Producto.PrecioLote <= 0)
-        {
-            // Mostrar mensaje de error
-            return;
-        }
-
-        Producto.FechaActualizacion = DateTime.Now;
         await OnGuardar.InvokeAsync();
     }
 }
