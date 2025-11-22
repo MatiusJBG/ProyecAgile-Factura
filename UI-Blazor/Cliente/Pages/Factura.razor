@@ -7,7 +7,6 @@
 @using Cliente.Components
 @inject FacturaService FacturaService
 @inject NavigationManager Nav
-@inject IJSRuntime JS
 
 <PageTitle>Facturas | AppInvoice</PageTitle>
 
@@ -18,34 +17,14 @@
             <h2 class="page-title">Gestión de Facturas</h2>
             <p class="page-subtitle">Crea, envía y controla todas tus facturas electrónicas</p>
         </div>
-        <div class="header-actions">
-            <button class="action-btn export-btn">
-                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Exportar
-            </button>
-        </div>
     </div>
 
     <!-- Navegación por pestañas -->
     <div class="tabs-navigation">
         <button class="tab-btn @(currentView == "lista" ? "active" : "")" @onclick='() => ChangeView("lista")'>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
             Lista General
         </button>
         <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <line x1="20" y1="8" x2="20" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <line x1="23" y1="11" x2="17" y2="11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
             Nueva Factura
         </button>
     </div>
@@ -53,93 +32,71 @@
     <!-- Contenido condicional según la vista -->
     @if (currentView == "lista")
     {
-    <!-- Tarjetas de resumen -->
-    <div class="summary-cards">
-        <div class="summary-card blue">
-            <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14 2 14 8 20 8"/></svg></div>
-            <div class="card-content">
-                <span class="card-label">Total Facturas</span>
-                <span class="card-value">@facturas.Count</span>
-                <span class="card-change positive">+18 este mes</span>
+        <!-- Tarjetas de resumen -->
+        <div class="summary-cards">
+            <div class="summary-card blue">
+                <div class="card-content">
+                    <span class="card-label">Total Facturas</span>
+                    <span class="card-value">@facturas.Count</span>
+                </div>
+            </div>
+            <div class="summary-card green">
+                <div class="card-content">
+                    <span class="card-label">Cobrado</span>
+                    <span class="card-value">@facturas.Where(f => f.Estado == EstadoFactura.Pagada).Sum(f => f.Tot_Fac_Con_IVA):C</span>
+                </div>
             </div>
         </div>
-        <div class="summary-card green">
-            <div class="card-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" stroke-width="2"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="2"/></svg></div>
-            <div class="card-content">
-                <span class="card-label">Cobrado</span>
-                <span class="card-value">@facturas.Where(f => f.Estado == EstadoFactura.Pagada).Sum(f => f.Total):C</span>
-            </div>
-        </div>
-        <div class="summary-card orange">
-            <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14"/></svg></div>
-            <div class="card-content">
-                <span class="card-label">Pendientes</span>
-                <span class="card-value">@facturas.Count(f => f.Estado == EstadoFactura.Pendiente)</span>
-            </div>
-        </div>
-        <div class="summary-card red">
-            <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-            <div class="card-content">
-                <span class="card-label">Vencidas</span>
-                <span class="card-value">@facturas.Count(f => f.Estado == EstadoFactura.Vencida)</span>
-            </div>
-        </div>
-    </div>
 
-    <!-- Filtros y búsqueda -->
-    <div class="search-filter-bar">
-        <div class="search-box">
-            <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2"/></svg>
-            <input type="text" class="search-input" placeholder="Buscar por número, cliente, NIT..." @bind="searchTerm" @bind:event="oninput" />
+        <!-- Filtros y búsqueda -->
+        <div class="search-filter-bar">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Buscar por cliente..." @bind="searchTerm" @bind:event="oninput" @bind:after="Filtrar" />
+            </div>
+            <div class="filter-buttons">
+                <select @bind="filtroEstado" @bind:after="Filtrar">
+                    <option value="">Todos los estados</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Pagada">Pagada</option>
+                    <option value="Vencida">Vencida</option>
+                    <option value="Anulada">Anulada</option>
+                </select>
+            </div>
         </div>
-        <div class="filter-buttons">
-            <select @bind="filtroEstado" @bind:after="Filtrar">
-                <option value="">Todos los estados</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Pagada">Pagada</option>
-                <option value="Vencida">Vencida</option>
-                <option value="Anulada">Anulada</option>
-            </select>
-        </div>
-    </div>
 
-    <!-- Tabla -->
-    <div class="table-container">
-        <table class="styled-table">
-            <thead>
-                <tr>
-                    <th>N° Factura</th>
-                    <th>Cliente</th>
-                    <th>Fecha</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var f in facturasFiltradas)
-                {
+        <!-- Tabla -->
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
                     <tr>
-                        <td><strong>@f.NumeroCompleto</strong></td>
-                        <td>@f.Cliente?.NombreCompleto</td>
-                        <td>@f.FechaEmision.ToString("dd/MM/yyyy")</td>
-                        <td>@f.Total:C</td>
-                        <td>
-                            <span class="status-badge @GetEstadoClass(f.Estado)">@f.Estado</span>
-                        </td>
-                        <td class="actions">
-                            <button class="action-btn-icon" @onclick="() => VerDetalle(f.Id)" title="Ver">
-                                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3"/></svg>
-                            </button>
-                            <button class="action-btn-icon edit" @onclick="() => EditarFactura(f)" title="Editar">
-                                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                            </button>
-                        </td>
+                        <th>ID Factura</th>
+                        <th>Cliente</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var f in facturasFiltradas)
+                    {
+                        <tr>
+                            <td><strong>@f.Id_Fac</strong></td>
+                            <td>@f.ClienteNombre</td>
+                            <td>@f.Fec_Fac.ToString("dd/MM/yyyy")</td>
+                            <td>@f.Tot_Fac_Con_IVA:C</td>
+                            <td>
+                                <span class="status-badge @GetEstadoClass(f.Estado)">@f.Estado</span>
+                            </td>
+                            <td class="actions">
+                                <button class="action-btn-icon" @onclick="() => VerDetalle(f.Id_Fac)" title="Ver">Ver</button>
+                                <button class="action-btn-icon edit" @onclick="() => EditarFactura(f)" title="Editar">Editar</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else if (currentView == "nuevo")
     {
@@ -177,8 +134,7 @@
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             query = query.Where(f =>
-                f.NumeroCompleto.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                f.Cliente?.NombreCompleto.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) == true);
+                f.ClienteNombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
         }
 
         if (!string.IsNullOrEmpty(filtroEstado))
@@ -194,10 +150,8 @@
         {
             facturaActual = new FacturaModel
             {
-                FechaEmision = DateTime.Today,
-                FechaVencimiento = DateTime.Today.AddDays(30),
-                Lineas = new() { new FacturaLinea() },
-                FormasPago = new() { new FormaPago() }
+                Fec_Fac = DateTime.Today,
+                Detalles = new() { new DetalleFactura() }
             };
         }
     }
@@ -210,15 +164,16 @@
 
     private async Task GuardarFactura()
     {
-        if (facturaActual.Id == 0)
+        if (facturaActual.Id_Fac == 0)
             await FacturaService.CreateAsync(facturaActual);
         else
-            await FacturaService.UpdateAsync(facturaActual.Id, facturaActual);
+            await FacturaService.UpdateAsync(facturaActual);
 
         facturas = await FacturaService.GetFacturasAsync();
         Filtrar();
         ChangeView("lista");
     }
+    
     private void VerDetalle(int id) => Nav.NavigateTo($"/factura/{id}");
 
     private string GetEstadoClass(EstadoFactura estado)

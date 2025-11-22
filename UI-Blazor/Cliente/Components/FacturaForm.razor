@@ -6,122 +6,110 @@
 @inject IProductoService ProductoService
 
 <div class="factura-form-container">
-    <h3 class="modal-title">@(Factura.Id == 0 ? "Nueva Factura" : "Editar Factura")</h3>
+    <h3 class="modal-title">@(Factura.Id_Fac == 0 ? "Nueva Factura" : "Editar Factura")</h3>
 
     <EditForm Model="@Factura" OnValidSubmit="CalcularTotales">
         <div class="form-grid">
-            <!-- Primera fila: Serie, Fechas, Cliente -->
+            <!-- Primera fila: Fecha, Cliente -->
             <div class="form-row">
                 <div class="form-group">
-                    <label>Serie / Número</label>
-                    <InputText @bind-Value="Factura.Serie" placeholder="F001" />
-                </div>
-                <div class="form-group">
                     <label>Fecha Emisión</label>
-                    <InputDate @bind-Value="Factura.FechaEmision" />
+                    <InputDate @bind-Value="Factura.Fec_Fac" />
                 </div>
                 <div class="form-group">
-                    <label>Fecha Vencimiento</label>
-                    <InputDate @bind-Value="Factura.FechaVencimiento" />
-                </div>
-                <div class="form-group">
-                    <label>Cliente</label>
-                    <InputSelect @bind-Value="Factura.ClienteId">
+                    <label>Cliente *</label>
+                    <InputSelect @bind-Value="Factura.Id_Cli_Per" @bind-Value:after="OnClienteChanged">
                         <option value="0">Seleccionar cliente...</option>
                         @foreach (var c in clientes)
                         {
-                            <option value="@c.Id">@c.NombreCompleto - @c.NumeroIdentificacion</option>
+                            <option value="@c.Id_Cli">@c.NombreCompleto - @c.Num_Documento</option>
                         }
                     </InputSelect>
                     <button type="button" class="btn-small">+ Nuevo cliente</button>
                 </div>
             </div>
 
-            <!-- Establecimiento y Punto de Venta -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Establecimiento</label>
-                    <InputSelect @bind-Value="Factura.Establecimiento">
-                        <option value="">Seleccionar establecimiento...</option>
-                        @foreach (var est in establecimientos)
-                        {
-                            <option value="@est">@est</option>
-                        }
-                    </InputSelect>
-                </div>
-                <div class="form-group">
-                    <label>Punto de Emisión</label>
-                    <InputSelect @bind-Value="Factura.PuntoEmision">
-                        <option value="">Seleccionar punto de emisión...</option>
-                        @foreach (var pe in puntosEmision)
-                        {
-                            <option value="@pe">@pe</option>
-                        }
-                    </InputSelect>
-                </div>
-            </div>
-
             <!-- Líneas de productos -->
-            <h4>Líneas de Factura</h4>
+            <h4>Detalles de Factura</h4>
             <table class="lineas-table">
                 <thead>
                     <tr>
                         <th>Producto</th>
                         <th>Cantidad</th>
                         <th>Precio Unit.</th>
-                        <th>Descuento</th>
                         <th>Subtotal</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var linea in Factura.Lineas)
+                    @foreach (var detalle in Factura.Detalles)
                     {
                         <tr>
                             <td>
-                                <InputText @bind-Value="linea.Descripcion" placeholder="Descripción o código" style="width:100%" />
+                                <InputText @bind-Value="detalle.ProductoNombre" placeholder="Descripción o código" style="width:100%" />
                             </td>
-                            <td><InputNumber @bind-Value="linea.Cantidad" /></td>
-                            <td><InputNumber @bind-Value="linea.PrecioUnitario" step="0.01" /></td>
-                            <td><InputNumber @bind-Value="linea.Descuento" step="0.01" /></td>
-                            <td>@linea.Subtotal.ToString("N2")</td>
+                            <td><InputNumber @bind-Value="detalle.Cantidad_Comprada" /></td>
+                            <td><InputNumber @bind-Value="detalle.Precio_Venta_Unit" step="0.01" /></td>
+                            <td>@detalle.Precio_Venta_Total.ToString("N2")</td>
                             <td>
-                                <button type="button" @onclick="() => Factura.Lineas.Remove(linea)" class="btn-danger-small">×</button>
+                                <button type="button" @onclick="() => Factura.Detalles.Remove(detalle)" class="btn-danger-small">×</button>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-            <button type="button" @onclick="AgregarLinea" class="btn-add-line">
-                + Agregar línea
+            <button type="button" @onclick="AgregarDetalle" class="btn-add-line">
+                + Agregar detalle
             </button>
 
-            <!-- Formas de pago -->
-            <h4>Formas de Pago</h4>
-            @foreach (var fp in Factura.FormasPago)
-            {
-                <div class="forma-pago-row">
-                    <InputSelect @bind-Value="fp.Tipo">
-                        <option value="">Seleccionar forma de pago...</option>
-                        @foreach (var forma in formasPago)
-                        {
-                            <option value="@forma">@forma</option>
-                        }
-                    </InputSelect>
-                    <InputNumber @bind-Value="fp.Valor" step="0.01" />
-                    <button type="button" @onclick="() => Factura.FormasPago.Remove(fp)" class="btn-danger-small">×</button>
+            <!-- Información de Pago y Establecimiento (Campos Futuros en BD) -->
+            <div class="payment-section">
+                <h4 class="section-title">
+                    💳 Información de Pago y Establecimiento
+                    <span class="future-badge">Pendiente en BD</span>
+                </h4>
+                
+                <div class="payment-grid">
+                    <div class="form-group">
+                        <label>Establecimiento *</label>
+                        <InputSelect @bind-Value="Factura.Establecimiento_Fac">
+                            <option value="@Establecimiento.Matriz">Matriz</option>
+                            <option value="@Establecimiento.SucursalCentro">Sucursal Centro</option>
+                            <option value="@Establecimiento.SucursalNorte">Sucursal Norte</option>
+                            <option value="@Establecimiento.SucursalSur">Sucursal Sur</option>
+                        </InputSelect>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Punto de Venta</label>
+                        <InputText @bind-Value="Factura.Punto_Venta" placeholder="Ej: PV-001" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Forma de Pago *</label>
+                        <InputSelect @bind-Value="Factura.Forma_Pago">
+                            <option value="@FormaPago.Efectivo">Efectivo</option>
+                            <option value="@FormaPago.Tarjeta">Tarjeta</option>
+                        </InputSelect>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Valor de Pago (USD)</label>
+                        <InputNumber @bind-Value="Factura.Valor_Pago" step="0.01" placeholder="0.00" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Plazo de Pago (días)</label>
+                        <InputNumber @bind-Value="Factura.Plazo_Pago_Dias" placeholder="0" />
+                    </div>
                 </div>
-            }
-            <button type="button" @onclick="() => Factura.FormasPago.Add(new())" class="btn-small">
-                + Agregar forma de pago
-            </button>
+            </div>
 
             <!-- Totales -->
             <div class="totales-section">
-                <div class="total-line"><span>Subtotal:</span> <strong>@Factura.Subtotal.ToString("C")</strong></div>
-                <div class="total-line"><span>Descuento:</span> <strong>@Factura.Descuento.ToString("C")</strong></div>
-                <div class="total-line"><span>IVA 12%:</span> <strong>@((Factura.Subtotal * 0.12m).ToString("C"))</strong></div>
-                <div class="total-line highlight"><span>TOTAL A PAGAR:</span> <strong>@Factura.Total.ToString("C")</strong></div>
+                <div class="total-line"><span>Subtotal:</span> <strong>@Factura.Tot_Fac_Sin_IVA.ToString("C")</strong></div>
+                <div class="total-line"><span>IVA 12%:</span> <strong>@Factura.IVA_Fac.ToString("C")</strong></div>
+                <div class="total-line highlight"><span>TOTAL A PAGAR:</span> <strong>@Factura.Tot_Fac_Con_IVA.ToString("C")</strong></div>
             </div>
 
             <div class="form-actions">
@@ -132,40 +120,78 @@
     </EditForm>
 </div>
 
+<style>
+    .payment-section {
+        margin: 1.5rem 0;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #fff9f0 0%, #fff5f8 100%);
+        border-left: 4px solid #f59e0b;
+        border-radius: 8px;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .future-badge {
+        font-size: 0.7rem;
+        background: #f59e0b;
+        color: white;
+        padding: 0.2rem 0.6rem;
+        border-radius: 10px;
+        font-weight: 500;
+    }
+
+    .payment-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    @@media (max-width: 768px) {
+        .payment-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
 @code {
     [Parameter] public FacturaModel Factura { get; set; } = new();
     [Parameter] public EventCallback OnGuardar { get; set; }
     [Parameter] public EventCallback OnCancelar { get; set; }
 
     private List<Models.Cliente> clientes = new();
-    private List<string> establecimientos = new() { "001 - CAMINO", "002 - CENTRO", "003 - NORTE" };
-    private List<string> puntosEmision = new() { "001", "002", "003", "004", "005" };
-    private List<string> formasPago = new() 
-    { 
-        "SIN UTILIZACION DE MEDIO", 
-        "EFECTIVO", 
-        "TRANSFERENCIA", 
-        "TARJETA DE CRÉDITO", 
-        "TARJETA DE DÉBITO", 
-        "CHEQUE", 
-        "DEPÓSITO" 
-    };
 
     protected override async Task OnInitializedAsync()
     {
         clientes = await ClienteService.GetClientesAsync();
     }
 
-    private void AgregarLinea()
+    private void AgregarDetalle()
     {
-        Factura.Lineas.Add(new FacturaLinea());
+        Factura.Detalles.Add(new DetalleFactura());
+    }
+
+    private void OnClienteChanged()
+    {
+        // Update ClienteNombre when Id_Cli_Per changes
+        var clienteSeleccionado = clientes.FirstOrDefault(c => c.Id_Cli == Factura.Id_Cli_Per);
+        if (clienteSeleccionado != null)
+        {
+            Factura.ClienteNombre = clienteSeleccionado.NombreCompleto;
+        }
     }
 
     private void CalcularTotales()
     {
-        Factura.Subtotal = Factura.Lineas.Sum(l => l.Subtotal);
-        Factura.Descuento = Factura.Lineas.Sum(l => l.Descuento);
-        Factura.Total = Factura.Subtotal - Factura.Descuento + (Factura.Subtotal * 0.12m);
+        Factura.Tot_Fac_Sin_IVA = Factura.Detalles.Sum(d => d.Precio_Venta_Total);
+        Factura.IVA_Fac = Factura.Tot_Fac_Sin_IVA * 0.12m;
+        Factura.Tot_Fac_Con_IVA = Factura.Tot_Fac_Sin_IVA + Factura.IVA_Fac;
         OnGuardar.InvokeAsync();
     }
 }

@@ -19,9 +19,9 @@
         <div class="filter-group type-filter">
             <span class="filter-label">Tipo de Cliente</span>
             <button class="filter-button @(CurrentTipoFilter == null ? "active" : "")" @onclick="() => SetTipoFilter(null)">Todos</button>
-            <button class="filter-button @(CurrentTipoFilter == TipoCliente.PersonaNatural ? "active" : "")" @onclick="() => SetTipoFilter(TipoCliente.PersonaNatural)">Persona (CI)</button>
-            <button class="filter-button @(CurrentTipoFilter == TipoCliente.Empresa ? "active" : "")" @onclick="() => SetTipoFilter(TipoCliente.Empresa)">Empresa (RUC)</button>
-            <button class="filter-button @(CurrentTipoFilter == TipoCliente.Extranjero ? "active" : "")" @onclick="() => SetTipoFilter(TipoCliente.Extranjero)">Extranjero (Pasaporte)</button>
+            <button class="filter-button @(CurrentTipoFilter == TipoCliente.PERSONA ? "active" : "")" @onclick="() => SetTipoFilter(TipoCliente.PERSONA)">Persona (CI)</button>
+            <button class="filter-button @(CurrentTipoFilter == TipoCliente.EMPRESA ? "active" : "")" @onclick="() => SetTipoFilter(TipoCliente.EMPRESA)">Empresa (RUC)</button>
+            <button class="filter-button @(CurrentTipoFilter == TipoCliente.EXTRANJERO ? "active" : "")" @onclick="() => SetTipoFilter(TipoCliente.EXTRANJERO)">Extranjero (Pasaporte)</button>
         </div>
     </div>
 </div>

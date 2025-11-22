@@ -6,51 +6,42 @@
 
 main {
     flex: 1;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    background-color: var(--color-background);
     min-height: 100vh;
 }
 
 .sidebar {
-    background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 50%, #16213e 100%);
-    position: relative;
-    overflow: hidden;
-}
-
-.sidebar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 20% 50%, rgba(41, 128, 185, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(142, 68, 173, 0.1) 0%, transparent 50%);
-    pointer-events: none;
+    background-color: var(--color-primary);
+    color: white;
 }
 
 .top-row {
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #d6d5d5;
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
     justify-content: flex-end;
     height: 3.5rem;
     display: flex;
     align-items: center;
+    box-shadow: var(--shadow-sm);
 }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
-    }
+.top-row ::deep a,
+.top-row ::deep .btn-link {
+    white-space: nowrap;
+    margin-left: 1.5rem;
+    text-decoration: none;
+    color: var(--color-text);
+}
 
-    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-        text-decoration: underline;
-    }
+.top-row ::deep a:hover,
+.top-row ::deep .btn-link:hover {
+    color: var(--color-secondary);
+}
 
-    .top-row ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.top-row ::deep a:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 @media (max-width: 640.98px) {
     .top-row {
@@ -59,7 +50,8 @@ main {
         padding: 0 1rem;
     }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
+    .top-row ::deep a,
+    .top-row ::deep .btn-link {
         margin-left: 0;
         font-size: 0.875rem;
     }
@@ -75,7 +67,8 @@ main {
         padding: 0 0.75rem;
     }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
+    .top-row ::deep a,
+    .top-row ::deep .btn-link {
         font-size: 0.8rem;
     }
 }
@@ -90,6 +83,8 @@ main {
         height: 100vh;
         position: sticky;
         top: 0;
+        box-shadow: var(--shadow-md);
+        z-index: 10;
     }
 
     .top-row {
@@ -104,7 +99,8 @@ main {
         width: 0;
     }
 
-    .top-row, article {
+    .top-row,
+    article {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
     }
