@@ -1,29 +1,26 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-namespace Core.Entities;
 
-public class Factura
+namespace Core.Entities
 {
-    [Key]
-    public int Id_Fac { get; set; }
+    public class Factura
+    {
+        [Key]
+        public int Id_Fac { get; set; }
 
-    [Required]
-    public DateTime Fecha { get; set; }
+        [Required]
+        public DateTime Fec_Fac { get; set; }
 
-    [Required]
-    public int Id_Cli { get; set; }
+        [Required]
+        public int Id_Cli_Per { get; set; }
 
-    [ForeignKey("Id_Cli")]
-    public Cliente Cliente { get; set; }
+        public Cliente Cliente { get; set; }
 
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal TotalSinIVA { get; set; }
+        public decimal? Tot_Fac_Sin_IVA { get; set; }
 
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal IVA { get; set; }
+        public decimal? IVA_Fac { get; set; }
 
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal TotalConIVA { get; set; }
+        public decimal? Tot_Fac_Con_IVA { get; set; }
 
-    public ICollection<DetalleFactura> Detalles { get; set; }
+        public ICollection<DetalleFactura>? DetallesFactura { get; set; }
+    }
 }

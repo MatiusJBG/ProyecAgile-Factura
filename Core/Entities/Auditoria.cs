@@ -1,20 +1,29 @@
 using System.ComponentModel.DataAnnotations;
-namespace Core.Entities;
 
-public class Auditoria
+namespace Core.Entities
 {
-    [Key]
-    public int Id_Aud { get; set; }
+    public class Auditoria
+    {
+        [Key]
+        public int Id_Aud { get; set; }
 
-    public string Usuario { get; set; }
+        [Required]
+        public DateTime Fecha { get; set; }
 
-    public string Accion { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Tipo_Accion { get; set; }
 
-    public string Entidad { get; set; }  
+        [Required]
+        public string Descripcion { get; set; }
 
-    public int? IdEntidad { get; set; }
+        public int? Id_Pro_Per { get; set; }
+        public Producto? Producto { get; set; }
 
-    public string Detalle { get; set; }
+        public int? Id_Lote_Per { get; set; }
+        public Lote? Lote { get; set; }
 
-    public DateTime Fecha { get; set; } = DateTime.Now;
+        [MaxLength(100)]
+        public string? Usuario { get; set; }
+    }
 }

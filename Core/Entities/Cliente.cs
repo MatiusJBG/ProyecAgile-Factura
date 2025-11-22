@@ -1,33 +1,38 @@
 using System.ComponentModel.DataAnnotations;
-namespace Core.Entities;
 
-public class Cliente
+namespace Core.Entities
 {
-    [Key]
-    public int Id_Cli { get; set; }
+    public class Cliente
+    {
+        [Key]
+        public int Id_Cli { get; set; }
 
-    // Tipo: Persona, Empresa, Extranjero
-    [Required]
-    public string TipoCliente { get; set; }
+        [Required]
+        public TipoCliente Tipo_Cliente { get; set; }
 
-    // Tipo de documento: Cedula, RUC, Pasaporte
-    [Required]
-    public string TipoDocumento { get; set; }
+        [Required]
+        public TipoDocumento Tipo_Documento { get; set; }
 
-    [Required]
-    [MaxLength(20)]
-    public string Documento { get; set; }
+        [Required]
+        [MaxLength(20)]
+        public string Num_Documento { get; set; }
 
-    // Si es persona
-    public string Nombre { get; set; }
-    public string Apellido { get; set; }
+        [Required]
+        [MaxLength(255)]
+        public string Nombre { get; set; }
 
-    // Si es empresa
-    public string NombreEmpresa { get; set; }
+        [MaxLength(255)]
+        public string? Apellido { get; set; }
 
-    public string Direccion { get; set; }
-    public string Correo { get; set; }
-    public string Telefono { get; set; }
+        [MaxLength(255)]
+        public string? Direccion { get; set; }
 
-    public ICollection<Factura> Facturas { get; set; }
+        [MaxLength(255)]
+        public string? Correo { get; set; }
+
+        [MaxLength(20)]
+        public string? Telefono { get; set; }
+
+        public ICollection<Factura>? Facturas { get; set; }
+    }
 }
