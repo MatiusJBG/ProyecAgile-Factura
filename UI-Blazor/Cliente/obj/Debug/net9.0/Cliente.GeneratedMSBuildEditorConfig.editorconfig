@@ -32,10 +32,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHBSb3V0ZXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/ClienteForm.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDbGllbnRlRm9ybS5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/CustomRouteView.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDdXN0b21Sb3V0ZVZpZXcucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -55,6 +51,10 @@ build_metadata.AdditionalFiles.CssScope =
 [C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/ClienteFilterBar.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDbGllbnRlRmlsdGVyQmFyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-fv2ksfns28
+
+[C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/ClienteForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDbGllbnRlRm9ybS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-kl8osxcfce
 
 [C:/Users/Matius/Desktop/Universidad/METO-AGILES/ProyecAgile-Factura/UI-Blazor/Cliente/Components/ClienteSummaryCards.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDbGllbnRlU3VtbWFyeUNhcmRzLnJhem9y

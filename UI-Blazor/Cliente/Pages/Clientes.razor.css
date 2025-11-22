@@ -18,12 +18,12 @@
     }
 }
 
-/* Header */
+/* Header de la página */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
     gap: 2rem;
 }
 
@@ -114,10 +114,15 @@
 /* Content Section */
 .content-section {
     background: white;
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.content-section:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
 .dashboard-content {
@@ -125,12 +130,13 @@
 }
 
 /* Form Styles for Nuevo Cliente */
-.form-container {
+.content-section .form-container {
     max-width: 900px;
     margin: 0 auto;
+    width: 100%;
 }
 
-.form-header {
+.content-section .form-header {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid #e2e8f0;
@@ -149,7 +155,7 @@
     margin: 0;
 }
 
-.client-form {
+.content-section .client-form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -173,7 +179,9 @@
     color: #334155;
 }
 
-.form-control {
+.form-control,
+.form-control input,
+.form-control select {
     padding: 0.75rem 1rem;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
@@ -181,9 +189,63 @@
     transition: all 0.3s ease;
     background: #f8fafc;
     color: #1e293b;
+    width: 100%;
+    font-family: inherit;
 }
 
-.form-control:focus {
+.form-control:focus,
+.form-control input:focus,
+.form-control select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.content-section .form-group input[type="text"],
+.content-section .form-group input[type="email"],
+.content-section .form-group input[type="tel"],
+.content-section .form-group select {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    color: #1e293b;
+    width: 100%;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.content-section .form-group input[type="text"]:focus,
+.content-section .form-group input[type="email"]:focus,
+.content-section .form-group input[type="tel"]:focus,
+.content-section .form-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.content-section .form-control {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    color: #1e293b;
+    width: 100%;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.content-section .form-control:focus {
     outline: none;
     border-color: #3b82f6;
     background: white;
@@ -228,12 +290,18 @@
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     color: white;
     box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+    border: none;
 }
 
 .btn-primary:hover {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(30, 41, 59, 0.3);
+}
+
+.btn-primary svg {
+    width: 18px;
+    height: 18px;
 }
 
 /* Pagination */
@@ -372,15 +440,18 @@
 
 @media (max-width: 480px) {
     .clientes-page {
-        padding: 0.75rem;
+        padding: 1rem;
     }
 
     .page-title {
-        font-size: 1.25rem;
+        font-size: 1.75rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.9rem;
     }
 
     .content-section {
-        padding: 1rem;
-        border-radius: 12px;
+        padding: 1.5rem;
     }
 }
