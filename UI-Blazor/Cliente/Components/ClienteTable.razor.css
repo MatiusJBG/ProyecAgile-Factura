@@ -10,7 +10,7 @@
 /* Header de la tabla */
 .table-header {
     display: grid;
-    grid-template-columns: 40px 60px 2fr 120px 150px 1.5fr 120px 100px 120px;
+    grid-template-columns: 60px 2fr 120px 150px 1.5fr 100px 100px;
     gap: 1rem;
     padding: 1rem 1.5rem;
     background-color: var(--color-background);
@@ -26,6 +26,12 @@
 .header-item {
     display: flex;
     align-items: center;
+    justify-content: center;
+}
+
+.header-item.nombre,
+.header-item.contacto {
+    justify-content: flex-start;
 }
 
 /* Cuerpo de la tabla */
@@ -36,7 +42,7 @@
 
 .table-row {
     display: grid;
-    grid-template-columns: 40px 60px 2fr 120px 150px 1.5fr 120px 100px 120px;
+    grid-template-columns: 60px 2fr 120px 150px 1.5fr 100px 100px;
     gap: 1rem;
     padding: 1rem 1.5rem;
     border-bottom: 1px solid var(--color-border);
@@ -56,8 +62,14 @@
 .row-item {
     display: flex;
     align-items: center;
+    justify-content: center;
     font-size: 0.9rem;
     color: var(--color-text);
+}
+
+.row-item.nombre,
+.row-item.contacto {
+    justify-content: flex-start;
 }
 
 .row-item.nombre strong {
@@ -129,58 +141,54 @@
     color: var(--color-danger);
 }
 
-/* Precio/Saldo */
-.price {
-    font-weight: 600;
-    font-family: 'Courier New', monospace;
-}
-
-.price.text-danger {
-    color: var(--color-danger);
-}
-
-.price.text-success {
-    color: var(--color-success);
-}
-
 /* Botones de acción */
 .acciones {
     display: flex;
     gap: 0.5rem;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .action-icon-button {
     width: 32px;
     height: 32px;
-    border: 1px solid transparent;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: transparent;
+    background: var(--color-background);
     color: var(--color-text-light);
 }
 
 .action-icon-button:hover {
-    background-color: var(--color-background);
-    border-color: var(--color-border);
-    color: var(--color-primary);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
-.view-btn:hover {
+.view-btn {
     color: var(--color-secondary);
-    background-color: rgba(59, 130, 246, 0.1);
+    background-color: rgba(59, 130, 246, 0.05);
     border-color: rgba(59, 130, 246, 0.2);
 }
 
-.edit-btn:hover {
+.view-btn:hover {
+    color: #fff;
+    background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
+}
+
+.edit-btn {
     color: #d97706;
-    background-color: rgba(245, 158, 11, 0.1);
+    background-color: rgba(245, 158, 11, 0.05);
     border-color: rgba(245, 158, 11, 0.2);
+}
+
+.edit-btn:hover {
+    color: #fff;
+    background-color: #d97706;
+    border-color: #d97706;
 }
 
 .action-icon-button .oi {
@@ -204,7 +212,7 @@
 
     .table-header,
     .table-row {
-        grid-template-columns: 40px 60px 2fr 100px 1fr 100px 80px 100px;
+        grid-template-columns: 60px 2fr 100px 1fr 100px 80px 100px;
         gap: 0.75rem;
         padding: 0.875rem 1.25rem;
     }
@@ -224,7 +232,7 @@
 
     .table-header,
     .table-row {
-        grid-template-columns: 40px 60px 200px 100px 100px 80px 100px;
+        grid-template-columns: 60px 200px 100px 100px 80px 100px;
         min-width: 800px;
         gap: 0.5rem;
         padding: 0.75rem 1rem;

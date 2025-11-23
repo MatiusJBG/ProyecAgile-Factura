@@ -13,8 +13,8 @@
     <div class="filter-section">
         <div class="filter-group">
             <span class="filter-label">Estado</span>
-            <button class="filter-button active">Activos</button>
-            <button class="filter-button">Inactivos</button>
+            <button class="filter-button @(CurrentStatusFilter == true ? "active" : "")" @onclick="() => SetStatusFilter(true)">Activos</button>
+            <button class="filter-button @(CurrentStatusFilter == false ? "active" : "")" @onclick="() => SetStatusFilter(false)">Inactivos</button>
         </div>
         <div class="filter-group type-filter">
             <span class="filter-label">Tipo de Cliente</span>
@@ -36,8 +36,12 @@
     [Parameter]
     public EventCallback<TipoCliente?> OnFilterByTipoChanged { get; set; }
 
+    [Parameter]
+    public EventCallback<bool?> OnFilterByStatusChanged { get; set; }
+
     private string SearchTerm { get; set; } = string.Empty;
     private TipoCliente? CurrentTipoFilter { get; set; } = null; 
+    private bool? CurrentStatusFilter { get; set; } = true; // Default to Active
 
     // Solo se invoca si se pulsa una tecla de búsqueda o se pierde el foco para evitar spam de eventos
     private async Task OnSearchInput(KeyboardEventArgs e)
@@ -52,5 +56,11 @@
     {
         CurrentTipoFilter = filter;
         await OnFilterByTipoChanged.InvokeAsync(filter);
+    }
+
+    private async Task SetStatusFilter(bool? status)
+    {
+        CurrentStatusFilter = status;
+        await OnFilterByStatusChanged.InvokeAsync(status);
     }
 }

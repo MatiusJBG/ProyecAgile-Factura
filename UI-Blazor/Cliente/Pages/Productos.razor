@@ -1,4 +1,4 @@
-﻿@page "/productos"
+@page "/productos"
 @page "/productos/lista"
 @attribute [Authorize]
 @using UI_Blazor.Client.Models
@@ -18,119 +18,100 @@
         </div>
     </div>
 
-    <!-- Navegación por pestañas -->
+    <!-- Tab navigation -->
     <div class="tabs-navigation">
-        <button class="tab-btn @(currentView == "lista" ? "active" : "")" @onclick='() => ChangeView("lista")'>
-            Lista General
-        </button>
-        <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>
-            Nuevo Producto
-        </button>
+        <button class="tab-btn @(currentView == "lista" ? "active" : "")" @onclick='() => ChangeView("lista")'>Lista General</button>
+        <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>Nuevo Producto</button>
     </div>
 
-    <!-- Contenido condicional según la vista -->
     @if (currentView == "lista")
     {
-    <!-- Barra de búsqueda -->
-    <div class="search-filter-bar">
-        <div class="search-box">
-            <input type="text" 
-                   class="search-input" 
-                   placeholder="Buscar por nombre, tipo o marca..."
-                   @bind="searchTerm"
-                   @bind:event="oninput"
-                   @bind:after="ApplyFilters" />
-            @if (!string.IsNullOrEmpty(searchTerm))
-            {
-                <button class="clear-btn" @onclick="ClearSearch">×</button>
-            }
-        </div>
-    </div>
-
-    <!-- Tabla de productos -->
-    <div class="productos-table-container">
-        <table class="productos-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Marca</th>
-                    <th>Precio Venta</th>
-                    <th>Stock</th>
-                    <th>Lotes (FIFO)</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (!productosFiltrados.Any())
+        <!-- Search bar -->
+        <div class="search-filter-bar">
+            <div class="search-box">
+                <input type="text"
+                       class="search-input"
+                       placeholder="Buscar por nombre, tipo o marca..."
+                       @bind="searchTerm"
+                       @bind:event="oninput"
+                       @bind:after="ApplyFilters" />
+                @if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    <tr>
-                        <td colspan="8" class="no-data">
-                            <div class="empty-state">
-                                <p>No se encontraron productos</p>
-                            </div>
-                        </td>
-                    </tr>
+                    <button class="clear-btn" @onclick="ClearSearch" title="Limpiar búsqueda">×</button>
                 }
-                else
-                {
-                    @foreach (var producto in productosFiltrados)
-                    {
-                        <tr>
-                            <td><strong>@producto.Id_Pro</strong></td>
-                            <td><strong>@producto.Nom_Pro</strong></td>
-                            <td>
-                                <span class="tipo-badge">@producto.Tip_Pro</span>
-                            </td>
-                            <td>@producto.Marca</td>
-                            <td>
-                                $@producto.Precio_Venta.ToString("N2")
-                            </td>
-                            <td>
-                                <span class="stock-badge @(producto.StockTotal < 10 ? "low-stock" : "")">
-                                    @producto.StockTotal unidades
-                                </span>
-                            </td>
-                            <td>
-                                @if (producto.Lotes != null && producto.Lotes.Any())
-                                {
-                                    <div class="lotes-list">
-                                        @foreach (var lote in producto.Lotes)
-                                        {
-                                            <div class="lote-item @(lote.Cantidad_Disponible > 0 ? "active" : "empty")">
-                                                <span class="lote-date">@lote.Fec_Ent.ToString("dd/MM/yy")</span>
-                                                <span class="lote-qty">@lote.Cantidad_Disponible / @lote.Cantidad_Recibida</span>
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <span class="no-lotes">-</span>
-                                }
-                            </td>
-                            <td class="actions-col">
-                                <button class="action-btn-icon view" @onclick="() => VerProducto(producto.Id_Pro)" title="Ver">Ver</button>
-                                <button class="action-btn-icon edit" @onclick="() => EditarProducto(producto.Id_Pro)" title="Editar">Editar</button>
-                                <button class="action-btn-icon delete" @onclick="() => EliminarProducto(producto.Id_Pro)" title="Eliminar">Eliminar</button>
-                            </td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
-
-        <!-- Paginación -->
-        @if (productosFiltrados.Any())
-        {
-            <div class="pagination-section">
-                <div class="pagination-info">
+            </div>
+            <div class="filter-buttons">
+                <div class="filter-info">
                     Mostrando <strong>@productosFiltrados.Count</strong> de <strong>@productos.Count</strong> productos
                 </div>
             </div>
-        }
-    </div>
+        </div>
+
+        <!-- Products table -->
+        <div class="productos-table-container">
+            <table class="productos-table">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">ID</th>
+                        <th>Nombre</th>
+                        <th style="width: 120px;">Tipo</th>
+                        <th style="width: 120px;">Marca</th>
+                        <th style="width: 120px;">Precio Venta</th>
+                        <th style="width: 120px;">Stock</th>
+                        <th style="width: 100px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (productosFiltrados != null && productosFiltrados.Any())
+                    {
+                        @foreach (var producto in productosFiltrados)
+                        {
+                            <tr>
+                                <td class="text-center"><strong>@producto.Id_Pro</strong></td>
+                                <td><strong>@producto.Nom_Pro</strong></td>
+                                <td><span class="tipo-badge @(producto.Tip_Pro == "Bien" ? "bien" : "servicio")">@producto.Tip_Pro</span></td>
+                                <td>@producto.Marca</td>
+                                <td class="precio-col">@producto.Precio_Venta.ToString("C")</td>
+                                <td class="stock-col">@producto.StockTotal</td>
+                                <td class="actions-col">
+                                    <button class="action-btn-icon view" @onclick='() => VerProducto(producto.Id_Pro)' title="Ver">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-icon edit" @onclick='() => EditarProducto(producto.Id_Pro)' title="Editar">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-icon delete" @onclick='() => EliminarProducto(producto.Id_Pro)' title="Eliminar">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">
+                                <div class="no-data">
+                                    <div class="empty-state">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                        </svg>
+                                        <p>No se encontraron productos</p>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else if (currentView == "nuevo")
     {
@@ -140,46 +121,11 @@
                     <h3 class="form-title">Nuevo Producto</h3>
                     <p class="form-subtitle">Complete la información del producto</p>
                 </div>
-
                 <ProductoForm Producto="productoActual" OnGuardar="GuardarProducto" OnCancelar='() => ChangeView("lista")' />
             </div>
         </div>
     }
 </div>
-
-<style>
-    .lotes-list {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        font-size: 0.8rem;
-    }
-    
-    .lote-item {
-        display: flex;
-        justify-content: space-between;
-        background: #f3f4f6;
-        padding: 2px 6px;
-        border-radius: 4px;
-    }
-    
-    .lote-item.active {
-        border-left: 2px solid #10b981;
-    }
-    
-    .lote-item.empty {
-        border-left: 2px solid #ef4444;
-        opacity: 0.6;
-    }
-    
-    .lote-date {
-        color: #6b7280;
-    }
-    
-    .lote-qty {
-        font-weight: 600;
-    }
-</style>
 
 @code {
     private List<Producto> productos = new();
@@ -197,7 +143,6 @@
     private void ApplyFilters()
     {
         var filtered = productos.AsEnumerable();
-
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             filtered = filtered.Where(p =>
@@ -205,7 +150,6 @@
                 p.Tip_Pro.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                 p.Marca.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
         }
-
         productosFiltrados = filtered.ToList();
     }
 
@@ -234,7 +178,6 @@
         {
             await ProductoService.UpdateProductoAsync(productoActual);
         }
-        
         productos = await ProductoService.GetProductosAsync();
         ApplyFilters();
         ChangeView("lista");
