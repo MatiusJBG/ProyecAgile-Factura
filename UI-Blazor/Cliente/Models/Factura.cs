@@ -2,54 +2,70 @@ namespace UI_Blazor.Client.Models
 {
     public enum EstadoFactura
     {
-        Pendiente, Pagada, Vencida, Anulada, NotaCredito
+        Pendiente,
+        Pagada,
+        Vencida,
+        Anulada,
+        NotaCredito
+    }
+
+    public enum Establecimiento
+    {
+        SucursalCentro,
+        SucursalNorte,
+        SucursalSur,
+        Matriz
+    }
+
+    public enum FormaPago
+    {
+        Efectivo,
+        Tarjeta
     }
 
     public class Factura
     {
-        public int Id { get; set; }
-        public string Serie { get; set; } = "F001";
-        public string Numero { get; set; } = "";
-        public string NumeroCompleto => $"{Serie}-{Numero.PadLeft(8, '0')}";
+        public int Id_Fac { get; set; }
+        public DateTime Fec_Fac { get; set; } = DateTime.Today;
+        public int Id_Cli_Per { get; set; }
+        public decimal Tot_Fac_Sin_IVA { get; set; }
+        public decimal IVA_Fac { get; set; }
+        public decimal Tot_Fac_Con_IVA { get; set; }
 
-        public DateTime FechaEmision { get; set; } = DateTime.Today;
-        public DateTime FechaVencimiento { get; set; } = DateTime.Today.AddDays(30);
-
-        public int ClienteId { get; set; }
-        public Cliente? Cliente { get; set; }
-
-        public string Establecimiento { get; set; } = "001 - CAMINO";
-        public string PuntoEmision { get; set; } = "001";
-
-        public string Moneda { get; set; } = "USD";
-        public decimal Subtotal { get; set; }
-        public decimal Descuento { get; set; }
-        public decimal IVA { get; set; } = 12m;
-        public decimal Total { get; set; }
-
+        // Estado (para UI, no en BD)
         public EstadoFactura Estado { get; set; } = EstadoFactura.Pendiente;
-        public string Observaciones { get; set; } = "";
 
-        public List<FacturaLinea> Lineas { get; set; } = new();
-        public List<FormaPago> FormasPago { get; set; } = new();
+        // Para display en UI (poblado por backend)
+        public string ClienteNombre { get; set; } = string.Empty;
 
-        public bool IsSelected { get; set; } = false;
+        // Detalles de factura (lista de DTO)
+        public List<DetalleFactura> Detalles { get; set; } = new();
+
+        // ========== CAMPOS FUTUROS (Pendientes en BD) ==========
+        
+        // Establecimiento y punto de venta
+        public Establecimiento Establecimiento_Fac { get; set; } = Establecimiento.Matriz;
+        public string Punto_Venta { get; set; } = string.Empty;
+        
+        // Forma de pago
+        public FormaPago Forma_Pago { get; set; } = FormaPago.Efectivo;
+        
+        // Valor y plazo de pago
+        public decimal Valor_Pago { get; set; }
+        public int Plazo_Pago_Dias { get; set; }
     }
 
-    public class FacturaLinea
+    public class DetalleFactura
     {
-        public int Id { get; set; }
-        public string Codigo { get; set; } = "";
-        public string Descripcion { get; set; } = "";
-        public decimal Cantidad { get; set; } = 1;
-        public decimal PrecioUnitario { get; set; }
-        public decimal Descuento { get; set; } = 0;
-        public decimal Subtotal => Cantidad * PrecioUnitario - Descuento;
-    }
+        public int Id_Det_Fac { get; set; }
+        public int Id_Fac_Per { get; set; }
+        public int Id_Lote_Per { get; set; }
+        public int Id_Pro_Per { get; set; }
+        public int Cantidad_Comprada { get; set; }
+        public decimal Precio_Venta_Unit { get; set; }
+        public decimal Precio_Venta_Total => Cantidad_Comprada * Precio_Venta_Unit;
 
-    public class FormaPago
-    {
-        public string Tipo { get; set; } = "SIN UTILIZACION DE MEDIO";
-        public decimal Valor { get; set; }
+        // Para display (poblado por backend)
+        public string ProductoNombre { get; set; } = string.Empty;
     }
 }

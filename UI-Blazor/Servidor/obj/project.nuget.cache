@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Zvqm4LjwETA=",
+  "dgSpecHash": "7MF9QJF/cGI=",
   "success": true,
   "projectFilePath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj",
   "expectedPackageFiles": [
@@ -14,6 +14,12 @@
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly.server\\9.0.0-preview.3.24172.13\\microsoft.aspnetcore.components.webassembly.server.9.0.0-preview.3.24172.13.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.metadata\\9.0.10\\microsoft.aspnetcore.metadata.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.10\\microsoft.aspnetcore.openapi.9.0.10.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.entityframeworkcore\\9.0.0\\microsoft.entityframeworkcore.9.0.0.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\9.0.0\\microsoft.entityframeworkcore.abstractions.9.0.0.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\9.0.0\\microsoft.entityframeworkcore.analyzers.9.0.0.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\9.0.0\\microsoft.entityframeworkcore.relational.9.0.0.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\9.0.0\\microsoft.extensions.caching.abstractions.9.0.0.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.caching.memory\\9.0.0\\microsoft.extensions.caching.memory.9.0.0.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.configuration\\9.0.10\\microsoft.extensions.configuration.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\9.0.10\\microsoft.extensions.configuration.abstractions.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.configuration.binder\\9.0.10\\microsoft.extensions.configuration.binder.9.0.10.nupkg.sha512",
@@ -30,7 +36,9 @@
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.10\\microsoft.extensions.primitives.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.jsinterop\\9.0.10\\microsoft.jsinterop.9.0.10.nupkg.sha512",
     "C:\\Users\\Matius\\.nuget\\packages\\microsoft.jsinterop.webassembly\\9.0.10\\microsoft.jsinterop.webassembly.9.0.10.nupkg.sha512",
-    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+    "C:\\Users\\Matius\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\mysqlconnector\\2.4.0\\mysqlconnector.2.4.0.nupkg.sha512",
+    "C:\\Users\\Matius\\.nuget\\packages\\pomelo.entityframeworkcore.mysql\\9.0.0\\pomelo.entityframeworkcore.mysql.9.0.0.nupkg.sha512"
   ],
   "logs": []
 }

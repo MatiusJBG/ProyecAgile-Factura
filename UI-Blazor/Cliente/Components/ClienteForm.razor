@@ -1,0 +1,109 @@
+@using UI_Blazor.Client.Models
+
+<div class="form-container">
+    <div class="form-header">
+        <h3 class="form-title">@Title</h3>
+        <p class="form-subtitle">@Subtitle</p>
+    </div>
+
+    <form class="client-form" @onsubmit="HandleSubmit">
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label">Tipo de Cliente *</label>
+                <select class="form-control" @bind="Cliente.Tipo_Cliente">
+                    <option value="@TipoCliente.PERSONA">Persona Natural (CI)</option>
+                    <option value="@TipoCliente.EMPRESA">Empresa (RUC)</option>
+                    <option value="@TipoCliente.EXTRANJERO">Extranjero (Pasaporte)</option>
+                </select>
+            </div>
+
+            @if (Cliente.Tipo_Cliente == TipoCliente.EMPRESA)
+            {
+                <div class="form-group full-width">
+                    <label class="form-label">Razón Social / Nombre Comercial *</label>
+                    <input type="text" class="form-control" @bind="Cliente.Nombre" placeholder="Ej: Distribuciones XYZ S.A." required />
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="form-label">Nombres *</label>
+                    <input type="text" class="form-control" @bind="Cliente.Nombre" placeholder="Ej: Juan Carlos" required />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Apellidos *</label>
+                    <input type="text" class="form-control" @bind="Cliente.Apellido" placeholder="Ej: Pérez García" required />
+                </div>
+            }
+
+            <div class="form-group">
+                <label class="form-label">Tipo de Documento *</label>
+                <select class="form-control" @bind="Cliente.Tipo_Documento">
+                    <option value="@TipoDocumento.CEDULA">Cédula</option>
+                    <option value="@TipoDocumento.RUC">RUC</option>
+                    <option value="@TipoDocumento.PASAPORTE">Pasaporte</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Número de Identificación *</label>
+                <input type="text" class="form-control" @bind="Cliente.Num_Documento" 
+                       placeholder="@GetPlaceholderIdentificacion()" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Dirección</label>
+                <input type="text" class="form-control" @bind="Cliente.Direccion" placeholder="Ej: Av. Principal 123" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email *</label>
+                <input type="email" class="form-control" @bind="Cliente.Correo" placeholder="ejemplo@correo.com" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Teléfono *</label>
+                <input type="tel" class="form-control" @bind="Cliente.Telefono" placeholder="0991234567" required />
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" @onclick="OnCancel">
+                Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="17 21 17 13 7 13 7 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="7 3 7 8 15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Guardar Cliente
+            </button>
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter] public Cliente Cliente { get; set; } = new();
+    [Parameter] public string Title { get; set; } = "Nuevo Cliente";
+    [Parameter] public string Subtitle { get; set; } = "Complete la información del cliente";
+    [Parameter] public EventCallback OnSave { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private async Task HandleSubmit()
+    {
+        await OnSave.InvokeAsync();
+    }
+
+    private string GetPlaceholderIdentificacion()
+    {
+        return Cliente.Tipo_Documento switch
+        {
+            TipoDocumento.CEDULA => "Ej: 1710000001",
+            TipoDocumento.RUC => "Ej: 0990000000001",
+            TipoDocumento.PASAPORTE => "Ej: A1234567",
+            _ => "Número de identificación"
+        };
+    }
+}

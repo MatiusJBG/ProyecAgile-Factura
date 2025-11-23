@@ -169,8 +169,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Application\\Application.csproj": {
-                "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Application\\Application.csproj"
+              "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Core\\Core.csproj": {
+                "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Core\\Core.csproj"
               }
             }
           }
@@ -190,6 +190,22 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

@@ -3,7 +3,7 @@
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
-<PageTitle>Sign In | Sistema de Facturación</PageTitle>
+<PageTitle>Iniciar Sesión | Sistema de Facturación</PageTitle>
 
 <div class="login-container">
     <div class="login-header">
@@ -14,19 +14,15 @@
                 </svg>
             </div>
         </div>
-        <nav class="top-nav">
-            <a href="#" class="nav-link">CONTACT</a>
-            <a href="#" class="nav-link">THEME MARKETPLACE</a>
-        </nav>
     </div>
 
     <div class="login-content">
         <div class="login-box">
-            <h1 class="login-title">SIGN IN</h1>
+            <h1 class="login-title">INICIAR SESIÓN</h1>
             
             <form class="login-form" @onsubmit="HandleLogin" @onsubmit:preventDefault="true">
                 <div class="form-group">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">Usuario</label>
                     <input type="text" 
                            id="name" 
                            class="form-input" 
@@ -36,7 +32,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label">Contraseña</label>
                     <input type="password" 
                            id="password" 
                            class="form-input" 
@@ -59,16 +55,15 @@
                     }
                     else
                     {
-                        <span>SIGN IN</span>
+                        <span>INGRESAR</span>
                     }
                 </button>
 
                 <div class="form-footer">
                     <label class="remember-me">
                         <input type="checkbox" @bind="rememberMe" />
-                        <span class="checkbox-label">Remember Me</span>
+                        <span class="checkbox-label">Recordarme</span>
                     </label>
-                    <a href="#" class="forgot-password">Forgot password</a>
                 </div>
             </form>
         </div>

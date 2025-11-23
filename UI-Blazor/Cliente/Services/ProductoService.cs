@@ -27,12 +27,8 @@ namespace UI_Blazor.Client.Services
             }
             catch
             {
-                // Mock data for development
-                return new List<Producto>
-                {
-                    new Producto { Id = 1, CodigoPrincipal = "PROD001", Nombre = "Producto A", TipoProducto = TipoProducto.BIEN, NumeroLote = "LOTE-001", CantidadEnLote = 100, PrecioLote = 10000.00m, IVA = TipoIVA.Gravado12, Stock = 50, Activo = true },
-                    new Producto { Id = 2, CodigoPrincipal = "PROD002", Nombre = "Servicio B", TipoProducto = TipoProducto.SERVICIO, NumeroLote = "LOTE-002", CantidadEnLote = 1, PrecioLote = 200.00m, IVA = TipoIVA.Gravado12, Activo = true }
-                };
+                // Retorna lista vacía si backend no disponible (para desarrollo)
+                return new List<Producto>();
             }
         }
 
@@ -50,41 +46,21 @@ namespace UI_Blazor.Client.Services
 
         public async Task<Producto> CreateProductoAsync(Producto producto)
         {
-            try
-            {
-                var response = await _http.PostAsJsonAsync(BaseUrl, producto);
-                return await response.Content.ReadFromJsonAsync<Producto>() ?? producto;
-            }
-            catch
-            {
-                producto.Id = new Random().Next(1000, 9999);
-                return producto;
-            }
+            var response = await _http.PostAsJsonAsync(BaseUrl, producto);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<Producto>() ?? producto;
         }
 
         public async Task UpdateProductoAsync(Producto producto)
         {
-            try
-            {
-                await _http.PutAsJsonAsync($"{BaseUrl}/{producto.Id}", producto);
-            }
-            catch
-            {
-                // Mock update
-            }
+            var response = await _http.PutAsJsonAsync($"{BaseUrl}/{producto.Id_Pro}", producto);
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task DeleteProductoAsync(int id)
         {
-            try
-            {
-                await _http.DeleteAsync($"{BaseUrl}/{id}");
-            }
-            catch
-            {
-                // Mock delete
-            }
+            var response = await _http.DeleteAsync($"{BaseUrl}/{id}");
+            response.EnsureSuccessStatusCode();
         }
     }
 }
-
