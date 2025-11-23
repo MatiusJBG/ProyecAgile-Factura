@@ -52,6 +52,20 @@
                                    required />
                         </div>
                     </div>
+
+                    <div class="form-row-inline">
+                        <div class="form-group">
+                            <label>Precio de Venta (PVP) *</label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   @bind="Producto.Precio_Venta" 
+                                   placeholder="0.00"
+                                   step="0.01"
+                                   min="0"
+                                   required />
+                            <small class="form-hint">Precio al público actual</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -59,7 +73,7 @@
         <!-- Información de Lotes y Precios -->
         <div class="form-section-box lote-section">
             <h4 class="section-subtitle">
-                📦 Información de Precios y Lotes
+                📦 Información de Lote Inicial
                 <span class="info-badge">Tabla separada: lotes</span>
             </h4>
             
@@ -68,7 +82,7 @@
                     <label>Fecha de Entrada</label>
                     <input type="date" 
                            class="form-control" 
-                           @bind="LoteInfo.Fec_Ent" />
+                           @bind="Producto.Fec_Ent" />
                     <small class="form-hint">Fecha de recepción del lote</small>
                 </div>
 
@@ -76,7 +90,7 @@
                     <label>Fecha de Expiración</label>
                     <input type="date" 
                            class="form-control" 
-                           @bind="LoteInfo.Fec_Exp" />
+                           @bind="Producto.Fec_Exp" />
                     <small class="form-hint">Fecha de vencimiento del producto</small>
                 </div>
 
@@ -84,7 +98,7 @@
                     <label>Cantidad Recibida</label>
                     <input type="number" 
                            class="form-control" 
-                           @bind="LoteInfo.Cantidad_Recibida" 
+                           @bind="Producto.Cantidad_Recibida" 
                            placeholder="Ej: 100"
                            min="1" />
                     <small class="form-hint">Unidades recibidas en el lote</small>
@@ -94,29 +108,29 @@
                     <label>Cantidad Disponible</label>
                     <input type="number" 
                            class="form-control" 
-                           @bind="LoteInfo.Cantidad_Disponible" 
+                           @bind="Producto.Cantidad_Disponible" 
                            placeholder="Ej: 100"
                            min="0" />
                     <small class="form-hint">Unidades actualmente disponibles</small>
                 </div>
 
                 <div class="form-group">
-                    <label>Precio Unitario (USD)</label>
+                    <label>Costo Unitario (USD)</label>
                     <input type="number" 
                            class="form-control" 
-                           @bind="LoteInfo.Precio_Unitario" 
+                           @bind="Producto.Precio_Unitario" 
                            placeholder="0.00"
                            step="0.01"
                            min="0" />
-                    <small class="form-hint">Precio por unidad individual</small>
+                    <small class="form-hint">Costo de adquisición por unidad</small>
                 </div>
             </div>
 
             <div class="lote-info-display">
                 <div class="calculated-info">
-                    <span class="info-label">Precio Total del Lote:</span>
+                    <span class="info-label">Costo Total del Lote:</span>
                     <span class="info-value">
-                        $@LoteInfo.Precio_Lote.ToString("N2")
+                        $@((Producto.Cantidad_Recibida.GetValueOrDefault() * Producto.Precio_Unitario.GetValueOrDefault()).ToString("N2"))
                     </span>
                 </div>
             </div>
@@ -204,9 +218,6 @@
     [Parameter]
     public EventCallback OnCancelar { get; set; }
 
-    // Información del lote (solo visual, se guardará separadamente)
-    private Lote LoteInfo { get; set; } = new();
-
     private async Task HandleSubmit()
     {
         // Validar que los campos requeridos estén completos
@@ -223,6 +234,12 @@
         if (string.IsNullOrWhiteSpace(Producto.Marca))
         {
             return;
+        }
+
+        // Si se ingresó cantidad recibida pero no disponible, asumir que es igual
+        if (Producto.Cantidad_Recibida.HasValue && !Producto.Cantidad_Disponible.HasValue)
+        {
+            Producto.Cantidad_Disponible = Producto.Cantidad_Recibida;
         }
 
         await OnGuardar.InvokeAsync();

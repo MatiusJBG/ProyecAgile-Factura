@@ -56,8 +56,9 @@
                     <th>Nombre</th>
                     <th>Tipo</th>
                     <th>Marca</th>
+                    <th>Precio Venta</th>
                     <th>Stock</th>
-                    <th>Lotes</th>
+                    <th>Lotes (FIFO)</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -65,7 +66,7 @@
                 @if (!productosFiltrados.Any())
                 {
                     <tr>
-                        <td colspan="7" class="no-data">
+                        <td colspan="8" class="no-data">
                             <div class="empty-state">
                                 <p>No se encontraron productos</p>
                             </div>
@@ -84,12 +85,30 @@
                             </td>
                             <td>@producto.Marca</td>
                             <td>
+                                $@producto.Precio_Venta.ToString("N2")
+                            </td>
+                            <td>
                                 <span class="stock-badge @(producto.StockTotal < 10 ? "low-stock" : "")">
                                     @producto.StockTotal unidades
                                 </span>
                             </td>
                             <td>
-                                <span class="lote-count">@producto.NumLotes</span>
+                                @if (producto.Lotes != null && producto.Lotes.Any())
+                                {
+                                    <div class="lotes-list">
+                                        @foreach (var lote in producto.Lotes)
+                                        {
+                                            <div class="lote-item @(lote.Cantidad_Disponible > 0 ? "active" : "empty")">
+                                                <span class="lote-date">@lote.Fec_Ent.ToString("dd/MM/yy")</span>
+                                                <span class="lote-qty">@lote.Cantidad_Disponible / @lote.Cantidad_Recibida</span>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="no-lotes">-</span>
+                                }
                             </td>
                             <td class="actions-col">
                                 <button class="action-btn-icon view" @onclick="() => VerProducto(producto.Id_Pro)" title="Ver">Ver</button>
@@ -127,6 +146,40 @@
         </div>
     }
 </div>
+
+<style>
+    .lotes-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 0.8rem;
+    }
+    
+    .lote-item {
+        display: flex;
+        justify-content: space-between;
+        background: #f3f4f6;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    
+    .lote-item.active {
+        border-left: 2px solid #10b981;
+    }
+    
+    .lote-item.empty {
+        border-left: 2px solid #ef4444;
+        opacity: 0.6;
+    }
+    
+    .lote-date {
+        color: #6b7280;
+    }
+    
+    .lote-qty {
+        font-weight: 600;
+    }
+</style>
 
 @code {
     private List<Producto> productos = new();
