@@ -20,6 +20,7 @@ builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<ILoteRepository, LoteRepository>();
 builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
+builder.Services.AddScoped<IPrecioRepository, PrecioRepository>();
 
 // Registrar servicios de aplicación
 builder.Services.AddScoped<ClienteService>();

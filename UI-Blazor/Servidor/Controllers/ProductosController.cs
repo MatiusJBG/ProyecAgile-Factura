@@ -52,7 +52,7 @@ namespace Servidor.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductoDto>> CreateProducto([FromBody] ProductoDto productoDto)
+        public async Task<ActionResult<ProductoDto>> CreateProducto([FromBody] ProductoConLoteDto productoDto)
         {
             try
             {

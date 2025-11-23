@@ -10,5 +10,9 @@ namespace Application.DTOs
         // Campos calculados
         public int StockTotal { get; set; }
         public int NumLotes { get; set; }
+        
+        // Información adicional
+        public decimal Precio_Venta { get; set; }
+        public List<LoteDto> Lotes { get; set; } = new();
     }
 }
