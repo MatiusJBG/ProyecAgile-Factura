@@ -1,3 +1,7 @@
+using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
+
 namespace UI_Blazor.Client.Services;
 
 public interface IAuthService
@@ -11,6 +15,8 @@ public interface IAuthService
 
 public class AuthService : IAuthService
 {
+    private readonly HttpClient _httpClient;
+    private readonly ILocalStorageService _localStorage;
     private bool _isAuthenticated = false;
     private string? _username;
 
@@ -19,35 +25,59 @@ public class AuthService : IAuthService
 
     public event Action? OnAuthenticationStateChanged;
 
-    public Task<bool> LoginAsync(string username, string password)
+    public AuthService(HttpClient httpClient, ILocalStorageService localStorage)
     {
-        // Autenticación simple para desarrollo
-        // En producción, esto debería validar contra un backend
-        if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
-        {
-            _isAuthenticated = true;
-            _username = username;
-            
-            // Guardar en localStorage para persistencia
-            if (OperatingSystem.IsBrowser())
-            {
-                // En Blazor WebAssembly, usar JSInterop para localStorage
-                // Por ahora, solo guardamos en memoria
-            }
-            
-            OnAuthenticationStateChanged?.Invoke();
-            return Task.FromResult(true);
-        }
-        
-        return Task.FromResult(false);
+        _httpClient = httpClient;
+        _localStorage = localStorage;
     }
 
-    public Task LogoutAsync()
+    public async Task<bool> LoginAsync(string username, string password)
     {
+        try
+        {
+            var loginRequest = new { Username = username, Password = password };
+            var response = await _httpClient.PostAsJsonAsync("api/Auth/login", loginRequest);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                
+                if (loginResponse != null)
+                {
+                    await _localStorage.SetItemAsync("authToken", loginResponse.Token);
+                    await _localStorage.SetItemAsync("username", loginResponse.Username);
+                    
+                    _isAuthenticated = true;
+                    _username = loginResponse.Username;
+                    
+                    OnAuthenticationStateChanged?.Invoke();
+                    return true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error en login: {ex.Message}");
+        }
+        
+        return false;
+    }
+
+    public async Task LogoutAsync()
+    {
+        await _localStorage.RemoveItemAsync("authToken");
+        await _localStorage.RemoveItemAsync("username");
+        
         _isAuthenticated = false;
         _username = null;
+        
         OnAuthenticationStateChanged?.Invoke();
-        return Task.CompletedTask;
     }
+}
+
+public class LoginResponse
+{
+    public string Token { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
 }
 

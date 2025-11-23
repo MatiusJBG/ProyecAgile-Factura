@@ -2,7 +2,10 @@ using Application.Services;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,12 +24,35 @@ builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<ILoteRepository, LoteRepository>();
 builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
 builder.Services.AddScoped<IPrecioRepository, PrecioRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 // Registrar servicios de aplicación
 builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<ProductoService>();
 builder.Services.AddScoped<LoteService>();
 builder.Services.AddScoped<FacturaService>();
+
+// Configurar JWT
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "ClaveSecretaSuperSeguraParaDesarrollo12345";
+var key = Encoding.ASCII.GetBytes(jwtKey);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false; // Solo para desarrollo
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false, // Simplificado para desarrollo
+        ValidateAudience = false // Simplificado para desarrollo
+    };
+});
 
 // Configurar CORS para permitir el frontend
 builder.Services.AddCors(options =>
@@ -56,6 +82,9 @@ else
 app.UseHttpsRedirection();
 
 app.UseCors("AllowBlazorClient");
+
+app.UseAuthentication(); // Agregar middleware de autenticación
+app.UseAuthorization();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
