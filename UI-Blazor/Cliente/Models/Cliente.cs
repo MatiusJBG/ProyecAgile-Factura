@@ -25,6 +25,7 @@ namespace UI_Blazor.Client.Models
         public string Direccion { get; set; } = string.Empty;
         public string Correo { get; set; } = string.Empty;
         public string Telefono { get; set; } = string.Empty;
+        public bool Activo { get; set; } = true;
 
         // Propiedad calculada para UI
         public string NombreCompleto => Tipo_Cliente == TipoCliente.EMPRESA 

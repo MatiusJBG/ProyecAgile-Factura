@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj": {}
+    "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj": {}
   },
   "projects": {
-    "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj": {
+    "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj",
+        "projectUniqueName": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj",
         "projectName": "Cliente",
-        "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj",
-        "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-        "outputPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\obj\\",
+        "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj",
+        "packagesPath": "C:\\Users\\Matius\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Matius\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

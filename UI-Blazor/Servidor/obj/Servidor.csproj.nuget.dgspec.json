@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj": {}
+    "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj": {}
   },
   "projects": {
-    "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Application\\Application.csproj": {
+    "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Application\\Application.csproj",
+        "projectUniqueName": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-        "outputPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Application\\obj\\",
+        "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\Matius\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Matius\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,14 +26,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Core\\Core.csproj": {
-                "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Core\\Core.csproj"
+              "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Core\\Core.csproj": {
+                "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Core\\Core.csproj"
               }
             }
           }
@@ -73,20 +74,20 @@
         }
       }
     },
-    "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Core\\Core.csproj": {
+    "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Core\\Core.csproj",
+        "projectUniqueName": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Core\\Core.csproj",
-        "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-        "outputPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Core\\obj\\",
+        "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Core\\Core.csproj",
+        "packagesPath": "C:\\Users\\Matius\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Matius\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -95,6 +96,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -138,20 +140,20 @@
         }
       }
     },
-    "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Infrastructure\\Infrastructure.csproj": {
+    "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-        "outputPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\Matius\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Matius\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -160,14 +162,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Core\\Core.csproj": {
-                "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Core\\Core.csproj"
+              "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Core\\Core.csproj": {
+                "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Core\\Core.csproj"
               }
             }
           }
@@ -223,20 +226,20 @@
         }
       }
     },
-    "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj": {
+    "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj",
+        "projectUniqueName": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj",
         "projectName": "Cliente",
-        "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj",
-        "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-        "outputPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\obj\\",
+        "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj",
+        "packagesPath": "C:\\Users\\Matius\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Matius\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -245,6 +248,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -326,20 +330,20 @@
         }
       }
     },
-    "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj": {
+    "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj",
+        "projectUniqueName": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj",
         "projectName": "Servidor",
-        "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj",
-        "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-        "outputPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\obj\\",
+        "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\Servidor.csproj",
+        "packagesPath": "C:\\Users\\Matius\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Servidor\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Matius\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -348,20 +352,21 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Application\\Application.csproj": {
-                "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Application\\Application.csproj"
+              "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Application\\Application.csproj": {
+                "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Application\\Application.csproj"
               },
-              "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\Infrastructure\\Infrastructure.csproj"
+              "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\Infrastructure\\Infrastructure.csproj"
               },
-              "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj": {
-                "projectPath": "D:\\Clases en general\\Cuarto\\Metodologías_Agiles\\workspace\\Factura\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj"
+              "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj": {
+                "projectPath": "C:\\Users\\Matius\\Desktop\\Universidad\\METO-AGILES\\ProyecAgile-Factura\\UI-Blazor\\Cliente\\Cliente.csproj"
               }
             }
           }

@@ -46,6 +46,7 @@
                 <ClienteFilterBar 
                     OnSearchChanged="HandleSearchChanged" 
                     OnFilterByTipoChanged="HandleFilterByTipoChanged"
+                    OnFilterByStatusChanged="HandleFilterByStatusChanged"
                     OnNuevoCliente='() => ChangeView("nuevo")'
                 />
                 
@@ -85,6 +86,7 @@
     private List<Cliente> ClientesFiltrados { get; set; } = new();
     private string searchTerm = string.Empty;
     private TipoCliente? filterTipo = null;
+    private bool? filterStatus = true; // Default to Active
     private string currentView = "lista";
     
     private Cliente nuevoCliente = new Cliente 
@@ -121,6 +123,11 @@
     {
         var tempClientes = listaClientes.AsEnumerable();
         
+        if (filterStatus.HasValue)
+        {
+            tempClientes = tempClientes.Where(c => c.Activo == filterStatus.Value);
+        }
+
         if (filterTipo.HasValue)
         {
             tempClientes = tempClientes.Where(c => c.Tipo_Cliente == filterTipo.Value);
@@ -161,6 +168,12 @@
     private void HandleFilterByTipoChanged(TipoCliente? newFilter)
     {
         filterTipo = newFilter;
+        ApplyFilters();
+    }
+
+    private void HandleFilterByStatusChanged(bool? newStatus)
+    {
+        filterStatus = newStatus;
         ApplyFilters();
     }
 

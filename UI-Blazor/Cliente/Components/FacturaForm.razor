@@ -120,46 +120,6 @@
     </EditForm>
 </div>
 
-<style>
-    .payment-section {
-        margin: 1.5rem 0;
-        padding: 1.5rem;
-        background: linear-gradient(135deg, #fff9f0 0%, #fff5f8 100%);
-        border-left: 4px solid #f59e0b;
-        border-radius: 8px;
-    }
-
-    .section-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .future-badge {
-        font-size: 0.7rem;
-        background: #f59e0b;
-        color: white;
-        padding: 0.2rem 0.6rem;
-        border-radius: 10px;
-        font-weight: 500;
-    }
-
-    .payment-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-
-    @@media (max-width: 768px) {
-        .payment-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
 @code {
     [Parameter] public FacturaModel Factura { get; set; } = new();
     [Parameter] public EventCallback OnGuardar { get; set; }
