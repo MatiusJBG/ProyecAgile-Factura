@@ -2189,10 +2189,10 @@ D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-F
 D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\obj\Debug\net9.0\refint\Cliente.dll
 D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\obj\Debug\net9.0\Cliente.pdb
 D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\obj\Debug\net9.0\ref\Cliente.dll
-D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\bin\Debug\net9.0\wwwroot\_framework\Cliente.7lydlqvn3c.wasm
-D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\bin\Debug\net9.0\wwwroot\_framework\Cliente.9vc8racfuv.pdb
-D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\bin\Debug\net9.0\wwwroot\_framework\Cliente.7lydlqvn3c.wasm.gz
-D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\bin\Debug\net9.0\wwwroot\_framework\Cliente.9vc8racfuv.pdb.gz
-D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\obj\Debug\net9.0\compressed\nok101rvuw-7lydlqvn3c.gz
-D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\obj\Debug\net9.0\compressed\ofo6bb0hw0-9vc8racfuv.gz
-D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\obj\Debug\net9.0\compressed\19xodq7bbf-o371tu4hdf.gz
+D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\bin\Debug\net9.0\wwwroot\_framework\Cliente.8haqkel3m8.wasm
+D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\bin\Debug\net9.0\wwwroot\_framework\Cliente.nkfsb7pedy.pdb
+D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\bin\Debug\net9.0\wwwroot\_framework\Cliente.8haqkel3m8.wasm.gz
+D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\bin\Debug\net9.0\wwwroot\_framework\Cliente.nkfsb7pedy.pdb.gz
+D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\obj\Debug\net9.0\compressed\nok101rvuw-8haqkel3m8.gz
+D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\obj\Debug\net9.0\compressed\ofo6bb0hw0-nkfsb7pedy.gz
+D:\Clases en general\Cuarto\Metodologías_Agiles\workspace\Factura\ProyecAgile-Factura\UI-Blazor\Cliente\obj\Debug\net9.0\compressed\19xodq7bbf-5i5wwugh8p.gz

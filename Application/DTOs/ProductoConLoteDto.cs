@@ -6,6 +6,7 @@ namespace Application.DTOs
         public string Tip_Pro { get; set; } = string.Empty;
         public string Nom_Pro { get; set; } = string.Empty;
         public string Marca { get; set; } = string.Empty;
+        public string? Imagen { get; set; }
 
         // Información del lote (opcional)
         public DateTime? Fec_Ent { get; set; }
