@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Infrastructure.Services
 {
@@ -168,15 +169,11 @@ namespace Infrastructure.Services
             if (!File.Exists(rutaCompleta))
                 throw new Exception("Archivo de certificado no encontrado");
 
-            // Nota: En producción, la contraseña debería obtenerse de un almacén seguro
-            // Por ahora, asumimos que se pasa como parámetro o se obtiene de configuración
-            byte[] certBytes = await File.ReadAllBytesAsync(rutaCompleta);
-            
-            // IMPORTANTE: Necesitarás implementar un mecanismo seguro para obtener la contraseña
-            // Esto es solo un placeholder
-            string password = ""; // Obtener de forma segura
-            
-            return new X509Certificate2(certBytes, password, X509KeyStorageFlags.Exportable);
+            // Obtener la contraseña del certificado desde configuración (si está configurada)
+            string password = _configuration["FirmaElectronica:CertPassword"] ?? "";
+
+            // Cargar el certificado con flags que permiten la exportación y uso de la clave privada
+            return new X509Certificate2(rutaCompleta, password, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.MachineKeySet);
         }
 
         public async Task EliminarCertificadoAsync(int idCertificado)
@@ -185,20 +182,13 @@ namespace Infrastructure.Services
             if (certificado == null)
                 return;
 
-            // No permitir eliminar certificado activo
             if (certificado.Activo)
-            {
                 throw new Exception("No se puede eliminar el certificado activo");
-            }
 
-            // Eliminar archivo físico
             string rutaCompleta = Path.Combine(_certificadosPath, certificado.Ruta_Archivo);
             if (File.Exists(rutaCompleta))
-            {
                 File.Delete(rutaCompleta);
-            }
 
-            // Eliminar registro de BD
             _context.CertificadosDigitales.Remove(certificado);
             await _context.SaveChangesAsync();
         }

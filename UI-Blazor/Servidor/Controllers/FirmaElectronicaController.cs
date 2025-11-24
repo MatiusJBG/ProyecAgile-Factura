@@ -27,6 +27,8 @@ namespace UI_Blazor.Servidor.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error al firmar factura: {ex.Message}");
+                Console.WriteLine($"StackTrace: {ex.StackTrace}");
                 return BadRequest(new { error = ex.Message });
             }
         }

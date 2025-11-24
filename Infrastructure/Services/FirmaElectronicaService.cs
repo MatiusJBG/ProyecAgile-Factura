@@ -35,6 +35,8 @@ namespace Infrastructure.Services
 
         public async Task<FirmaElectronica> FirmarFacturaAsync(int idFactura)
         {
+            Console.WriteLine($"Iniciando firma de factura ID: {idFactura}");
+
             // Obtener la factura con sus detalles
             var factura = await _context.Facturas
                 .Include(f => f.Detalles)
@@ -43,6 +45,8 @@ namespace Infrastructure.Services
 
             if (factura == null)
                 throw new Exception($"Factura con ID {idFactura} no encontrada");
+
+            Console.WriteLine("Factura encontrada.");
 
             // Verificar si ya está firmada
             var firmaExistente = await _context.FirmasElectronicas
@@ -56,17 +60,25 @@ namespace Infrastructure.Services
             if (certificado == null)
                 throw new Exception("No hay certificado activo configurado");
 
+            Console.WriteLine($"Certificado activo encontrado: {certificado.Nombre}");
+
             // Generar XML de la factura
             string xmlFactura = GenerarXmlFactura(factura);
-
-            // Cargar el certificado X509
-            var cert = await _certificadoService.CargarCertificadoX509Async(certificado.Id_Cert);
+            Console.WriteLine("XML generado correctamente.");
 
             // Generar hash del XML
             string hashDocumento = GenerarHash(xmlFactura);
+            Console.WriteLine("Hash generado.");
 
-            // Firmar el hash
+            // Cargar el certificado X509 (con password opcional)
+            Console.WriteLine("Cargando certificado X509...");
+            var cert = await _certificadoService.CargarCertificadoX509Async(certificado.Id_Cert);
+            Console.WriteLine("Certificado X509 cargado.");
+
+            // Firmar el XML con el certificado
+            Console.WriteLine("Firmando XML...");
             string firmaDigital = FirmarConCertificado(xmlFactura, cert);
+            Console.WriteLine("XML firmado.");
 
             // Crear registro de firma
             var firma = new FirmaElectronica
@@ -83,6 +95,7 @@ namespace Infrastructure.Services
 
             _context.FirmasElectronicas.Add(firma);
             await _context.SaveChangesAsync();
+            Console.WriteLine("Firma guardada en base de datos.");
 
             return firma;
         }
@@ -161,8 +174,10 @@ public string GenerarXmlFactura(Factura factura)
 
     // Detalles
     xmlWriter.WriteStartElement("Detalles");
-    foreach (var detalle in factura.Detalles)
+    if (factura.Detalles != null && factura.Detalles.Any())
     {
+        foreach (var detalle in factura.Detalles)
+        {
         xmlWriter.WriteStartElement("Detalle");
         xmlWriter.WriteElementString("ProductoId", detalle.Id_Pro_Per.ToString());
         xmlWriter.WriteElementString("Cantidad", detalle.Cantidad_Comprada.ToString());
@@ -173,6 +188,7 @@ public string GenerarXmlFactura(Factura factura)
         xmlWriter.WriteElementString("Total", ((decimal)detalle.Precio_Venta_Total).ToString("F2"));
         
         xmlWriter.WriteEndElement();
+    }
     }
     xmlWriter.WriteEndElement();
 

@@ -128,6 +128,17 @@ using (var scope = app.Services.CreateScope())
             logger.LogWarning(ex, "Error al aplicar parche manual (probablemente ya existe la columna).");
         }
 
+        // Parche: Agregar columna Porcentaje_Descuento si falta
+        try
+        {
+            logger.LogInformation("Intentando agregar columna Porcentaje_Descuento...");
+            context.Database.ExecuteSqlRaw("ALTER TABLE detallesfactura ADD COLUMN Porcentaje_Descuento decimal(5,2) NULL DEFAULT 0;");
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Error al agregar columna Porcentaje_Descuento (probablemente ya existe).");
+        }
+
         // Crear tabla descuentos_producto manualmente si no existe
         try
         {
