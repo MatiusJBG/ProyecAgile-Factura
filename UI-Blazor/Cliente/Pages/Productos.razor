@@ -57,7 +57,8 @@
                         <th style="width: 120px;">Tipo</th>
                         <th style="width: 120px;">Marca</th>
                         <th style="width: 120px;">Precio Venta</th>
-                        <th style="width: 120px;">Stock</th>
+                        <th style="width: 130px;">Fecha Entrada</th>
+                        <th style="width: 140px;">Stock (Rec/Disp)</th>
                         <th style="width: 100px;">Acciones</th>
                     </tr>
                 </thead>
@@ -72,7 +73,28 @@
                                 <td><span class="tipo-badge @(producto.Tip_Pro == "Bien" ? "bien" : "servicio")">@producto.Tip_Pro</span></td>
                                 <td>@producto.Marca</td>
                                 <td class="precio-col">@producto.Precio_Venta.ToString("C")</td>
-                                <td class="stock-col">@producto.StockTotal</td>
+                                <td class="text-center">
+                                    @if (producto.Lotes != null && producto.Lotes.Any())
+                                    {
+                                        @producto.Lotes.First().Fec_Ent.ToString("dd/MM/yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span style="color: #999;">-</span>
+                                    }
+                                </td>
+                                <td class="stock-col">
+                                    @if (producto.Lotes != null && producto.Lotes.Any())
+                                    {
+                                        var totalRecibido = producto.Lotes.Sum(l => l.Cantidad_Recibida);
+                                        var totalDisponible = producto.Lotes.Sum(l => l.Cantidad_Disponible);
+                                        <span>@totalRecibido / @totalDisponible</span>
+                                    }
+                                    else
+                                    {
+                                        <span>0 / 0</span>
+                                    }
+                                </td>
                                 <td class="actions-col">
                                     <button class="action-btn-icon view" @onclick='() => VerProducto(producto.Id_Pro)' title="Ver">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -97,7 +119,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="7">
+                            <td colspan="8">
                                 <div class="no-data">
                                     <div class="empty-state">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
