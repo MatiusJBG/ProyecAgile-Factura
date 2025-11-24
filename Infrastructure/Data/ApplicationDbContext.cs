@@ -19,6 +19,8 @@ namespace Infrastructure.Data
         public DbSet<Auditoria> Auditorias { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<DescuentoProducto> DescuentosProductos { get; set; }
+        public DbSet<FirmaElectronica> FirmasElectronicas { get; set; }
+        public DbSet<CertificadoDigital> CertificadosDigitales { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -271,6 +273,76 @@ namespace Infrastructure.Data
                 entity.HasOne(e => e.Producto)
                     .WithMany(p => p.Descuentos)
                     .HasForeignKey(e => e.Id_Pro_Per)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configuración de CertificadoDigital
+            modelBuilder.Entity<CertificadoDigital>(entity =>
+            {
+                entity.ToTable("CertificadosDigitales");
+                entity.HasKey(e => e.Id_Cert);
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired();
+
+                entity.Property(e => e.Ruta_Archivo)
+                    .IsRequired();
+
+                entity.Property(e => e.Password_Hash)
+                    .IsRequired();
+
+                entity.Property(e => e.Fecha_Emision)
+                    .IsRequired();
+
+                entity.Property(e => e.Fecha_Expiracion)
+                    .IsRequired();
+
+                entity.Property(e => e.Emisor)
+                    .IsRequired();
+
+                entity.Property(e => e.Serial_Number)
+                    .IsRequired();
+
+                entity.Property(e => e.Subject)
+                    .IsRequired();
+
+                entity.Property(e => e.Activo)
+                    .IsRequired();
+
+                entity.Property(e => e.Fecha_Carga)
+                    .IsRequired();
+            });
+
+            // Configuración de FirmaElectronica
+            modelBuilder.Entity<FirmaElectronica>(entity =>
+            {
+                entity.ToTable("FirmasElectronicas");
+                entity.HasKey(e => e.Id_Firma);
+
+                entity.Property(e => e.Firma_Digital)
+                    .IsRequired();
+
+                entity.Property(e => e.Algoritmo)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Certificado_Serial)
+                    .IsRequired();
+
+                entity.Property(e => e.Fecha_Firma)
+                    .IsRequired();
+
+                entity.Property(e => e.Hash_Documento)
+                    .IsRequired();
+
+                entity.Property(e => e.Estado_Validacion)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                // Relación con Factura
+                entity.HasOne(e => e.Factura)
+                    .WithMany()
+                    .HasForeignKey(e => e.Id_Fac_Per)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }

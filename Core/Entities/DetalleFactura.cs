@@ -8,9 +8,11 @@ namespace Core.Entities
         public int Id_Pro_Per { get; set; }
         public int Cantidad_Comprada { get; set; }
         public decimal Precio_Venta_Unit { get; set; }
+        public decimal Porcentaje_Descuento { get; set; }
         
         // Campo generado en la base de datos (computed column)
         public decimal Precio_Venta_Total { get; set; }
+        
 
         // Navigation properties
         public Factura Factura { get; set; } = null!;
