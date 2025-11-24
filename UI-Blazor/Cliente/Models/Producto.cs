@@ -6,6 +6,7 @@ namespace UI_Blazor.Client.Models
         public string Tip_Pro { get; set; } = string.Empty;
         public string Nom_Pro { get; set; } = string.Empty;
         public string Marca { get; set; } = string.Empty;
+        public string? Imagen { get; set; }
         
         // Para display en UI (poblado por backend desde suma de lotes)
         public int StockTotal { get; set; } = 0;
