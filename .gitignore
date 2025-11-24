@@ -1,3 +1,6 @@
+##Conexión BD
+appsettings.json
+
 ## Ignorar archivos de compilación y build
 bin/
 obj/
