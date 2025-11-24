@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251124155251_AddFacturaFields")]
+    partial class AddFacturaFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,31 +203,23 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("CVV")
                         .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("varchar(4)");
+                        .HasColumnType("longtext");
 
-                    b.Property<string>("Establecimiento_Fac")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                    b.Property<int>("Establecimiento_Fac")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                    b.Property<int>("Estado")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Fec_Fac")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("FechaVencimiento")
                         .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("varchar(5)");
+                        .HasColumnType("longtext");
 
-                    b.Property<string>("Forma_Pago")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                    b.Property<int>("Forma_Pago")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("IVA_Fac")
                         .HasPrecision(10, 2)
@@ -235,23 +230,18 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("NumeroTarjeta")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("varchar(16)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Plazo_Pago_Dias")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.Property<string>("Punto_Venta")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("TitularTarjeta")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("longtext");
 
                     b.Property<decimal?>("Tot_Fac_Con_IVA")
                         .HasPrecision(10, 2)
@@ -262,8 +252,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<decimal>("Valor_Pago")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id_Fac");
 
