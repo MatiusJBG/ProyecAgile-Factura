@@ -1,0 +1,148 @@
+@page "/facturas/nueva"
+@using UI_Blazor.Client.Services
+@using UI_Blazor.Client.Models
+@inject IClienteService ClienteService
+@inject IProductoService ProductoService
+@inject IDescuentoService DescuentoService
+@inject NavigationManager Nav
+
+<h3>Nueva Factura</h3>
+
+<div class="factura-form">
+    <div class="form-group">
+        <label>Cliente:</label>
+        <select @bind="idCliente" class="form-control">
+            <option value="0">Seleccionar...</option>
+            @foreach (var c in clientes)
+            {
+                <option value="@c.Id_Cli">@c.NombreCompleto</option>
+            }
+        </select>
+    </div>
+
+    <h4>Productos</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Desc %</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var linea in lineas)
+            {
+                <tr>
+                    <td>
+                        <select @bind="linea.IdProducto" @bind:after="() => CargarProducto(linea)" class="form-control">
+                            <option value="0">Seleccionar...</option>
+                            @foreach (var p in productos)
+                            {
+                                <option value="@p.Id_Pro">@p.Nom_Pro</option>
+                            }
+                        </select>
+                    </td>
+                    <td><input type="number" @bind="linea.Cantidad" @bind:after="Calcular" class="form-control" style="width:80px" /></td>
+                    <td><input type="number" step="0.01" @bind="linea.Precio" @bind:after="Calcular" class="form-control" style="width:100px" /></td>
+                    <td><input type="number" @bind="linea.Descuento" @bind:after="Calcular" class="form-control" style="width:70px" /></td>
+                    <td><strong>@linea.Total.ToString("C")</strong></td>
+                    <td><button @onclick="() => Eliminar(linea)" class="btn btn-sm btn-danger">X</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button @onclick="Agregar" class="btn btn-secondary">+ Agregar Línea</button>
+
+    <div class="totales mt-4">
+        <p><strong>Subtotal:</strong> @subtotal.ToString("C")</p>
+        <p><strong>IVA 12%:</strong> @iva.ToString("C")</p>
+        <p><strong>TOTAL:</strong> @total.ToString("C")</p>
+    </div>
+
+    <div class="mt-3">
+        <button @onclick="Guardar" class="btn btn-primary">Guardar</button>
+        <button @onclick='() => Nav.NavigateTo("/facturas")' class="btn btn-secondary">Cancelar</button>
+    </div>
+</div>
+
+@code {
+    private List<UI_Blazor.Client.Models.Cliente> clientes = new();
+    private List<UI_Blazor.Client.Models.Producto> productos = new();
+    private List<LineaFactura> lineas = new();
+    private int idCliente = 0;
+    private decimal subtotal = 0;
+    private decimal iva = 0;
+    private decimal total = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await ClienteService.GetClientesAsync();
+        productos = await ProductoService.GetProductosAsync();
+        Agregar();
+    }
+
+    private void Agregar()
+    {
+        lineas.Add(new LineaFactura());
+    }
+
+    private void Eliminar(LineaFactura linea)
+    {
+        lineas.Remove(linea);
+        Calcular();
+    }
+
+    private async Task CargarProducto(LineaFactura linea)
+    {
+        var prod = productos.FirstOrDefault(p => p.Id_Pro == linea.IdProducto);
+        if (prod != null)
+        {
+            linea.Precio = prod.Precio_Venta;
+            linea.IdLote = prod.Lotes?.FirstOrDefault()?.Id_Lote ?? 0;
+            
+            try
+            {
+                var desc = await DescuentoService.GetDescuentoActivoAsync(linea.IdProducto);
+                linea.Descuento = desc?.Porcentaje ?? 0;
+            }
+            catch { linea.Descuento = 0; }
+        }
+        Calcular();
+    }
+
+    private void Calcular()
+    {
+        foreach (var linea in lineas)
+        {
+            var sub = linea.Cantidad * linea.Precio;
+            var desc = sub * (linea.Descuento / 100m);
+            linea.Total = sub - desc;
+        }
+        
+        subtotal = lineas.Sum(l => l.Total);
+        iva = subtotal * 0.12m;
+        total = subtotal + iva;
+        
+        StateHasChanged();
+    }
+
+    private Task Guardar()
+    {
+        // TODO: Implementar guardado
+        Console.WriteLine($"Guardar factura - Total: {total}");
+        return Task.CompletedTask;
+    }
+
+    private class LineaFactura
+    {
+        public int IdProducto { get; set; }
+        public int IdLote { get; set; }
+        public int Cantidad { get; set; } = 1;
+        public decimal Precio { get; set; }
+        public decimal Descuento { get; set; }
+        public decimal Total { get; set; }
+    }
+}

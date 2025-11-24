@@ -4,6 +4,7 @@
 @using Models = UI_Blazor.Client.Models
 @inject IClienteService ClienteService
 @inject IProductoService ProductoService
+@inject IDescuentoService DescuentoService
 
 <div class="factura-form-container">
     <h3 class="modal-title">@(Factura.Id_Fac == 0 ? "Nueva Factura" : "Editar Factura")</h3>
@@ -25,50 +26,48 @@
                             <option value="@c.Id_Cli">@c.NombreCompleto - @c.Num_Documento</option>
                         }
                     </InputSelect>
-                    <button type="button" class="btn-small">+ Nuevo cliente</button>
                 </div>
-            </div>
 
-            <!-- Líneas de productos -->
-            <h4>Detalles de Factura</h4>
-            <table class="lineas-table">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio Unit.</th>
-                        <th>Subtotal</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var detalle in Factura.Detalles)
-                    {
+                <!-- Detalles de Factura -->
+                <h4>Detalles de Factura</h4>
+                <table class="lineas-table">
+                    <thead>
                         <tr>
-                            <td>
-                                <InputText @bind-Value="detalle.ProductoNombre" placeholder="Descripción o código" style="width:100%" />
-                            </td>
-                            <td><InputNumber @bind-Value="detalle.Cantidad_Comprada" /></td>
-                            <td><InputNumber @bind-Value="detalle.Precio_Venta_Unit" step="0.01" /></td>
-                            <td>@detalle.Precio_Venta_Total.ToString("N2")</td>
-                            <td>
-                                <button type="button" @onclick="() => Factura.Detalles.Remove(detalle)" class="btn-danger-small">×</button>
-                            </td>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unit.</th>
+                            <th>Descuento %</th>
+                            <th>Total</th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-            <button type="button" @onclick="AgregarDetalle" class="btn-add-line">
-                + Agregar detalle
-            </button>
-
-            <!-- Información de Pago y Establecimiento (Campos Futuros en BD) -->
-            <div class="payment-section">
-                <h4 class="section-title">
-                    💳 Información de Pago y Establecimiento
-                    <span class="future-badge">Pendiente en BD</span>
-                </h4>
+                    </thead>
+                    <tbody>
+                        @foreach (var detalle in Factura.Detalles)
+                        {
+                            <tr>
+                                <td>
+                                    <InputSelect @bind-Value="detalle.Id_Pro_Per" @bind-Value:after="() => OnProductoSeleccionado(detalle)" class="w-100">
+                                        <option value="0">Seleccionar...</option>
+                                        @foreach (var p in productos)
+                                        {
+                                            <option value="@p.Id_Pro">@p.Nom_Pro</option>
+                                        }
+                                    </InputSelect>
+                                </td>
+                                <td><InputNumber @bind-Value="detalle.Cantidad_Comprada" @bind-Value:after="CalcularTotales" class="w-100" /></td>
+                                <td><InputNumber @bind-Value="detalle.Precio_Venta_Unit" @bind-Value:after="CalcularTotales" step="0.01" class="w-100" /></td>
+                                <td><InputNumber @bind-Value="detalle.Porcentaje_Descuento" @bind-Value:after="CalcularTotales" step="0.01" class="w-100" disabled="true" /></td>
+                                <td>@detalle.Precio_Venta_Total.ToString("C")</td>
+                                <td><button type="button" @onclick="() => Factura.Detalles.Remove(detalle)" class="btn-danger-small">×</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
                 
+                <div class="d-flex justify-content-end mb-3">
+                    <button type="button" @onclick="AgregarDetalle" class="btn-add-line">+ Agregar detalle</button>
+                </div>
+
                 <div class="payment-grid">
                     <div class="form-group">
                         <label>Establecimiento *</label>
@@ -92,6 +91,26 @@
                             <option value="@FormaPago.Tarjeta">Tarjeta</option>
                         </InputSelect>
                     </div>
+
+                    @if (Factura.Forma_Pago == FormaPago.Tarjeta)
+                    {
+                        <div class="form-group">
+                            <label>Número de Tarjeta</label>
+                            <InputText @bind-Value="Factura.NumeroTarjeta" placeholder="XXXX-XXXX-XXXX-XXXX" />
+                        </div>
+                        <div class="form-group">
+                            <label>Titular</label>
+                            <InputText @bind-Value="Factura.TitularTarjeta" placeholder="Nombre como aparece en la tarjeta" />
+                        </div>
+                        <div class="form-group">
+                            <label>Vencimiento (MM/YY)</label>
+                            <InputText @bind-Value="Factura.FechaVencimiento" placeholder="MM/YY" />
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <InputText @bind-Value="Factura.CVV" placeholder="123" />
+                        </div>
+                    }
 
                     <div class="form-group">
                         <label>Valor de Pago (USD)</label>
@@ -126,10 +145,12 @@
     [Parameter] public EventCallback OnCancelar { get; set; }
 
     private List<Models.Cliente> clientes = new();
+    private List<Models.Producto> productos = new();
 
     protected override async Task OnInitializedAsync()
     {
         clientes = await ClienteService.GetClientesAsync();
+        productos = await ProductoService.GetProductosAsync();
     }
 
     private void AgregarDetalle()
@@ -139,7 +160,6 @@
 
     private void OnClienteChanged()
     {
-        // Update ClienteNombre when Id_Cli_Per changes
         var clienteSeleccionado = clientes.FirstOrDefault(c => c.Id_Cli == Factura.Id_Cli_Per);
         if (clienteSeleccionado != null)
         {
@@ -147,11 +167,39 @@
         }
     }
 
-    private void CalcularTotales()
+    private async Task OnProductoSeleccionado(DetalleFactura detalle)
     {
-        Factura.Tot_Fac_Sin_IVA = Factura.Detalles.Sum(d => d.Precio_Venta_Total);
+        var prod = productos.FirstOrDefault(p => p.Id_Pro == detalle.Id_Pro_Per);
+        if (prod != null)
+        {
+            detalle.Precio_Venta_Unit = prod.Precio_Venta;
+            var desc = await DescuentoService.GetDescuentoActivoAsync(prod.Id_Pro);
+            detalle.Porcentaje_Descuento = desc?.Porcentaje ?? 0;
+            await CalcularTotales();
+        }
+    }
+
+    private async Task CalcularTotales()
+    {
+        // Calculate subtotal without discounts
+        var subtotalSinDescuento = Factura.Detalles.Sum(d => d.Cantidad_Comprada * d.Precio_Venta_Unit);
+        // Calculate total discounts
+        decimal totalDescuentos = 0m;
+        foreach (var detalle in Factura.Detalles)
+        {
+            var prod = productos.FirstOrDefault(p => p.Id_Pro == detalle.Id_Pro_Per);
+            if (prod != null)
+            {
+                var desc = await DescuentoService.GetDescuentoActivoAsync(prod.Id_Pro);
+                var perc = desc?.Porcentaje ?? 0;
+                detalle.Porcentaje_Descuento = perc;
+                totalDescuentos += (detalle.Cantidad_Comprada * detalle.Precio_Venta_Unit) * (perc / 100m);
+            }
+        }
+        Factura.Tot_Descuento = totalDescuentos;
+        Factura.Tot_Fac_Sin_IVA = subtotalSinDescuento - totalDescuentos;
         Factura.IVA_Fac = Factura.Tot_Fac_Sin_IVA * 0.12m;
         Factura.Tot_Fac_Con_IVA = Factura.Tot_Fac_Sin_IVA + Factura.IVA_Fac;
-        OnGuardar.InvokeAsync();
+        await OnGuardar.InvokeAsync();
     }
 }
