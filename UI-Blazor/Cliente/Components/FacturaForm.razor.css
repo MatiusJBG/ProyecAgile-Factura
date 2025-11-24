@@ -1,19 +1,15 @@
 /* Form Container */
 .factura-form-container {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     width: 100%;
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 2.5rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
-    animation: slideUp 0.5s ease-out;
+    animation: fadeIn 0.4s ease-out;
 }
 
-@keyframes slideUp {
+@keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
 
     to {
@@ -22,354 +18,330 @@
     }
 }
 
-/* Modal Title */
+/* Header Section */
+.form-header-section {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
 .modal-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0 0 2rem 0;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f1f5f9;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 0.5rem 0;
     letter-spacing: -0.5px;
-    position: relative;
 }
 
-.modal-title::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 60px;
-    height: 2px;
-    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+.form-subtitle {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
 }
 
-/* Form Grid */
-.form-grid {
+/* Sections */
+.form-sections {
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
 
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+.form-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
 }
 
-/* Form Group */
+.form-section:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    border-color: #cbd5e1;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #334155;
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.section-title svg {
+    color: #3b82f6;
+}
+
+/* Grids */
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.payment-totals-wrapper {
+    align-items: start;
+}
+
+/* Form Groups */
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    position: relative;
 }
 
 .form-group label {
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: #475569;
     margin-left: 0.25rem;
 }
 
-.form-group input,
-.form-group select {
-    padding: 0.875rem 1rem;
+.form-control {
+    padding: 0.75rem 1rem;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 0.95rem;
-    transition: all 0.2s ease;
-    background: #f8fafc;
     color: #1e293b;
+    background: #f8fafc;
+    transition: all 0.2s ease;
     width: 100%;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-control:focus {
     outline: none;
     border-color: #3b82f6;
     background: white;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.form-group input:hover,
-.form-group select:hover {
-    border-color: #cbd5e1;
+.form-control:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
 }
 
-h4 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #334155;
-    margin: 1rem 0 1rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+/* Table */
+.table-responsive {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
 }
 
-/* Líneas Table */
 .lineas-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-bottom: 1rem;
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
-}
-
-.lineas-table thead {
-    background: #f8fafc;
+    border-collapse: collapse;
+    min-width: 800px;
 }
 
 .lineas-table th {
-    padding: 1rem 1.25rem;
+    background: #f8fafc;
+    padding: 1rem;
     text-align: left;
     font-size: 0.75rem;
     font-weight: 700;
     color: #64748b;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     border-bottom: 1px solid #e2e8f0;
 }
 
 .lineas-table td {
-    padding: 1rem 1.25rem;
+    padding: 0.75rem;
     border-bottom: 1px solid #f1f5f9;
     vertical-align: middle;
 }
 
-.lineas-table tbody tr:last-child td {
+.lineas-table tr:last-child td {
     border-bottom: none;
 }
 
-.lineas-table tbody tr {
-    transition: background 0.2s ease;
-}
-
-.lineas-table tbody tr:hover {
-    background: #f8fafc;
-}
-
-.lineas-table input,
-.lineas-table select {
-    padding: 0.6rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
+.lineas-table .form-control {
     background: white;
-    width: 100%;
-}
-
-.lineas-table input:focus,
-.lineas-table select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
 }
 
 /* Buttons */
-.btn-add-line {
-    padding: 1rem;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    background: transparent;
-    color: #64748b;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
-    margin-top: 0.5rem;
+.btn-icon-danger {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #ef4444;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-icon-danger:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+}
+
+.add-line-container {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-add-line {
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+    background: white;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .btn-add-line:hover {
-    background: #f0f9ff;
     border-color: #3b82f6;
     color: #3b82f6;
-    border-style: solid;
-    transform: translateY(-2px);
-}
-
-.btn-danger-small {
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 8px;
-    background: #fee2e2;
-    color: #ef4444;
-    font-size: 1.25rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-}
-
-.btn-danger-small:hover {
-    background: #ef4444;
-    color: white;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    background: #eff6ff;
 }
 
 /* Payment Section */
 .payment-section {
-    margin: 2rem 0;
-    padding: 2rem;
-    background: linear-gradient(135deg, #fffbeb 0%, #fff1f2 100%);
-    border: 1px solid #fef3c7;
-    border-radius: 16px;
-    position: relative;
-    overflow: hidden;
+    background: #fff;
 }
 
-.payment-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: #f59e0b;
-}
-
-.payment-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
-}
-
-/* Totales Section */
-.totales-section {
+.card-details-panel {
     background: #f8fafc;
-    border-radius: 16px;
-    padding: 2rem;
-    margin-top: 2rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Totals Section */
+.totals-section {
+    background: #f8fafc;
     border: 1px solid #e2e8f0;
 }
 
-.total-line {
+.totals-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.total-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 0;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #64748b;
 }
 
-.total-line strong {
-    color: #1e293b;
+.total-row.discount {
+    color: #10b981;
+}
+
+.total-row .value {
     font-weight: 600;
-}
-
-.total-line.highlight {
-    margin-top: 1rem;
-    padding-top: 1.5rem;
-    border-top: 2px dashed #cbd5e1;
-    font-size: 1.25rem;
-}
-
-.total-line.highlight span {
     color: #1e293b;
+}
+
+.total-divider {
+    height: 1px;
+    background: #cbd5e1;
+    margin: 0.5rem 0;
+    border-bottom: 1px dashed #cbd5e1;
+}
+
+.total-row.grand-total {
+    margin-top: 0.5rem;
+}
+
+.total-row.grand-total .label {
+    font-size: 1.1rem;
     font-weight: 700;
+    color: #1e293b;
 }
 
-.total-line.highlight strong {
-    font-size: 1.75rem;
-    color: #059669;
-    background: linear-gradient(90deg, #059669, #10b981);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.total-row.grand-total .value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #3b82f6;
 }
 
-/* Form Actions */
-.form-actions {
+/* Action Buttons */
+.form-actions-vertical {
     display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e2e8f0;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .action-btn {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.875rem 2rem;
-    border: none;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
     border-radius: 12px;
-    font-size: 1rem;
     font-weight: 600;
+    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s;
+    border: none;
 }
 
-.action-btn.secondary {
+.primary-btn {
+    background: #3b82f6;
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.primary-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px -1px rgba(59, 130, 246, 0.4);
+}
+
+.secondary {
     background: white;
     color: #64748b;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #cbd5e1;
 }
 
-.action-btn.secondary:hover {
-    background: #f8fafc;
+.secondary:hover {
+    background: #f1f5f9;
     color: #1e293b;
-    border-color: #cbd5e1;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: #94a3b8;
 }
 
-.action-btn.primary-btn {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(30, 41, 59, 0.25);
-}
-
-.action-btn.primary-btn:hover {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(30, 41, 59, 0.35);
+.full-width {
+    width: 100%;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .factura-form-container {
-        padding: 1.5rem;
-    }
-
-    .form-row {
+    .form-grid-2 {
         grid-template-columns: 1fr;
     }
 
-    .lineas-table {
-        display: block;
-        overflow-x: auto;
+    .payment-totals-wrapper {
+        flex-direction: column;
     }
 
-    .lineas-table th,
-    .lineas-table td {
-        min-width: 120px;
-    }
-
-    .form-actions {
-        flex-direction: column-reverse;
-    }
-
-    .action-btn {
-        width: 100%;
-        justify-content: center;
+    .modal-title {
+        font-size: 1.5rem;
     }
 }
