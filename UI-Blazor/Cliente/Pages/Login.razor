@@ -17,6 +17,13 @@
             </div>
         }
 
+        @if (!string.IsNullOrEmpty(lockoutMessage))
+        {
+            <div class="alert alert-warning">
+                @lockoutMessage
+            </div>
+        }
+
         <div class="form-group">
             <label for="username">Usuario</label>
             <input id="username" class="form-control" @bind="username" placeholder="Ingrese su usuario" />
@@ -27,7 +34,7 @@
             <input id="password" type="password" class="form-control" @bind="password" placeholder="Ingrese su contraseña" />
         </div>
 
-        <button class="btn-login" @onclick="HandleLogin" disabled="@isLoading">
+        <button class="btn-login" @onclick="HandleLogin" disabled="@(isLoading || (lockoutEndTime.HasValue && lockoutEndTime.Value > DateTime.Now))">
             @if (isLoading)
             {
                 <span>Cargando...</span>
@@ -40,20 +47,61 @@
     </div>
 </div>
 
-
-
 @code {
     private string username = "";
     private string password = "";
     private string? errorMessage;
     private bool isLoading = false;
+    private DateTime? lockoutEndTime;
+    private string? lockoutMessage;
+    private System.Threading.Timer? timer;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (AuthService.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/");
+            return;
         }
+
+        await CheckLockoutState();
+    }
+
+    private async Task CheckLockoutState()
+    {
+        lockoutEndTime = await AuthService.GetLockoutEndTimeAsync();
+        if (lockoutEndTime.HasValue && lockoutEndTime.Value > DateTime.Now)
+        {
+            StartCountdown();
+        }
+        else
+        {
+            lockoutMessage = null;
+            timer?.Dispose();
+            timer = null;
+        }
+    }
+
+    private void StartCountdown()
+    {
+        timer?.Dispose();
+        timer = new System.Threading.Timer(async _ =>
+        {
+            if (lockoutEndTime.HasValue && lockoutEndTime.Value > DateTime.Now)
+            {
+                var remaining = lockoutEndTime.Value - DateTime.Now;
+                lockoutMessage = $"Demasiados intentos fallidos. Intente nuevamente en {remaining.Seconds} segundos.";
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                lockoutMessage = null;
+                lockoutEndTime = null;
+                timer?.Dispose();
+                timer = null;
+                await InvokeAsync(StateHasChanged);
+            }
+        }, null, 0, 1000);
     }
 
     private async Task HandleLogin()
@@ -63,6 +111,12 @@
 
         try
         {
+            // Double check before calling service
+            if (lockoutEndTime.HasValue && lockoutEndTime.Value > DateTime.Now)
+            {
+                return;
+            }
+
             var result = await AuthService.LoginAsync(username, password);
             if (result)
             {
@@ -70,7 +124,17 @@
             }
             else
             {
-                errorMessage = "Usuario o contraseña incorrectos";
+                // Check if we are now locked out
+                await CheckLockoutState();
+                
+                if (lockoutEndTime.HasValue && lockoutEndTime.Value > DateTime.Now)
+                {
+                    // Lockout message is handled by timer/CheckLockoutState
+                }
+                else
+                {
+                    errorMessage = "Usuario o contraseña incorrectos";
+                }
             }
         }
         catch (Exception ex)
@@ -82,5 +146,10 @@
         {
             isLoading = false;
         }
+    }
+    
+    public void Dispose()
+    {
+        timer?.Dispose();
     }
 }

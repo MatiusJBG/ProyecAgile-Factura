@@ -1,5 +1,7 @@
 ﻿@inject NavigationManager NavigationManager
 @inject IAuthService AuthService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
 
 <div class="sidebar-container">
     <div class="sidebar-header">
@@ -77,10 +79,10 @@
     <div class="sidebar-footer">
         <div class="user-profile">
             <div class="user-avatar">
-                <span>JD</span>
+                <span>@(string.IsNullOrEmpty(username) ? "U" : (username.Length > 0 ? username.Substring(0, 1).ToUpper() : "U"))</span>
             </div>
             <div class="user-info">
-                <span class="user-name">John Doe</span>
+                <span class="user-name">@(string.IsNullOrEmpty(username) ? "Usuario" : username)</span>
                 <span class="user-role">Administrador</span>
             </div>
         </div>
@@ -95,6 +97,27 @@
 </div>
 
 @code {
+    private string username = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            username = user.Identity.Name;
+            
+            if (string.IsNullOrEmpty(username))
+            {
+                username = user.FindFirst("unique_name")?.Value 
+                        ?? user.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value
+                        ?? user.FindFirst("name")?.Value
+                        ?? "";
+            }
+        }
+    }
+
     private async Task HandleLogout()
     {
         await AuthService.LogoutAsync();
