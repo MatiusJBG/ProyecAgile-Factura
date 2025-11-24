@@ -66,6 +66,12 @@ namespace Application.Services
             // Si viene precio de venta, crearlo
             if (productoDto.Precio_Venta.HasValue)
             {
+                // Validación: PVP no puede ser menor al Costo Unitario
+                if (productoDto.Precio_Unitario.HasValue && productoDto.Precio_Venta.Value < productoDto.Precio_Unitario.Value)
+                {
+                    throw new ArgumentException($"El Precio de Venta (${productoDto.Precio_Venta.Value:N2}) no puede ser menor al Costo Unitario (${productoDto.Precio_Unitario.Value:N2})");
+                }
+
                 var precio = new Precio
                 {
                     Id_Pro_Per = creado.Id_Pro,
@@ -93,11 +99,89 @@ namespace Application.Services
                 throw new KeyNotFoundException($"Producto con ID {id} no encontrado");
             }
 
+            // 1. Actualizar datos básicos del producto
             producto.Tip_Pro = productoDto.Tip_Pro;
             producto.Nom_Pro = productoDto.Nom_Pro;
             producto.Marca = productoDto.Marca;
+            producto.Imagen = productoDto.Imagen;
 
             await _productoRepository.UpdateAsync(producto);
+
+            // 2. Actualizar datos del Lote (si existe alguno, actualizamos el primero/más antiguo por defecto)
+            // NOTA: Esto asume que el usuario quiere editar el "lote inicial" o el primer lote disponible.
+            var primerLote = producto.Lotes.OrderBy(l => l.Fec_Ent).FirstOrDefault();
+            if (primerLote != null)
+            {
+                bool loteModificado = false;
+
+                if (productoDto.Fec_Ent.HasValue) 
+                {
+                    primerLote.Fec_Ent = productoDto.Fec_Ent.Value;
+                    loteModificado = true;
+                }
+                
+                if (productoDto.Fec_Exp.HasValue)
+                {
+                    primerLote.Fec_Exp = productoDto.Fec_Exp.Value;
+                    loteModificado = true;
+                }
+
+                if (productoDto.Cantidad_Recibida.HasValue)
+                {
+                    primerLote.Cantidad_Recibida = productoDto.Cantidad_Recibida.Value;
+                    loteModificado = true;
+                }
+
+                if (productoDto.Cantidad_Disponible.HasValue)
+                {
+                    primerLote.Cantidad_Disponible = productoDto.Cantidad_Disponible.Value;
+                    loteModificado = true;
+                }
+
+                if (productoDto.Precio_Unitario.HasValue)
+                {
+                    primerLote.Precio_Unitario = productoDto.Precio_Unitario.Value;
+                    loteModificado = true;
+                }
+
+                if (loteModificado)
+                {
+                    // Recalcular precio total del lote
+                    primerLote.Precio_Lote = primerLote.Cantidad_Recibida * primerLote.Precio_Unitario;
+                    await _loteRepository.UpdateAsync(primerLote);
+                }
+            }
+
+            // 3. Actualizar Precio de Venta (si cambió)
+            // Como Precio_Venta es decimal (no nullable), siempre tiene valor.
+            // Comparamos con el precio actual en BD.
+            var precioActual = await _precioRepository.GetCurrentPriceAsync(id);
+            
+            // Si no hay precio o el precio es diferente, crear nuevo registro
+            if (precioActual == null || precioActual.Precio_Venta != productoDto.Precio_Venta)
+            {
+                // Validación: PVP no puede ser menor al Costo Unitario
+                // Usamos el precio unitario del DTO si viene, o el del primer lote si no viene en el DTO pero existe en BD
+                decimal? costoUnitario = productoDto.Precio_Unitario;
+                if (!costoUnitario.HasValue && primerLote != null)
+                {
+                    costoUnitario = primerLote.Precio_Unitario;
+                }
+
+                if (costoUnitario.HasValue && productoDto.Precio_Venta < costoUnitario.Value)
+                {
+                    throw new ArgumentException($"El Precio de Venta (${productoDto.Precio_Venta:N2}) no puede ser menor al Costo Unitario (${costoUnitario.Value:N2})");
+                }
+
+                var nuevoPrecio = new Precio
+                {
+                    Id_Pro_Per = id,
+                    Precio_Venta = productoDto.Precio_Venta,
+                    Fecha_Actualizacion = DateTime.Now,
+                    Motivo = "Actualización de Precio"
+                };
+                await _precioRepository.AddAsync(nuevoPrecio);
+            }
         }
 
         public async Task DeleteProductoAsync(int id)
@@ -129,16 +213,27 @@ namespace Application.Services
                 })
                 .ToList();
 
+            // Mapear datos del primer lote a las propiedades planas del DTO para que aparezcan en el formulario
+            var primerLote = lotesOrdenados.FirstOrDefault();
+
             return new ProductoDto
             {
                 Id_Pro = producto.Id_Pro,
                 Tip_Pro = producto.Tip_Pro,
                 Nom_Pro = producto.Nom_Pro,
                 Marca = producto.Marca,
+                Imagen = producto.Imagen,
                 StockTotal = producto.Lotes.Sum(l => l.Cantidad_Disponible),
                 NumLotes = producto.Lotes.Count,
                 Lotes = lotesOrdenados,
-                Precio_Venta = precio?.Precio_Venta ?? 0
+                Precio_Venta = precio?.Precio_Venta ?? 0,
+                
+                // Mapeo de campos planos desde el primer lote (si existe)
+                Fec_Ent = primerLote?.Fec_Ent,
+                Fec_Exp = primerLote?.Fec_Exp,
+                Cantidad_Recibida = primerLote?.Cantidad_Recibida,
+                Cantidad_Disponible = primerLote?.Cantidad_Disponible,
+                Precio_Unitario = primerLote?.Precio_Unitario
             };
         }
 
@@ -148,7 +243,8 @@ namespace Application.Services
             {
                 Tip_Pro = dto.Tip_Pro,
                 Nom_Pro = dto.Nom_Pro,
-                Marca = dto.Marca
+                Marca = dto.Marca,
+                Imagen = dto.Imagen
             };
         }
     }

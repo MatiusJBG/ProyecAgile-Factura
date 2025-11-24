@@ -272,3 +272,9 @@ StyleCopReport.xml
 ## Archivos de backup
 *.backup
 *.old
+bin/
+obj/
+*.dll
+*.pdb
+*.cache
+*.wasm
