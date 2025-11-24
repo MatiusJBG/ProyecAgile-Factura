@@ -2,7 +2,7 @@ using Application.DTOs;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Servidor.Controllers
+namespace UI_Blazor.Servidor.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
