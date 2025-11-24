@@ -2,6 +2,7 @@ using Application.Services;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -31,6 +32,10 @@ builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<ProductoService>();
 builder.Services.AddScoped<LoteService>();
 builder.Services.AddScoped<FacturaService>();
+
+// Registrar servicios de firma electrónica
+builder.Services.AddScoped<IFirmaElectronicaService, FirmaElectronicaService>();
+builder.Services.AddScoped<ICertificadoService, CertificadoService>();
 
 // Configurar JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "ClaveSecretaSuperSeguraParaDesarrollo12345";
@@ -123,6 +128,17 @@ using (var scope = app.Services.CreateScope())
             logger.LogWarning(ex, "Error al aplicar parche manual (probablemente ya existe la columna).");
         }
 
+        // Parche: Agregar columna Porcentaje_Descuento si falta
+        try
+        {
+            logger.LogInformation("Intentando agregar columna Porcentaje_Descuento...");
+            context.Database.ExecuteSqlRaw("ALTER TABLE detallesfactura ADD COLUMN Porcentaje_Descuento decimal(5,2) NULL DEFAULT 0;");
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Error al agregar columna Porcentaje_Descuento (probablemente ya existe).");
+        }
+
         // Crear tabla descuentos_producto manualmente si no existe
         try
         {
@@ -144,6 +160,58 @@ using (var scope = app.Services.CreateScope())
         catch (Exception ex)
         {
             logger.LogError(ex, "Error al crear tabla descuentos_producto.");
+        }
+
+        // Crear tabla CertificadosDigitales manualmente si no existe
+        try
+        {
+            logger.LogInformation("Intentando crear tabla CertificadosDigitales...");
+            context.Database.ExecuteSqlRaw(@"
+                CREATE TABLE IF NOT EXISTS `CertificadosDigitales` (
+                    `Id_Cert` int NOT NULL AUTO_INCREMENT,
+                    `Nombre` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Ruta_Archivo` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Password_Hash` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Fecha_Emision` datetime(6) NOT NULL,
+                    `Fecha_Expiracion` datetime(6) NOT NULL,
+                    `Emisor` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Serial_Number` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Subject` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Activo` tinyint(1) NOT NULL,
+                    `Fecha_Carga` datetime(6) NOT NULL,
+                    `Observaciones` longtext CHARACTER SET utf8mb4 NULL,
+                    CONSTRAINT `PK_CertificadosDigitales` PRIMARY KEY (`Id_Cert`)
+                ) CHARACTER SET=utf8mb4;
+            ");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al crear tabla CertificadosDigitales.");
+        }
+
+        // Crear tabla FirmasElectronicas manualmente si no existe
+        try
+        {
+            logger.LogInformation("Intentando crear tabla FirmasElectronicas...");
+            context.Database.ExecuteSqlRaw(@"
+                CREATE TABLE IF NOT EXISTS `FirmasElectronicas` (
+                    `Id_Firma` int NOT NULL AUTO_INCREMENT,
+                    `Id_Fac_Per` int NOT NULL,
+                    `Firma_Digital` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Algoritmo` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Certificado_Serial` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Fecha_Firma` datetime(6) NOT NULL,
+                    `Hash_Documento` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Estado_Validacion` longtext CHARACTER SET utf8mb4 NOT NULL,
+                    `Observaciones` longtext CHARACTER SET utf8mb4 NULL,
+                    CONSTRAINT `PK_FirmasElectronicas` PRIMARY KEY (`Id_Firma`),
+                    CONSTRAINT `FK_FirmasElectronicas_Facturas_Id_Fac_Per` FOREIGN KEY (`Id_Fac_Per`) REFERENCES `facturas` (`Id_Fac`) ON DELETE CASCADE
+                ) CHARACTER SET=utf8mb4;
+            ");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al crear tabla FirmasElectronicas.");
         }
 
         // Crear usuario admin si no existe
