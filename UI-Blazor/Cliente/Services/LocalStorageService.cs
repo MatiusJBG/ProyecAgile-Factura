@@ -24,9 +24,9 @@ namespace UI_Blazor.Client.Services
             var json = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
 
             if (json == null)
-                return default;
+                return default!;
 
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json)!;
         }
 
         public async Task SetItemAsync<T>(string key, T value)

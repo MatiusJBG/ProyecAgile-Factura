@@ -4,11 +4,12 @@
 @using Models = UI_Blazor.Client.Models
 @inject IClienteService ClienteService
 @inject IProductoService ProductoService
+@inject IDescuentoService DescuentoService
 
 <div class="factura-form-container">
     <h3 class="modal-title">@(Factura.Id_Fac == 0 ? "Nueva Factura" : "Editar Factura")</h3>
 
-    <EditForm Model="@Factura" OnValidSubmit="CalcularTotales">
+    <EditForm Model="@Factura" OnValidSubmit="GuardarFactura">
         <div class="form-grid">
             <!-- Primera fila: Fecha, Cliente -->
             <div class="form-row">
@@ -25,50 +26,64 @@
                             <option value="@c.Id_Cli">@c.NombreCompleto - @c.Num_Documento</option>
                         }
                     </InputSelect>
-                    <button type="button" class="btn-small">+ Nuevo cliente</button>
                 </div>
             </div>
 
-            <!-- Líneas de productos -->
-            <h4>Detalles de Factura</h4>
-            <table class="lineas-table">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio Unit.</th>
-                        <th>Subtotal</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var detalle in Factura.Detalles)
-                    {
-                        <tr>
-                            <td>
-                                <InputText @bind-Value="detalle.ProductoNombre" placeholder="Descripción o código" style="width:100%" />
-                            </td>
-                            <td><InputNumber @bind-Value="detalle.Cantidad_Comprada" /></td>
-                            <td><InputNumber @bind-Value="detalle.Precio_Venta_Unit" step="0.01" /></td>
-                            <td>@detalle.Precio_Venta_Total.ToString("N2")</td>
-                            <td>
-                                <button type="button" @onclick="() => Factura.Detalles.Remove(detalle)" class="btn-danger-small">×</button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <button type="button" @onclick="AgregarDetalle" class="btn-add-line">
-                + Agregar detalle
-            </button>
-
-            <!-- Información de Pago y Establecimiento (Campos Futuros en BD) -->
-            <div class="payment-section">
-                <h4 class="section-title">
-                    💳 Información de Pago y Establecimiento
-                    <span class="future-badge">Pendiente en BD</span>
+            <!-- Detalles de Factura -->
+            <div>
+                <h4>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    Detalles de Factura
                 </h4>
+                <table class="lineas-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th style="width: 100px;">Cantidad</th>
+                            <th style="width: 120px;">Precio Unit.</th>
+                            <th style="width: 100px;">Desc %</th>
+                            <th style="width: 120px;">Total</th>
+                            <th style="width: 50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detalle in Factura.Detalles)
+                        {
+                            <tr>
+                                <td>
+                                    <InputSelect @bind-Value="detalle.Id_Pro_Per" @bind-Value:after="() => OnProductoSeleccionado(detalle)" class="w-100">
+                                        <option value="0">Seleccionar...</option>
+                                        @foreach (var p in productos)
+                                        {
+                                            <option value="@p.Id_Pro">@p.Nom_Pro</option>
+                                        }
+                                    </InputSelect>
+                                </td>
+                                <td><InputNumber @bind-Value="detalle.Cantidad_Comprada" @bind-Value:after="CalcularTotales" class="w-100" /></td>
+                                <td><InputNumber @bind-Value="detalle.Precio_Venta_Unit" @bind-Value:after="CalcularTotales" step="0.01" class="w-100" /></td>
+                                <td><InputNumber @bind-Value="detalle.Porcentaje_Descuento" @bind-Value:after="CalcularTotales" step="0.01" class="w-100" disabled="true" /></td>
+                                <td>@detalle.Precio_Venta_Total.ToString("C")</td>
+                                <td>
+                                    <button type="button" @onclick="() => Factura.Detalles.Remove(detalle)" class="btn-danger-small" title="Eliminar línea">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
                 
+                <button type="button" @onclick="AgregarDetalle" class="btn-add-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Agregar nueva línea
+                </button>
+            </div>
+
+            <div class="payment-section">
+                <div class="section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    Información de Pago
+                </div>
                 <div class="payment-grid">
                     <div class="form-group">
                         <label>Establecimiento *</label>
@@ -93,6 +108,26 @@
                         </InputSelect>
                     </div>
 
+                    @if (Factura.Forma_Pago == FormaPago.Tarjeta)
+                    {
+                        <div class="form-group">
+                            <label>Número de Tarjeta</label>
+                            <InputText @bind-Value="Factura.NumeroTarjeta" placeholder="XXXX-XXXX-XXXX-XXXX" />
+                        </div>
+                        <div class="form-group">
+                            <label>Titular</label>
+                            <InputText @bind-Value="Factura.TitularTarjeta" placeholder="Nombre como aparece en la tarjeta" />
+                        </div>
+                        <div class="form-group">
+                            <label>Vencimiento (MM/YY)</label>
+                            <InputText @bind-Value="Factura.FechaVencimiento" placeholder="MM/YY" />
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <InputText @bind-Value="Factura.CVV" placeholder="123" />
+                        </div>
+                    }
+
                     <div class="form-group">
                         <label>Valor de Pago (USD)</label>
                         <InputNumber @bind-Value="Factura.Valor_Pago" step="0.01" placeholder="0.00" />
@@ -113,8 +148,13 @@
             </div>
 
             <div class="form-actions">
-                <button type="button" class="action-btn secondary" @onclick="OnCancelar">Cancelar</button>
-                <button type="submit" class="action-btn primary-btn">Guardar y Enviar</button>
+                <button type="button" class="action-btn secondary" @onclick="OnCancelar">
+                    Cancelar
+                </button>
+                <button type="submit" class="action-btn primary-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    Guardar y Enviar
+                </button>
             </div>
         </div>
     </EditForm>
@@ -126,10 +166,12 @@
     [Parameter] public EventCallback OnCancelar { get; set; }
 
     private List<Models.Cliente> clientes = new();
+    private List<Models.Producto> productos = new();
 
     protected override async Task OnInitializedAsync()
     {
         clientes = await ClienteService.GetClientesAsync();
+        productos = await ProductoService.GetProductosAsync();
     }
 
     private void AgregarDetalle()
@@ -139,7 +181,6 @@
 
     private void OnClienteChanged()
     {
-        // Update ClienteNombre when Id_Cli_Per changes
         var clienteSeleccionado = clientes.FirstOrDefault(c => c.Id_Cli == Factura.Id_Cli_Per);
         if (clienteSeleccionado != null)
         {
@@ -147,11 +188,55 @@
         }
     }
 
-    private void CalcularTotales()
+    private async Task OnProductoSeleccionado(DetalleFactura detalle)
     {
-        Factura.Tot_Fac_Sin_IVA = Factura.Detalles.Sum(d => d.Precio_Venta_Total);
+        var prod = productos.FirstOrDefault(p => p.Id_Pro == detalle.Id_Pro_Per);
+        if (prod != null)
+        {
+            detalle.Precio_Venta_Unit = prod.Precio_Venta;
+            
+            // Assign Lote (First available)
+            var lote = prod.Lotes?.FirstOrDefault(l => l.Cantidad_Disponible > 0);
+            if (lote != null)
+            {
+                detalle.Id_Lote_Per = lote.Id_Lote;
+            }
+            else
+            {
+                detalle.Id_Lote_Per = 0;
+            }
+            
+            var desc = await DescuentoService.GetDescuentoActivoAsync(prod.Id_Pro);
+            detalle.Porcentaje_Descuento = desc?.Porcentaje ?? 0;
+            await CalcularTotales();
+        }
+    }
+
+    private async Task CalcularTotales()
+    {
+        // Calculate subtotal without discounts
+        var subtotalSinDescuento = Factura.Detalles.Sum(d => d.Cantidad_Comprada * d.Precio_Venta_Unit);
+        
+        // Calculate total discounts
+        decimal totalDescuentos = 0m;
+        foreach (var detalle in Factura.Detalles)
+        {
+            var prod = productos.FirstOrDefault(p => p.Id_Pro == detalle.Id_Pro_Per);
+            if (prod != null)
+            {
+                totalDescuentos += (detalle.Cantidad_Comprada * detalle.Precio_Venta_Unit) * (detalle.Porcentaje_Descuento / 100m);
+            }
+        }
+        
+        Factura.Tot_Descuento = totalDescuentos;
+        Factura.Tot_Fac_Sin_IVA = subtotalSinDescuento - totalDescuentos;
         Factura.IVA_Fac = Factura.Tot_Fac_Sin_IVA * 0.12m;
         Factura.Tot_Fac_Con_IVA = Factura.Tot_Fac_Sin_IVA + Factura.IVA_Fac;
-        OnGuardar.InvokeAsync();
+    }
+
+    private async Task GuardarFactura()
+    {
+        await CalcularTotales();
+        await OnGuardar.InvokeAsync();
     }
 }
