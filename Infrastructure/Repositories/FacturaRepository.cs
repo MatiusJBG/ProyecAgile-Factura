@@ -27,6 +27,7 @@ namespace Infrastructure.Repositories
             return await _dbSet
                 .Include(f => f.Cliente)
                 .Include(f => f.Detalles)
+                    .ThenInclude(d => d.Producto)
                 .ToListAsync();
         }
 

@@ -18,6 +18,7 @@ namespace Infrastructure.Data
         public DbSet<Precio> Precios { get; set; }
         public DbSet<Auditoria> Auditorias { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<DescuentoProducto> DescuentosProductos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -247,6 +248,30 @@ namespace Infrastructure.Data
                 entity.Property(e => e.Contrasena_Usu)
                     .IsRequired()
                     .HasMaxLength(255);
+            });
+
+            // Configuración de DescuentoProducto
+            modelBuilder.Entity<DescuentoProducto>(entity =>
+            {
+                entity.ToTable("descuentos_producto");
+                entity.HasKey(e => e.Id_Desc);
+
+                entity.Property(e => e.Porcentaje)
+                    .HasPrecision(5, 2)
+                    .IsRequired();
+
+                entity.Property(e => e.Motivo)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.FechaInicio)
+                    .IsRequired();
+
+                // Relación con Producto
+                entity.HasOne(e => e.Producto)
+                    .WithMany(p => p.Descuentos)
+                    .HasForeignKey(e => e.Id_Pro_Per)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
