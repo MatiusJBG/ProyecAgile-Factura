@@ -13,5 +13,6 @@ namespace Core.Entities
         public ICollection<Precio> Precios { get; set; } = new List<Precio>();
         public ICollection<DetalleFactura> DetallesFactura { get; set; } = new List<DetalleFactura>();
         public ICollection<Auditoria> Auditorias { get; set; } = new List<Auditoria>();
+        public ICollection<DescuentoProducto> Descuentos { get; set; } = new List<DescuentoProducto>();
     }
 }

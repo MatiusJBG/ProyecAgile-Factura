@@ -1,0 +1,271 @@
+@page "/certificados"
+@using UI_Blazor.Client.Services
+@using UI_Blazor.Client.Models
+@inject ICertificadoService CertificadoService
+@inject IJSRuntime JS
+@inject IConfiguration Configuration
+
+<div class="container-fluid">
+    <h2 class="page-title">🔐 Gestión de Certificados Digitales</h2>
+
+    <!-- Botón para subir nuevo certificado -->
+    <div class="mb-4">
+        <button class="btn btn-primary" @onclick="MostrarModalSubir">
+            <i class="bi bi-upload"></i> Subir Nuevo Certificado
+        </button>
+    </div>
+
+    <!-- Certificado Activo -->
+    @if (certificadoActivo != null)
+    {
+        <div class="alert alert-success mb-4">
+            <h5><i class="bi bi-check-circle"></i> Certificado Activo</h5>
+            <p><strong>Nombre:</strong> @certificadoActivo.Nombre</p>
+            <p><strong>Emisor:</strong> @certificadoActivo.Emisor</p>
+            <p><strong>Expira:</strong> @certificadoActivo.Fecha_Expiracion.ToString("dd/MM/yyyy")</p>
+            @if (certificadoActivo.DiasParaExpirar < 30)
+            {
+                <p class="text-warning"><i class="bi bi-exclamation-triangle"></i> Expira en @certificadoActivo.DiasParaExpirar días</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning mb-4">
+            <i class="bi bi-exclamation-triangle"></i> No hay certificado activo. Por favor, sube y activa un certificado para poder firmar facturas.
+        </div>
+    }
+
+    <!-- Lista de certificados -->
+    <div class="card">
+        <div class="card-header">
+            <h5>Certificados Disponibles</h5>
+        </div>
+        <div class="card-body">
+            @if (certificados == null)
+            {
+                <p>Cargando certificados...</p>
+            }
+            else if (!certificados.Any())
+            {
+                <p>No hay certificados registrados.</p>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Emisor</th>
+                            <th>Fecha Emisión</th>
+                            <th>Fecha Expiración</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cert in certificados)
+                        {
+                            <tr class="@(cert.Activo ? "table-success" : "")">
+                                <td>@cert.Nombre</td>
+                                <td>@cert.Emisor</td>
+                                <td>@cert.Fecha_Emision.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @cert.Fecha_Expiracion.ToString("dd/MM/yyyy")
+                                    @if (cert.EstaExpirado)
+                                    {
+                                        <span class="badge bg-danger">Expirado</span>
+                                    }
+                                    else if (cert.DiasParaExpirar < 30)
+                                    {
+                                        <span class="badge bg-warning">Por expirar</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (cert.Activo)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!cert.Activo && !cert.EstaExpirado)
+                                    {
+                                        <button class="btn btn-sm btn-success" @onclick="() => ActivarCertificado(cert.Id_Cert)">
+                                            Activar
+                                        </button>
+                                    }
+                                    @if (!cert.Activo)
+                                    {
+                                        <button class="btn btn-sm btn-danger" @onclick="() => EliminarCertificado(cert.Id_Cert)">
+                                            Eliminar
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <!-- Modal para subir certificado -->
+    @if (mostrarModal)
+    {
+        <div class="modal show d-block" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Subir Certificado Digital</h5>
+                        <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Certificado</label>
+                            <input type="text" class="form-control" @bind="nombreCertificado" placeholder="Ej: Certificado Empresa 2025" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Archivo (.pfx o .p12)</label>
+                            <InputFile OnChange="OnFileSelected" class="form-control" accept=".pfx,.p12" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña del Certificado</label>
+                            <input type="password" class="form-control" @bind="passwordCertificado" />
+                        </div>
+                        @if (!string.IsNullOrEmpty(mensajeError))
+                        {
+                            <div class="alert alert-danger">@mensajeError</div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" @onclick="SubirCertificado" disabled="@subiendoCertificado">
+                            @if (subiendoCertificado)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Subir Certificado
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop show"></div>
+    }
+</div>
+
+@code {
+    private List<CertificadoDigital>? certificados;
+    private CertificadoDigital? certificadoActivo;
+    private bool mostrarModal = false;
+    private string nombreCertificado = "";
+    private string passwordCertificado = "";
+    private string mensajeError = "";
+    private bool subiendoCertificado = false;
+    private IBrowserFile? archivoSeleccionado;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarCertificados();
+    }
+
+    private async Task CargarCertificados()
+    {
+        certificados = await CertificadoService.GetAllCertificadosAsync();
+        certificadoActivo = await CertificadoService.GetCertificadoActivoAsync();
+    }
+
+    private void MostrarModalSubir()
+    {
+        mostrarModal = true;
+        nombreCertificado = "";
+        passwordCertificado = "";
+        mensajeError = "";
+        archivoSeleccionado = null;
+    }
+
+    private void CerrarModal()
+    {
+        mostrarModal = false;
+    }
+
+    private void OnFileSelected(InputFileChangeEventArgs e)
+    {
+        archivoSeleccionado = e.File;
+    }
+
+    private async Task SubirCertificado()
+    {
+        mensajeError = "";
+
+        if (archivoSeleccionado == null)
+        {
+            mensajeError = "Debe seleccionar un archivo";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(nombreCertificado))
+        {
+            mensajeError = "Debe ingresar un nombre para el certificado";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(passwordCertificado))
+        {
+            mensajeError = "Debe ingresar la contraseña del certificado";
+            return;
+        }
+
+        try
+        {
+            subiendoCertificado = true;
+            await CertificadoService.SubirCertificadoAsync(archivoSeleccionado, passwordCertificado, nombreCertificado);
+            await CargarCertificados();
+            CerrarModal();
+            await JS.InvokeVoidAsync("alert", "Certificado subido correctamente");
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al subir certificado: {ex.Message}";
+        }
+        finally
+        {
+            subiendoCertificado = false;
+        }
+    }
+
+    private async Task ActivarCertificado(int idCertificado)
+    {
+        try
+        {
+            await CertificadoService.ActivarCertificadoAsync(idCertificado);
+            await CargarCertificados();
+            await JS.InvokeVoidAsync("alert", "Certificado activado correctamente");
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"Error al activar certificado: {ex.Message}");
+        }
+    }
+
+    private async Task EliminarCertificado(int idCertificado)
+    {
+        bool confirmado = await JS.InvokeAsync<bool>("confirm", "¿Está seguro de eliminar este certificado?");
+        if (!confirmado) return;
+
+        try
+        {
+            await CertificadoService.EliminarCertificadoAsync(idCertificado);
+            await CargarCertificados();
+            await JS.InvokeVoidAsync("alert", "Certificado eliminado correctamente");
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"Error al eliminar certificado: {ex.Message}");
+        }
+    }
+}

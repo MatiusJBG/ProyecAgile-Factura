@@ -4,7 +4,7 @@
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
-<PageTitle>Iniciar Sesión | Sistema de Facturación</PageTitle>
+<PageTitle>Iniciar Sesión</PageTitle>
 
 <div class="login-container">
     <div class="login-box">
@@ -14,6 +14,13 @@
         {
             <div class="alert alert-danger">
                 @errorMessage
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(lockoutMessage))
+        {
+            <div class="alert alert-warning">
+                @lockoutMessage
             </div>
         }
 
@@ -27,7 +34,7 @@
             <input id="password" type="password" class="form-control" @bind="password" placeholder="Ingrese su contraseña" />
         </div>
 
-        <button class="btn-login" @onclick="HandleLogin" disabled="@isLoading">
+        <button class="btn-login" @onclick="HandleLogin" disabled="@(isLoading || (lockoutEndTime.HasValue && lockoutEndTime.Value > DateTime.Now))">
             @if (isLoading)
             {
                 <span>Cargando...</span>
@@ -40,104 +47,61 @@
     </div>
 </div>
 
-<style>
-    .login-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #f3f4f6;
-    }
-
-    .login-box {
-        background: white;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 400px;
-    }
-
-    .login-title {
-        text-align: center;
-        margin-bottom: 1.5rem;
-        color: #1f2937;
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #4b5563;
-        font-weight: 500;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #d1d5db;
-        border-radius: 4px;
-        font-size: 1rem;
-        box-sizing: border-box;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: #2563eb;
-        ring: 2px solid #93c5fd;
-    }
-
-    .btn-login {
-        width: 100%;
-        padding: 0.75rem;
-        background-color: #2563eb;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        margin-top: 1rem;
-    }
-
-    .btn-login:hover {
-        background-color: #1d4ed8;
-    }
-
-    .btn-login:disabled {
-        background-color: #93c5fd;
-        cursor: not-allowed;
-    }
-
-    .alert-danger {
-        background-color: #fee2e2;
-        color: #b91c1c;
-        padding: 0.75rem;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-        text-align: center;
-        border: 1px solid #fca5a5;
-    }
-</style>
-
 @code {
     private string username = "";
     private string password = "";
     private string? errorMessage;
     private bool isLoading = false;
+    private DateTime? lockoutEndTime;
+    private string? lockoutMessage;
+    private System.Threading.Timer? timer;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (AuthService.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/");
+            return;
         }
+
+        await CheckLockoutState();
+    }
+
+    private async Task CheckLockoutState()
+    {
+        lockoutEndTime = await AuthService.GetLockoutEndTimeAsync();
+        if (lockoutEndTime.HasValue && lockoutEndTime.Value > DateTime.Now)
+        {
+            StartCountdown();
+        }
+        else
+        {
+            lockoutMessage = null;
+            timer?.Dispose();
+            timer = null;
+        }
+    }
+
+    private void StartCountdown()
+    {
+        timer?.Dispose();
+        timer = new System.Threading.Timer(async _ =>
+        {
+            if (lockoutEndTime.HasValue && lockoutEndTime.Value > DateTime.Now)
+            {
+                var remaining = lockoutEndTime.Value - DateTime.Now;
+                lockoutMessage = $"Demasiados intentos fallidos. Intente nuevamente en {remaining.Seconds} segundos.";
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                lockoutMessage = null;
+                lockoutEndTime = null;
+                timer?.Dispose();
+                timer = null;
+                await InvokeAsync(StateHasChanged);
+            }
+        }, null, 0, 1000);
     }
 
     private async Task HandleLogin()
@@ -147,6 +111,12 @@
 
         try
         {
+            // Double check before calling service
+            if (lockoutEndTime.HasValue && lockoutEndTime.Value > DateTime.Now)
+            {
+                return;
+            }
+
             var result = await AuthService.LoginAsync(username, password);
             if (result)
             {
@@ -154,7 +124,17 @@
             }
             else
             {
-                errorMessage = "Usuario o contraseña incorrectos";
+                // Check if we are now locked out
+                await CheckLockoutState();
+                
+                if (lockoutEndTime.HasValue && lockoutEndTime.Value > DateTime.Now)
+                {
+                    // Lockout message is handled by timer/CheckLockoutState
+                }
+                else
+                {
+                    errorMessage = "Usuario o contraseña incorrectos";
+                }
             }
         }
         catch (Exception ex)
@@ -166,5 +146,10 @@
         {
             isLoading = false;
         }
+    }
+    
+    public void Dispose()
+    {
+        timer?.Dispose();
     }
 }

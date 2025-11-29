@@ -29,6 +29,7 @@ namespace UI_Blazor.Client.Models
         public DateTime Fec_Fac { get; set; } = DateTime.Today;
         public int Id_Cli_Per { get; set; }
         public decimal Tot_Fac_Sin_IVA { get; set; }
+        public decimal Tot_Descuento { get; set; } // Nuevo campo para total descuentos
         public decimal IVA_Fac { get; set; }
         public decimal Tot_Fac_Con_IVA { get; set; }
 
@@ -53,6 +54,12 @@ namespace UI_Blazor.Client.Models
         // Valor y plazo de pago
         public decimal Valor_Pago { get; set; }
         public int Plazo_Pago_Dias { get; set; }
+
+        // Datos de Tarjeta (Solo UI por ahora)
+        public string NumeroTarjeta { get; set; } = string.Empty;
+        public string TitularTarjeta { get; set; } = string.Empty;
+        public string FechaVencimiento { get; set; } = string.Empty;
+        public string CVV { get; set; } = string.Empty;
     }
 
     public class DetalleFactura
@@ -63,7 +70,12 @@ namespace UI_Blazor.Client.Models
         public int Id_Pro_Per { get; set; }
         public int Cantidad_Comprada { get; set; }
         public decimal Precio_Venta_Unit { get; set; }
-        public decimal Precio_Venta_Total => Cantidad_Comprada * Precio_Venta_Unit;
+        
+        // Descuentos
+        public decimal Porcentaje_Descuento { get; set; }
+        public decimal Monto_Descuento => (Cantidad_Comprada * Precio_Venta_Unit) * (Porcentaje_Descuento / 100m);
+        
+        public decimal Precio_Venta_Total => (Cantidad_Comprada * Precio_Venta_Unit) - Monto_Descuento;
 
         // Para display (poblado por backend)
         public string ProductoNombre { get; set; } = string.Empty;
