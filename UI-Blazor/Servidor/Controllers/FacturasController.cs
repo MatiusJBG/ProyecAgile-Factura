@@ -54,8 +54,17 @@ namespace UI_Blazor.Servidor.Controllers
         [HttpPost]
         public async Task<ActionResult<FacturaDto>> CreateFactura([FromBody] FacturaDto facturaDto)
         {
+            _logger.LogInformation("Recibida solicitud POST para crear factura. Cliente: {ClienteId}, Total: {Total}", 
+                facturaDto?.Id_Cli_Per, facturaDto?.Tot_Fac_Con_IVA);
+
             try
             {
+                if (facturaDto == null)
+                {
+                    _logger.LogWarning("El cuerpo de la solicitud es nulo");
+                    return BadRequest("El cuerpo de la solicitud no puede ser nulo");
+                }
+
                 var creada = await _facturaService.CreateFacturaAsync(facturaDto);
                 return CreatedAtAction(nameof(GetFactura), new { id = creada.Id_Fac }, creada);
             }
@@ -72,6 +81,12 @@ namespace UI_Blazor.Servidor.Controllers
                 _logger.LogError(ex, "Error al crear factura");
                 return StatusCode(500, "Error interno del servidor");
             }
+        }
+
+        [HttpPost("test")]
+        public IActionResult TestPost()
+        {
+            return Ok("POST funciona correctamente");
         }
 
         [HttpPut("{id}")]

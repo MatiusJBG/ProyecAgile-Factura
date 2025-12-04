@@ -88,6 +88,10 @@ namespace Infrastructure.Services
             // Guardar archivo
             await File.WriteAllBytesAsync(rutaCompleta, archivoBytes);
 
+            // Guardar contraseña en archivo adjunto (solución temporal para persistencia)
+            string rutaPassword = Path.ChangeExtension(rutaCompleta, ".pass");
+            await File.WriteAllTextAsync(rutaPassword, password);
+
             // Hash de la contraseña (para validación futura)
             string passwordHash = HashPassword(password);
 
@@ -169,8 +173,19 @@ namespace Infrastructure.Services
             if (!File.Exists(rutaCompleta))
                 throw new Exception("Archivo de certificado no encontrado");
 
-            // Obtener la contraseña del certificado desde configuración (si está configurada)
-            string password = _configuration["FirmaElectronica:CertPassword"] ?? "";
+            // Intentar leer la contraseña del archivo .pass
+            string password = "";
+            string rutaPassword = Path.ChangeExtension(rutaCompleta, ".pass");
+            
+            if (File.Exists(rutaPassword))
+            {
+                password = await File.ReadAllTextAsync(rutaPassword);
+            }
+            else
+            {
+                // Fallback a configuración si no existe archivo de contraseña
+                password = _configuration["FirmaElectronica:CertPassword"] ?? "";
+            }
 
             // Cargar el certificado con flags que permiten la exportación y uso de la clave privada
             return new X509Certificate2(rutaCompleta, password, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.MachineKeySet);

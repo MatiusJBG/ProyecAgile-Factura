@@ -7,8 +7,10 @@ namespace UI_Blazor.Client.Services
     {
         Task<List<Producto>> GetProductosAsync();
         Task<Producto?> GetProductoByIdAsync(int id);
+        Task<Producto?> GetProductoByNombreAsync(string nombre);
         Task<Producto> CreateProductoAsync(Producto producto);
         Task UpdateProductoAsync(Producto producto);
+        Task AddLoteAsync(int productoId, Lote lote);
         Task DeleteProductoAsync(int id);
     }
 
@@ -44,6 +46,19 @@ namespace UI_Blazor.Client.Services
             }
         }
 
+        public async Task<Producto?> GetProductoByNombreAsync(string nombre)
+        {
+            try
+            {
+                var productos = await GetProductosAsync();
+                return productos.FirstOrDefault(p => p.Nom_Pro.Equals(nombre, StringComparison.OrdinalIgnoreCase));
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public async Task<Producto> CreateProductoAsync(Producto producto)
         {
             var response = await _http.PostAsJsonAsync(BaseUrl, producto);
@@ -54,6 +69,12 @@ namespace UI_Blazor.Client.Services
         public async Task UpdateProductoAsync(Producto producto)
         {
             var response = await _http.PutAsJsonAsync($"{BaseUrl}/{producto.Id_Pro}", producto);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task AddLoteAsync(int productoId, Lote lote)
+        {
+            var response = await _http.PostAsJsonAsync($"{BaseUrl}/{productoId}/lotes", lote);
             response.EnsureSuccessStatusCode();
         }
 

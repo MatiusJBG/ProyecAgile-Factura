@@ -12,7 +12,7 @@
         <p class="form-subtitle">Complete la información para generar una nueva factura electrónica.</p>
     </div>
 
-    <EditForm Model="@Factura" OnValidSubmit="CalcularTotales">
+    <EditForm Model="@Factura" OnValidSubmit="OnSubmit">
         <DataAnnotationsValidator />
         
         <div class="form-sections">
@@ -77,8 +77,8 @@
                                             }
                                         </InputSelect>
                                     </td>
-                                    <td><InputNumber @bind-Value="detalle.Cantidad_Comprada" @bind-Value:after="CalcularTotales" class="form-control text-center" /></td>
-                                    <td><InputNumber @bind-Value="detalle.Precio_Venta_Unit" @bind-Value:after="CalcularTotales" step="0.01" class="form-control text-end" /></td>
+                                    <td><InputNumber @bind-Value="detalle.Cantidad_Comprada" @bind-Value:after="CalcularTotales" class="form-control text-center" min="0" /></td>
+                                    <td><InputNumber @bind-Value="detalle.Precio_Venta_Unit" @bind-Value:after="CalcularTotales" step="0.01" class="form-control text-end" min="0" /></td>
                                     <td><InputNumber @bind-Value="detalle.Porcentaje_Descuento" @bind-Value:after="CalcularTotales" step="0.01" class="form-control text-end" disabled="true" /></td>
                                     <td class="text-end fw-bold">@detalle.Precio_Venta_Total.ToString("C")</td>
                                     <td class="text-center">
@@ -144,7 +144,7 @@
                         
                         <div class="form-group">
                             <label>Plazo (días)</label>
-                            <InputNumber @bind-Value="Factura.Plazo_Pago_Dias" placeholder="0" class="form-control" />
+                            <InputNumber @bind-Value="Factura.Plazo_Pago_Dias" placeholder="0" class="form-control" min="0" />
                         </div>
                     </div>
 
@@ -249,11 +249,23 @@
             detalle.Precio_Venta_Unit = prod.Precio_Venta;
             var desc = await DescuentoService.GetDescuentoActivoAsync(prod.Id_Pro);
             detalle.Porcentaje_Descuento = desc?.Porcentaje ?? 0;
-            await CalcularTotales();
+            
+            // ⭐ FIFO: Seleccionar el lote más antiguo con stock disponible
+            var loteDisponible = prod.Lotes?
+                .Where(l => l.Cantidad_Disponible > 0)
+                .OrderBy(l => l.Fec_Ent) // FIFO: Primero el más antiguo
+                .FirstOrDefault();
+            
+            if (loteDisponible != null)
+            {
+                detalle.Id_Lote_Per = loteDisponible.Id_Lote;
+            }
+            
+            CalcularTotales();
         }
     }
 
-    private async Task CalcularTotales()
+    private void CalcularTotales()
     {
         // Calculate subtotal without discounts
         var subtotalSinDescuento = Factura.Detalles.Sum(d => d.Cantidad_Comprada * d.Precio_Venta_Unit);
@@ -264,9 +276,8 @@
             var prod = productos.FirstOrDefault(p => p.Id_Pro == detalle.Id_Pro_Per);
             if (prod != null)
             {
-                var desc = await DescuentoService.GetDescuentoActivoAsync(prod.Id_Pro);
-                var perc = desc?.Porcentaje ?? 0;
-                detalle.Porcentaje_Descuento = perc;
+                // Note: We use the already assigned percentage
+                var perc = detalle.Porcentaje_Descuento;
                 totalDescuentos += (detalle.Cantidad_Comprada * detalle.Precio_Venta_Unit) * (perc / 100m);
             }
         }
@@ -274,6 +285,11 @@
         Factura.Tot_Fac_Sin_IVA = subtotalSinDescuento - totalDescuentos;
         Factura.IVA_Fac = Factura.Tot_Fac_Sin_IVA * 0.12m;
         Factura.Tot_Fac_Con_IVA = Factura.Tot_Fac_Sin_IVA + Factura.IVA_Fac;
+    }
+
+    private async Task OnSubmit()
+    {
+        CalcularTotales();
         await OnGuardar.InvokeAsync();
     }
 }
