@@ -42,28 +42,68 @@ namespace Application.Services
 
         public async Task<ProductoDto> CreateProductoAsync(ProductoConLoteDto productoDto)
         {
-            var producto = MapToEntity(productoDto);
-            var creado = await _productoRepository.AddAsync(producto);
+            // PASO 1: Verificar si ya existe un producto con el mismo nombre
+            var productoExistente = await _productoRepository.GetByNombreAsync(productoDto.Nom_Pro);
+            
+            Producto producto;
+            bool esProductoNuevo = productoExistente == null;
 
-            // Si viene información de lote, crearlo
+            if (productoExistente != null)
+            {
+                // El producto ya existe, vamos a agregar un nuevo lote
+                producto = productoExistente;
+                
+                // Actualizar información básica si cambió (tipo, marca, imagen)
+                bool productoModificado = false;
+                
+                if (!string.IsNullOrEmpty(productoDto.Tip_Pro) && producto.Tip_Pro != productoDto.Tip_Pro)
+                {
+                    producto.Tip_Pro = productoDto.Tip_Pro;
+                    productoModificado = true;
+                }
+                
+                if (!string.IsNullOrEmpty(productoDto.Marca) && producto.Marca != productoDto.Marca)
+                {
+                    producto.Marca = productoDto.Marca;
+                    productoModificado = true;
+                }
+                
+                if (!string.IsNullOrEmpty(productoDto.Imagen) && producto.Imagen != productoDto.Imagen)
+                {
+                    producto.Imagen = productoDto.Imagen;
+                    productoModificado = true;
+                }
+                
+                if (productoModificado)
+                {
+                    await _productoRepository.UpdateAsync(producto);
+                }
+            }
+            else
+            {
+                // Es un producto nuevo, crearlo
+                producto = MapToEntity(productoDto);
+                producto = await _productoRepository.AddAsync(producto);
+            }
+
+            // PASO 2: Agregar el nuevo lote con su propia fecha de entrada
             if (productoDto.Cantidad_Recibida.HasValue && productoDto.Precio_Unitario.HasValue)
             {
-                var lote = new Lote
+                var nuevoLote = new Lote
                 {
-                    Id_Pro_Per = creado.Id_Pro,
-                    Fec_Ent = productoDto.Fec_Ent ?? DateTime.Now,
+                    Id_Pro_Per = producto.Id_Pro,
+                    Fec_Ent = productoDto.Fec_Ent ?? DateTime.Now, // Mantener la fecha del nuevo lote
                     Fec_Exp = productoDto.Fec_Exp ?? DateTime.Now.AddMonths(1),
                     Cantidad_Recibida = productoDto.Cantidad_Recibida.Value,
                     Cantidad_Disponible = productoDto.Cantidad_Disponible ?? productoDto.Cantidad_Recibida.Value,
                     Precio_Unitario = productoDto.Precio_Unitario.Value,
-                    // Precio_Lote se calcula en base de datos o podemos calcularlo aquí si es necesario
                     Precio_Lote = productoDto.Cantidad_Recibida.Value * productoDto.Precio_Unitario.Value
                 };
                 
-                await _loteRepository.AddAsync(lote);
+                await _loteRepository.AddAsync(nuevoLote);
             }
 
-            // Si viene precio de venta, crearlo
+            // PASO 3: Actualizar o crear precio de venta
             if (productoDto.Precio_Venta.HasValue)
             {
                 // Validación: PVP no puede ser menor al Costo Unitario
@@ -72,23 +112,30 @@ namespace Application.Services
                     throw new ArgumentException($"El Precio de Venta (${productoDto.Precio_Venta.Value:N2}) no puede ser menor al Costo Unitario (${productoDto.Precio_Unitario.Value:N2})");
                 }
 
-                var precio = new Precio
+                // Obtener precio actual
+                var precioActual = await _precioRepository.GetCurrentPriceAsync(producto.Id_Pro);
+                
+                // Solo crear nuevo registro de precio si es diferente al actual
+                if (precioActual == null || precioActual.Precio_Venta != productoDto.Precio_Venta.Value)
                 {
-                    Id_Pro_Per = creado.Id_Pro,
-                    Precio_Venta = productoDto.Precio_Venta.Value,
-                    Fecha_Actualizacion = DateTime.Now,
-                    Motivo = "Precio Inicial"
-                };
-                await _precioRepository.AddAsync(precio);
+                    var precio = new Precio
+                    {
+                        Id_Pro_Per = producto.Id_Pro,
+                        Precio_Venta = productoDto.Precio_Venta.Value,
+                        Fecha_Actualizacion = DateTime.Now,
+                        Motivo = esProductoNuevo ? "Precio Inicial" : "Actualización por Nuevo Lote"
+                    };
+                    await _precioRepository.AddAsync(precio);
+                }
             }
 
-            // Recargar producto con sus lotes para devolver el DTO completo
-            var productoCompleto = await _productoRepository.GetByIdAsync(creado.Id_Pro);
+            // PASO 4: Recargar producto con sus lotes ordenados por FIFO
+            var productoCompleto = await _productoRepository.GetByIdAsync(producto.Id_Pro);
             
             // Obtener precio actual
-            var precioActual = await _precioRepository.GetCurrentPriceAsync(creado.Id_Pro);
+            var precioFinal = await _precioRepository.GetCurrentPriceAsync(producto.Id_Pro);
             
-            return MapToDto(productoCompleto!, precioActual);
+            return MapToDto(productoCompleto!, precioFinal);
         }
 
         public async Task UpdateProductoAsync(int id, ProductoDto productoDto)
@@ -182,6 +229,32 @@ namespace Application.Services
                 };
                 await _precioRepository.AddAsync(nuevoPrecio);
             }
+        }
+
+        public async Task AddLoteAsync(int productoId, LoteDto loteDto)
+        {
+            var producto = await _productoRepository.GetByIdAsync(productoId);
+            if (producto == null)
+            {
+                throw new KeyNotFoundException($"Producto con ID {productoId} no encontrado");
+            }
+
+            var nuevoLote = new Lote
+            {
+                Id_Pro_Per = productoId,
+                Fec_Ent = loteDto.Fec_Ent,
+                Fec_Exp = loteDto.Fec_Exp,
+                Cantidad_Recibida = loteDto.Cantidad_Recibida,
+                Cantidad_Disponible = loteDto.Cantidad_Disponible > 0 ? loteDto.Cantidad_Disponible : loteDto.Cantidad_Recibida,
+                Precio_Unitario = loteDto.Precio_Unitario,
+                Precio_Lote = loteDto.Cantidad_Recibida * loteDto.Precio_Unitario
+            };
+
+            await _loteRepository.AddAsync(nuevoLote);
+
+            // Actualizar precio de venta si es necesario (opcional, pero buena práctica verificar)
+            // Aquí podríamos implementar lógica para actualizar el precio del producto si el nuevo lote tiene un costo mayor
+            // Por ahora, mantenemos el precio existente a menos que se quiera forzar una actualización explícita.
         }
 
         public async Task DeleteProductoAsync(int id)

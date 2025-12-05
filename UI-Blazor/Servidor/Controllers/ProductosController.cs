@@ -85,6 +85,25 @@ namespace Servidor.Controllers
             }
         }
 
+        [HttpPost("{id}/lotes")]
+        public async Task<IActionResult> AddLote(int id, [FromBody] LoteDto loteDto)
+        {
+            try
+            {
+                await _productoService.AddLoteAsync(id, loteDto);
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al agregar lote al producto {Id}", id);
+                return StatusCode(500, "Error interno del servidor");
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProducto(int id)
         {

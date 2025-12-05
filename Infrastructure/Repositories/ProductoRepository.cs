@@ -24,5 +24,12 @@ namespace Infrastructure.Repositories
                 .Include(p => p.Lotes)
                 .FirstOrDefaultAsync(p => p.Id_Pro == id);
         }
+
+        public async Task<Producto?> GetByNombreAsync(string nombre)
+        {
+            return await _dbSet
+                .Include(p => p.Lotes)
+                .FirstOrDefaultAsync(p => p.Nom_Pro.ToLower() == nombre.ToLower());
+        }
     }
 }

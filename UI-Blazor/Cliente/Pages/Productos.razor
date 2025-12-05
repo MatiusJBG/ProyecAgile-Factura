@@ -5,6 +5,7 @@
 @using UI_Blazor.Client.Services
 @using Cliente.Components
 
+
 @inject IProductoService ProductoService
 @inject IDescuentoService DescuentoService
 @inject NavigationManager NavigationManager
@@ -113,6 +114,12 @@
                                     <button class="action-btn-icon delete" @onclick='() => EliminarProducto(producto.Id_Pro)' title="Eliminar">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-icon add-batch" @onclick='() => AgregarLote(producto.Id_Pro)' title="Agregar Lote">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                                         </svg>
                                     </button>
                                 </td>
@@ -439,6 +446,47 @@
             </div>
         </div>
     }
+
+    <!-- Modal Agregar Lote -->
+    @if (showAddBatchModal)
+    {
+        <div class="modal-overlay" @onclick="CerrarModalLote">
+            <div class="modal-content modal-edit" @onclick:stopPropagation>
+                <div class="modal-header">
+                    <h3>Agregar Lote a @productoParaLote?.Nom_Pro</h3>
+                    <button class="modal-close-btn" @onclick="CerrarModalLote">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-edit-grid">
+                        <div class="form-group">
+                            <label>Fecha de Entrada:</label>
+                            <input type="date" class="form-control" @bind="nuevoLote.Fec_Ent" />
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Expiración:</label>
+                            <input type="date" class="form-control" @bind="nuevoLote.Fec_Exp" />
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad Recibida:</label>
+                            <input type="number" class="form-control" @bind="nuevoLote.Cantidad_Recibida" min="1" />
+                        </div>
+                        <div class="form-group">
+                            <label>Costo Unitario:</label>
+                            <input type="number" step="0.01" class="form-control" @bind="nuevoLote.Precio_Unitario" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad Disponible (Inicial):</label>
+                            <input type="number" class="form-control" @bind="nuevoLote.Cantidad_Disponible" min="0" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" @onclick="CerrarModalLote">Cancelar</button>
+                    <button class="btn-primary" @onclick="GuardarLote">Guardar Lote</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
@@ -453,6 +501,11 @@
     private bool showEditModal = false;
     private Producto? productoParaVer;
     private Producto? productoParaEditar;
+    
+    // Variables para agregar lote
+    private bool showAddBatchModal = false;
+    private Producto? productoParaLote;
+    private Lote nuevoLote = new();
 
     // Variables para descuentos
     private Producto? productoSeleccionadoDescuento;
@@ -662,5 +715,53 @@
         }
         
         StateHasChanged();
+    }
+
+    private async Task AgregarLote(int id)
+    {
+        var producto = await ProductoService.GetProductoByIdAsync(id);
+        if (producto != null)
+        {
+            productoParaLote = producto;
+            nuevoLote = new Lote 
+            { 
+                Id_Pro_Per = id,
+                Fec_Ent = DateTime.Today,
+                Fec_Exp = DateTime.Today.AddMonths(1),
+                Cantidad_Recibida = 0,
+                Cantidad_Disponible = 0,
+                Precio_Unitario = 0
+            };
+            showAddBatchModal = true;
+        }
+    }
+
+    private void CerrarModalLote()
+    {
+        showAddBatchModal = false;
+        productoParaLote = null;
+    }
+
+    private async Task GuardarLote()
+    {
+        if (nuevoLote.Cantidad_Recibida <= 0)
+        {
+            // Validar
+            return;
+        }
+
+        // Si cantidad disponible es 0, asumir que es igual a la recibida
+        if (nuevoLote.Cantidad_Disponible == 0)
+        {
+            nuevoLote.Cantidad_Disponible = nuevoLote.Cantidad_Recibida;
+        }
+
+        await ProductoService.AddLoteAsync(nuevoLote.Id_Pro_Per, nuevoLote);
+        
+        // Recargar
+        productos = await ProductoService.GetProductosAsync();
+        ApplyFilters();
+        
+        CerrarModalLote();
     }
 }
