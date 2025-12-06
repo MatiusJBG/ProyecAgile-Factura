@@ -1,8 +1,12 @@
-using Application.Services;
-using Core.Interfaces;
+using Application.Services.Clientes;
+using Application.Services.Facturacion;
+using Application.Services.Inventario;
+using Application.Services.Auth;
+using Core.Interfaces.Clientes; using Core.Interfaces.Facturacion; using Core.Interfaces.Inventario; using Core.Interfaces.Auth; using Core.Interfaces.Certificados; using Core.Interfaces.Common;
 using Infrastructure.Data;
-using Infrastructure.Repositories;
-using Infrastructure.Services;
+using Infrastructure.Repositories.Clientes; using Infrastructure.Repositories.Facturacion; using Infrastructure.Repositories.Inventario; using Infrastructure.Repositories.Auth; using Infrastructure.Repositories.Certificados; using Infrastructure.Repositories.Common;
+using Infrastructure.Services.Facturacion; using Infrastructure.Services.Certificados; using Infrastructure.Services;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -26,16 +30,25 @@ builder.Services.AddScoped<ILoteRepository, LoteRepository>();
 builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
 builder.Services.AddScoped<IPrecioRepository, PrecioRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IDescuentoRepository, DescuentoRepository>();
+builder.Services.AddScoped<IFirmaElectronicaRepository, FirmaElectronicaRepository>();
+builder.Services.AddScoped<ICertificadoRepository, CertificadoRepository>();
 
 // Registrar servicios de aplicación
 builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<ProductoService>();
 builder.Services.AddScoped<LoteService>();
 builder.Services.AddScoped<FacturaService>();
+builder.Services.AddScoped<DescuentoService>();
+builder.Services.AddScoped<AuthService>();
 
-// Registrar servicios de firma electrónica
+// Registrar servicios de firma electrónica (de Infrastructure)
 builder.Services.AddScoped<IFirmaElectronicaService, FirmaElectronicaService>();
 builder.Services.AddScoped<ICertificadoService, CertificadoService>();
+
+// Registrar sistema de caché en archivos
+builder.Services.AddSingleton<IFileCacheService, FileCacheService>();
+builder.Services.AddHostedService<FileCacheWorker>();
 
 // Configurar JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "ClaveSecretaSuperSeguraParaDesarrollo12345";
@@ -71,6 +84,31 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Middleware de logging de errores global - AL INICIO
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "CRITICAL: Error no controlado en {Path}: {Message}", context.Request.Path, ex.Message);
+        // Devolver 500 JSON amigable si es API
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsJsonAsync(new { error = "Internal Server Error", details = ex.Message });
+        }
+        else 
+        {
+             throw; 
+        }
+    }
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -220,13 +258,24 @@ using (var scope = app.Services.CreateScope())
             if (!context.Usuarios.Any(u => u.Nom_Usu == "admin"))
             {
                 logger.LogInformation("Creando usuario admin por defecto...");
-                context.Usuarios.Add(new Core.Entities.Usuario { Nom_Usu = "admin", Contrasena_Usu = "admin" });
+                context.Usuarios.Add(new Core.Entities.Auth.Usuario { Nom_Usu = "admin", Contrasena_Usu = "admin" });
                 context.SaveChanges();
             }
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error al crear usuario admin.");
+        }
+
+        // Parche: Agregar columna Activo a Clientes si falta
+        try
+        {
+            logger.LogInformation("Intentando agregar columna Activo a Clientes...");
+            context.Database.ExecuteSqlRaw("ALTER TABLE clientes ADD COLUMN Activo tinyint(1) NOT NULL DEFAULT 1;");
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Error al agregar columna Activo a Clientes (probablemente ya existe).");
         }
     }
     catch (Exception ex)

@@ -1,0 +1,22 @@
+using Core.Enums.Clientes; using Core.Enums.Facturacion;
+
+namespace Application.DTOs.Cliente
+{    public class ClienteDto
+    {
+        public int Id_Cli { get; set; }
+        public TipoCliente Tipo_Cliente { get; set; }
+        public TipoDocumento Tipo_Documento { get; set; }
+        public string Num_Documento { get; set; } = string.Empty;
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string Direccion { get; set; } = string.Empty;
+        public string Correo { get; set; } = string.Empty;
+        public string Telefono { get; set; } = string.Empty;
+        public bool Activo { get; set; } = true;
+
+        // Propiedad calculada para UI
+        public string NombreCompleto => Tipo_Cliente == TipoCliente.EMPRESA 
+            ? Nombre 
+            : $"{Nombre} {Apellido}".Trim();
+    }
+}

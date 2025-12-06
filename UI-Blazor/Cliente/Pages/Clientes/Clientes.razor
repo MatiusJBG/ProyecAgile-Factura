@@ -1,0 +1,355 @@
+﻿@page "/clientes"
+@page "/clientes/lista"
+@attribute [Authorize]
+@using Cliente.Components 
+@using Application.DTOs.Cliente
+
+@inject IClienteService ClienteService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Clientes</PageTitle>
+
+<div class="clientes-page">
+    <!-- Header con navegación por pestañas -->
+    <div class="page-header">
+        <div class="header-title-section">
+            <h2 class="page-title">Gestión de Clientes</h2>
+            <p class="page-subtitle">Administra y visualiza todos tus clientes</p>
+        </div>
+        <div class="header-actions">
+            <button class="action-btn export-btn">
+                Exportar CSV
+            </button>
+            <button class="action-btn import-btn">
+                Importar
+            </button>
+        </div>
+    </div>
+
+    <!-- Navegación por pestañas -->
+    <div class="tabs-navigation">
+        <button class="tab-btn @(currentView == "lista" ? "active" : "")" @onclick='() => ChangeView("lista")'>
+            Lista General
+        </button>
+        <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>
+            Añadir Cliente
+        </button>
+    </div>
+
+    <!-- Contenido condicional según la vista -->
+    @if (currentView == "lista")
+    {
+        <div class="content-section">
+            <ClienteTable ClienteDtos="ClientesFiltrados"
+                OnEditClient="HandleEditClient"
+                OnDeleteClient="HandleDeleteClient"
+                OnViewClient="HandleViewClient"
+            />
+
+            @if (ClientesFiltrados.Any())
+            {
+                <div class="pagination-section">
+                    <div class="pagination-info">
+                        Mostrando <strong>@ClientesFiltrados.Count</strong> de <strong>@listaClientes.Count</strong> clientes
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else if (currentView == "nuevo")
+    {
+        <div class="content-section">
+            <ClienteForm 
+                ClienteDto="nuevoCliente" 
+                OnSave="HandleSubmitNuevoCliente" 
+                OnCancel='() => ChangeView("lista")' 
+            />
+        </div>
+    }
+
+    <!-- Modal Ver Cliente -->
+    @if (showViewModal)
+    {
+        <div class="modal-overlay" @onclick="CerrarModalVer">
+            <div class="modal-content" @onclick:stopPropagation>
+                <div class="modal-header">
+                    <h3>Detalles del Cliente</h3>
+                    <button class="modal-close-btn" @onclick="CerrarModalVer">×</button>
+                </div>
+                <div class="modal-body">
+                    @if (clienteParaVer != null)
+                    {
+                        <div class="cliente-detalle-grid">
+                            <div class="detalle-item">
+                                <label>ID:</label>
+                                <span>@clienteParaVer.Id_Cli</span>
+                            </div>
+                            <div class="detalle-item">
+                                <label>Nombre Completo:</label>
+                                <span>@clienteParaVer.NombreCompleto</span>
+                            </div>
+                            <div class="detalle-item">
+                                <label>Tipo de Cliente:</label>
+                                <span class="tipo-badge">@clienteParaVer.Tipo_Cliente</span>
+                            </div>
+                            <div class="detalle-item">
+                                <label>Tipo de Documento:</label>
+                                <span>@clienteParaVer.Tipo_Documento</span>
+                            </div>
+                            <div class="detalle-item">
+                                <label>Número de Documento:</label>
+                                <span>@clienteParaVer.Num_Documento</span>
+                            </div>
+                            <div class="detalle-item">
+                                <label>Teléfono:</label>
+                                <span>@clienteParaVer.Telefono</span>
+                            </div>
+                            <div class="detalle-item full-width">
+                                <label>Correo Electrónico:</label>
+                                <span>@clienteParaVer.Correo</span>
+                            </div>
+                            <div class="detalle-item full-width">
+                                <label>Dirección:</label>
+                                <span>@clienteParaVer.Direccion</span>
+                            </div>
+                            <div class="detalle-item">
+                                <label>Estado:</label>
+                                <span class="status-badge @(clienteParaVer.Activo ? "activo" : "inactivo")">
+                                    @(clienteParaVer.Activo ? "Activo" : "Inactivo")
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" @onclick="CerrarModalVer">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Modal Cambiar Estado del Cliente -->
+    @if (showEditModal)
+    {
+        <div class="modal-overlay" @onclick="CerrarModalEditar">
+            <div class="modal-content modal-edit-small" @onclick:stopPropagation>
+                <div class="modal-header">
+                    <h3>Cambiar Estado del Cliente</h3>
+                    <button class="modal-close-btn" @onclick="CerrarModalEditar">×</button>
+                </div>
+                <div class="modal-body">
+                    @if (clienteParaEditar != null)
+                    {
+                        <div class="form-edit-simple">
+                            <div class="cliente-info-display">
+                                <div class="info-row">
+                                    <label>Cliente:</label>
+                                    <span class="cliente-nombre">@clienteParaEditar.NombreCompleto</span>
+                                </div>
+                                <div class="info-row">
+                                    <label>Documento:</label>
+                                    <span>@clienteParaEditar.Tipo_Documento - @clienteParaEditar.Num_Documento</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group-estado">
+                                <label>Estado del Cliente:</label>
+                                <div class="estado-options">
+                                    <label class="radio-option @(clienteParaEditar.Activo ? "selected" : "")">
+                                        <input type="radio" name="estado" checked="@clienteParaEditar.Activo" @onchange="@(() => clienteParaEditar.Activo = true)" />
+                                        <span class="radio-label">
+                                            <span class="status-icon activo">?</span>
+                                            Activo
+                                        </span>
+                                    </label>
+                                    <label class="radio-option @(!clienteParaEditar.Activo ? "selected" : "")">
+                                        <input type="radio" name="estado" checked="@(!clienteParaEditar.Activo)" @onchange="@(() => clienteParaEditar.Activo = false)" />
+                                        <span class="radio-label">
+                                            <span class="status-icon inactivo">?</span>
+                                            Inactivo
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" @onclick="CerrarModalEditar">Cancelar</button>
+                    <button class="btn-primary" @onclick="GuardarEdicion">Guardar Estado</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<ClienteDto> listaClientes { get; set; } = new();
+    private List<ClienteDto> ClientesFiltrados { get; set; } = new();
+    private string searchTerm = string.Empty;
+    private TipoCliente? filterTipo = null;
+    private bool? filterStatus = true; // Default to Active
+    private string currentView = "lista";
+    
+    private ClienteDto nuevoCliente = new ClienteDto 
+    { 
+        Tipo_Cliente = TipoCliente.PERSONA,
+        Tipo_Documento = TipoDocumento.CEDULA
+    };
+
+    // Variables para modales
+    private bool showViewModal = false;
+    private bool showEditModal = false;
+    private ClienteDto? clienteParaVer;
+    private ClienteDto? clienteParaEditar;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadClienteDtos();
+    }
+
+    private async Task LoadClienteDtos()
+    {
+        listaClientes = await ClienteService.GetClientesAsync();
+        ApplyFilters();
+    }
+
+    private void ChangeView(string view)
+    {
+        currentView = view;
+        if (view == "nuevo")
+        {
+            nuevoCliente = new ClienteDto 
+            { 
+                Tipo_Cliente = TipoCliente.PERSONA,
+                Tipo_Documento = TipoDocumento.CEDULA
+            };
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        var tempClienteDtos = listaClientes.AsEnumerable();
+        
+        if (filterStatus.HasValue)
+        {
+            tempClienteDtos = tempClienteDtos.Where(c => c.Activo == filterStatus.Value);
+        }
+
+        if (filterTipo.HasValue)
+        {
+            tempClienteDtos = tempClienteDtos.Where(c => c.Tipo_Cliente == filterTipo.Value);
+        }
+        
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            tempClienteDtos = FilterBySearchTerm(tempClienteDtos.ToList(), searchTerm);
+        }
+        
+        ClientesFiltrados = tempClienteDtos.ToList();
+    }
+
+    private List<ClienteDto> FilterBySearchTerm(List<ClienteDto> source, string term)
+    {
+        if (string.IsNullOrWhiteSpace(term))
+        {
+            return source;
+        }
+
+        string normalizedTerm = term.Trim().ToLowerInvariant();
+
+        return source.Where(c => 
+            c.Nombre.ToLowerInvariant().Contains(normalizedTerm) ||
+            c.Apellido.ToLowerInvariant().Contains(normalizedTerm) ||
+            c.Num_Documento.Contains(normalizedTerm) ||
+            c.Telefono.Contains(normalizedTerm) ||
+            c.Correo.ToLowerInvariant().Contains(normalizedTerm)
+        ).ToList();
+    }
+
+    private void HandleSearchChanged(string newSearchTerm)
+    {
+        searchTerm = newSearchTerm;
+        ApplyFilters();
+    }
+
+    private void HandleFilterByTipoChanged(TipoCliente? newFilter)
+    {
+        filterTipo = newFilter;
+        ApplyFilters();
+    }
+
+    private void HandleFilterByStatusChanged(bool? newStatus)
+    {
+        filterStatus = newStatus;
+        ApplyFilters();
+    }
+
+    private async Task HandleSubmitNuevoCliente()
+    {
+        await ClienteService.CreateClienteAsync(nuevoCliente);
+        await LoadClienteDtos();
+        ChangeView("lista");
+        Console.WriteLine($"ClienteDto guardado: {nuevoCliente.NombreCompleto}");
+    }
+
+    private async Task HandleViewClient(int clientId)
+    {
+        var cliente = await ClienteService.GetClienteByIdAsync(clientId);
+        if (cliente != null)
+        {
+            clienteParaVer = cliente;
+            showViewModal = true;
+        }
+    }
+    
+    private async Task HandleEditClient(int clientId)
+    {
+        var cliente = await ClienteService.GetClienteByIdAsync(clientId);
+        if (cliente != null)
+        {
+            // Crear una copia para no modificar el original hasta guardar
+            clienteParaEditar = new ClienteDto
+            {
+                Id_Cli = cliente.Id_Cli,
+                Tipo_Cliente = cliente.Tipo_Cliente,
+                Tipo_Documento = cliente.Tipo_Documento,
+                Num_Documento = cliente.Num_Documento,
+                Nombre = cliente.Nombre,
+                Apellido = cliente.Apellido,
+                Direccion = cliente.Direccion,
+                Correo = cliente.Correo,
+                Telefono = cliente.Telefono,
+                Activo = cliente.Activo
+            };
+            showEditModal = true;
+        }
+    }
+
+    private void HandleDeleteClient(int clientId)
+    {
+        Console.WriteLine($"Eliminar cliente: {clientId}");
+    }
+
+    private void CerrarModalVer()
+    {
+        showViewModal = false;
+        clienteParaVer = null;
+    }
+
+    private void CerrarModalEditar()
+    {
+        showEditModal = false;
+        clienteParaEditar = null;
+    }
+
+    private async Task GuardarEdicion()
+    {
+        if (clienteParaEditar != null)
+        {
+            await ClienteService.UpdateClienteAsync(clienteParaEditar);
+            await LoadClienteDtos();
+            CerrarModalEditar();
+        }
+    }
+}

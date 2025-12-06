@@ -1,0 +1,259 @@
+
+
+<div class="form-container">
+    <div class="form-header">
+        <h3 class="form-title">@Title</h3>
+        <p class="form-subtitle">@Subtitle</p>
+    </div>
+
+    <form class="client-form" @onsubmit="HandleSubmit">
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label">Tipo de ClienteDto *</label>
+                <select class="form-control" @bind="ClienteDto.Tipo_Cliente">
+                    <option value="@TipoCliente.PERSONA">Persona Natural (CI)</option>
+                    <option value="@TipoCliente.EMPRESA">Empresa (RUC)</option>
+                    <option value="@TipoCliente.EXTRANJERO">Extranjero (Pasaporte)</option>
+                </select>
+            </div>
+
+            @if (ClienteDto.Tipo_Cliente == TipoCliente.EMPRESA)
+            {
+                <div class="form-group full-width">
+                    <label class="form-label">Razón Social / Nombre Comercial *</label>
+                    <input type="text" class="form-control" @bind="ClienteDto.Nombre" placeholder="Ej: Distribuciones XYZ S.A." required />
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="form-label">Nombres *</label>
+                    <input type="text" class="form-control" @bind="ClienteDto.Nombre" placeholder="Ej: Juan Carlos" required />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Apellidos *</label>
+                    <input type="text" class="form-control" @bind="ClienteDto.Apellido" placeholder="Ej: Pérez García" required />
+                </div>
+            }
+
+            <div class="form-group">
+                <label class="form-label">Tipo de Documento *</label>
+                <select class="form-control" @bind="SelectedTipoDocumento">
+                    <option value="@TipoDocumento.CEDULA">Cédula</option>
+                    <option value="@TipoDocumento.RUC">RUC</option>
+                    <option value="@TipoDocumento.PASAPORTE">Pasaporte</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Número de Identificación *</label>
+                <input type="text" class="form-control @(!isDocumentValid ? "is-invalid" : "")" 
+                       @bind-value="DocumentoInput" @bind-value:event="oninput"
+                       placeholder="@GetPlaceholderIdentificacion()" required />
+                @if (!string.IsNullOrEmpty(validationMessage))
+                {
+                    <div class="text-danger small mt-1">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        @validationMessage
+                    </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Dirección</label>
+                <input type="text" class="form-control" @bind="ClienteDto.Direccion" placeholder="Ej: Av. Principal 123" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email *</label>
+                <input type="email" class="form-control" @bind="ClienteDto.Correo" placeholder="ejemplo@correo.com" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Teléfono *</label>
+                <input type="tel" class="form-control @(!isPhoneValid ? "is-invalid" : "")" 
+                       @bind-value="TelefonoInput" @bind-value:event="oninput"
+                       placeholder="0991234567" required />
+                @if (!string.IsNullOrEmpty(phoneValidationMessage))
+                {
+                    <div class="text-danger small mt-1">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        @phoneValidationMessage
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" @onclick="OnCancel">
+                Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" disabled="@(!isDocumentValid || !isPhoneValid)">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="17 21 17 13 7 13 7 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="7 3 7 8 15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Guardar ClienteDto
+            </button>
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter] public ClienteDto ClienteDto { get; set; } = new();
+    [Parameter] public string Title { get; set; } = "Nuevo ClienteDto";
+    [Parameter] public string Subtitle { get; set; } = "Complete la información del cliente";
+    [Parameter] public EventCallback OnSave { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private string? validationMessage;
+    private string? phoneValidationMessage;
+    private bool isDocumentValid = true;
+    private bool isPhoneValid = true;
+
+    private string DocumentoInput
+    {
+        get => ClienteDto.Num_Documento;
+        set
+        {
+            ClienteDto.Num_Documento = value;
+            ValidateDocumento();
+        }
+    }
+
+    private string TelefonoInput
+    {
+        get => ClienteDto.Telefono;
+        set
+        {
+            ClienteDto.Telefono = value;
+            ValidateTelefono();
+        }
+    }
+
+    private TipoDocumento SelectedTipoDocumento
+    {
+        get => ClienteDto.Tipo_Documento;
+        set
+        {
+            ClienteDto.Tipo_Documento = value;
+            ValidateDocumento();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        ValidateDocumento();
+        ValidateTelefono();
+    }
+
+    private void ValidateTelefono()
+    {
+        phoneValidationMessage = null;
+        isPhoneValid = true;
+        string phone = ClienteDto.Telefono;
+
+        if (string.IsNullOrWhiteSpace(phone))
+        {
+            return;
+        }
+
+        if (!long.TryParse(phone, out _))
+        {
+            phoneValidationMessage = "El teléfono debe contener solo números.";
+            isPhoneValid = false;
+        }
+        else if (phone.Length != 10)
+        {
+            phoneValidationMessage = "El teléfono debe tener exactamente 10 dígitos.";
+            isPhoneValid = false;
+        }
+    }
+
+    private void ValidateDocumento()
+    {
+        validationMessage = null;
+        isDocumentValid = true;
+        string doc = ClienteDto.Num_Documento;
+
+        if (string.IsNullOrWhiteSpace(doc))
+        {
+            // Allow empty initially or handle as required field
+            return;
+        }
+
+        switch (ClienteDto.Tipo_Documento)
+        {
+            case TipoDocumento.CEDULA:
+                if (!long.TryParse(doc, out _))
+                {
+                    validationMessage = "La cédula debe contener solo números.";
+                    isDocumentValid = false;
+                }
+                else if (doc.Length != 10)
+                {
+                    validationMessage = "La cédula debe tener exactamente 10 dígitos.";
+                    isDocumentValid = false;
+                }
+                break;
+
+            case TipoDocumento.RUC:
+                if (!long.TryParse(doc, out _))
+                {
+                    validationMessage = "El RUC debe contener solo números.";
+                    isDocumentValid = false;
+                }
+                else if (doc.Length != 13)
+                {
+                    validationMessage = "El RUC debe tener exactamente 13 dígitos.";
+                    isDocumentValid = false;
+                }
+                break;
+
+            case TipoDocumento.PASAPORTE:
+                // Alphanumeric check (letters and numbers only)
+                if (!System.Text.RegularExpressions.Regex.IsMatch(doc, "^[a-zA-Z0-9]+$"))
+                {
+                    validationMessage = "El pasaporte solo puede contener letras y números.";
+                    isDocumentValid = false;
+                }
+                else if (doc.Length < 5 || doc.Length > 20)
+                {
+                    validationMessage = "El pasaporte debe tener entre 5 y 20 caracteres.";
+                    isDocumentValid = false;
+                }
+                break;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        ValidateDocumento();
+        ValidateTelefono();
+        
+        if (!isDocumentValid || !isPhoneValid) return;
+        
+        await OnSave.InvokeAsync();
+    }
+
+    private string GetPlaceholderIdentificacion()
+    {
+        return ClienteDto.Tipo_Documento switch
+        {
+            TipoDocumento.CEDULA => "Ej: 1710000001",
+            TipoDocumento.RUC => "Ej: 0990000000001",
+            TipoDocumento.PASAPORTE => "Ej: A1234567",
+            _ => "Número de identificación"
+        };
+    }
+}

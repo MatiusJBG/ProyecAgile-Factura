@@ -1,8 +1,13 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components.Authorization;
-using UI_Blazor.Client.Services;
 using Cliente;
+using Cliente.Services.Clientes;
+using Cliente.Services.Facturacion;
+using Cliente.Services.Inventario;
+using Cliente.Services.Auth;
+using Cliente.Services.Certificados;
+using Cliente.Services.Common;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -14,8 +19,8 @@ builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IImagenService, ImagenService>();
 builder.Services.AddScoped<FacturaService>();
 builder.Services.AddScoped<IDescuentoService, DescuentoService>();
-builder.Services.AddScoped<IFirmaElectronicaService, FirmaElectronicaService>();
-builder.Services.AddScoped<ICertificadoService, CertificadoService>();
+builder.Services.AddScoped<FirmaElectronicaHttpClient>();
+builder.Services.AddScoped<CertificadoHttpClient>();
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();

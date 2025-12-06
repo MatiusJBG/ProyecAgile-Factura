@@ -1,0 +1,452 @@
+
+
+@using FacturaModel = Application.DTOs.Factura.FacturaDto
+@using Application.DTOs.Cliente
+@using Application.DTOs.Producto
+@using Application.DTOs.Factura
+@inject IClienteService ClienteService
+@inject IProductoService ProductoService
+@inject IDescuentoService DescuentoService
+
+<div class="factura-form-container">
+    <div class="form-header-section">
+        <h3 class="modal-title">@(Factura.Id_Fac == 0 ? "Nueva Factura" : "Editar Factura")</h3>
+        <p class="form-subtitle">Complete la información para generar una nueva factura electrónica.</p>
+    </div>
+
+    <EditForm Model="@Factura" OnValidSubmit="OnSubmit">
+        <DataAnnotationsValidator />
+        
+        <div class="form-sections">
+            <!-- Sección 1: Información General -->
+            <div class="form-section">
+                <h4 class="section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                    </svg>
+                    Información General
+                </h4>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Fecha de Emisión</label>
+                        <InputDate @bind-Value="Factura.Fec_Fac" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Cliente *</label>
+                        <div class="search-container">
+                            <input type="text" class="form-control" 
+                                   @bind-value="_clienteSearchTerm" 
+                                   @bind-value:event="oninput" 
+                                   @onfocus="FiltrarClientes"
+                                   @onfocusout="CerrarBusquedaCliente"
+                                   placeholder="Buscar por nombre, cédula o teléfono..." />
+                            @if (mostrarResultadosClientes)
+                            {
+                                <div class="search-results">
+                                    @if (clientesFiltrados.Any())
+                                    {
+                                        @foreach (var c in clientesFiltrados)
+                                        {
+                                            <div class="search-item" @onclick="() => SeleccionarCliente(c)">
+                                                <span class="fw-bold">@c.NombreCompleto</span>
+                                                <small class="text-muted d-block">@c.Tipo_Documento: @c.Num_Documento</small>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="search-item text-muted">No se encontraron resultados</div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        @if (Factura.Id_Cli_Per != 0)
+                        {
+                            <div class="mt-2 text-success">
+                                <small>Calculando factura para: <strong>@Factura.ClienteNombre</strong></small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 2: Detalles de Productos -->
+            <div class="form-section">
+                <h4 class="section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart3" viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                    </svg>
+                    Detalles de la Factura
+                </h4>
+                
+                <div class="table-responsive" style="overflow: visible;">
+                    <table class="lineas-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 35%;">Producto</th>
+                                <th style="width: 15%;">Cantidad</th>
+                                <th style="width: 15%;">Precio Unit.</th>
+                                <th style="width: 15%;">Descuento %</th>
+                                <th style="width: 15%;">Total</th>
+                                <th style="width: 5%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in Factura.Detalles)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="search-container">
+                                            <input type="text" class="form-control" 
+                                                   value="@detalle.ProductoNombre"
+                                                   @oninput="(e) => FiltrarProductosRow(detalle, e.Value?.ToString())"
+                                                   @onfocus="() => FiltrarProductosRow(detalle, null)"
+                                                   @onfocusout="() => CerrarBusquedaProductoRow()"
+                                                   placeholder="Buscar producto..." />
+                                            
+                                            @if (activeSearchRow == detalle && mostrarResultadosProductos)
+                                            {
+                                                <div class="search-results">
+                                                    @if (productosFiltrados.Any())
+                                                    {
+                                                        @foreach (var p in productosFiltrados)
+                                                        {
+                                                            <div class="search-item" @onclick="() => SeleccionarProductoRow(detalle, p)">
+                                                                <div class="d-flex justify-content-between">
+                                                                    <span class="fw-bold">@p.Nom_Pro</span>
+                                                                    <span class="price-badge">@p.Precio_Venta.ToString("C")</span>
+                                                                </div>
+                                                                <small class="text-muted d-block">Stock: @p.StockTotal</small>
+                                                            </div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="search-item text-muted">No se encontraron productos</div>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="number" 
+                                               class="form-control text-center" 
+                                               value="@detalle.Cantidad_Comprada" 
+                                               @oninput="(e) => ActualizarCantidad(detalle, e.Value)" 
+                                               min="1" />
+                                    </td>
+                                    <!-- Precio (Read-only) -->
+                                    <td>
+                                        <div class="price-display form-control text-end" style="background-color: #e9ecef;">
+                                            @(detalle.Precio_Venta_Unit.ToString("C2"))
+                                        </div>
+                                    </td>
+
+                                    <!-- Descuento (Read-only) -->
+                                    <td>
+                                        <div class="form-control text-end" style="background-color: #e9ecef;">
+                                            @(detalle.Porcentaje_Descuento.ToString("0.##"))%
+                                        </div>
+                                    </td>
+
+                                    <!-- Total (Read-only) -->
+                                    <td class="text-end">
+                                        <div class="total-display form-control text-end" style="background-color: #e9ecef; border:none; font-weight:bold;">
+                                            @(detalle.Precio_Venta_Total.ToString("C2"))
+                                        </div>
+                                    </td>
+
+                                    <!-- Actions -->
+                                    <td class="text-center">
+                                        <button type="button" class="btn-icon-danger" @onclick="() => Factura.Detalles.Remove(detalle)" title="Eliminar línea">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                            <!-- Add Line Button -->
+                            <tr>
+                                <td colspan="6" class="text-start">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AgregarLineaVacia">
+                                        + Agregar Producto
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sección 3: Pago y Totales -->
+            <div class="form-grid-2 payment-totals-wrapper">
+                <!-- Columna Izquierda: Datos de Pago -->
+                <div class="form-section payment-section">
+                    <h4 class="section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-credit-card" viewBox="0 0 16 16">
+                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/>
+                            <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/>
+                        </svg>
+                        Datos de Pago
+                    </h4>
+                    
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Forma de Pago</label>
+                            <InputSelect @bind-Value="Factura.Forma_Pago" class="form-control">
+                                <option value="@FormaPago.Efectivo">Efectivo</option>
+                                <option value="@FormaPago.Tarjeta">Tarjeta</option>
+                            </InputSelect>
+                        </div>
+                    </div>
+
+                    @if (Factura.Forma_Pago == FormaPago.Tarjeta)
+                    {
+                        <div class="card-details-panel">
+                            <div class="form-group full-width">
+                                <label>Número de Tarjeta</label>
+                                <InputText @bind-Value="Factura.NumeroTarjeta" placeholder="0000 0000 0000 0000" class="form-control" />
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label>Titular</label>
+                                    <InputText @bind-Value="Factura.TitularTarjeta" placeholder="Nombre en tarjeta" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Vencimiento</label>
+                                    <div class="d-flex gap-2">
+                                        <InputText @bind-Value="Factura.FechaVencimiento" placeholder="MM/YY" class="form-control" />
+                                        <InputText @bind-Value="Factura.CVV" placeholder="CVV" class="form-control" style="width: 80px;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Columna Derecha: Totales -->
+                <div class="form-section totals-section">
+                    <h4 class="section-title">Resumen</h4>
+                    <div class="totals-grid">
+                        <div class="total-row">
+                            <span class="label">Subtotal</span>
+                            <span class="value">@Factura.Tot_Fac_Sin_IVA.ToString("C")</span>
+                        </div>
+                        <div class="total-row discount">
+                            <span class="label">Descuento</span>
+                            <span class="value">- @Factura.Tot_Descuento.ToString("C")</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="label">IVA (12%)</span>
+                            <span class="value">@Factura.IVA_Fac.ToString("C")</span>
+                        </div>
+                        <div class="total-divider"></div>
+                        <div class="total-row grand-total">
+                            <span class="label">TOTAL</span>
+                            <span class="value">@Factura.Tot_Fac_Con_IVA.ToString("C")</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions-vertical">
+                        <button type="submit" class="action-btn primary-btn full-width">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                            </svg>
+                            Guardar Factura
+                        </button>
+                        <button type="button" class="action-btn secondary full-width" @onclick="OnCancelar">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter] public FacturaModel Factura { get; set; } = new();
+    [Parameter] public EventCallback OnGuardar { get; set; }
+    [Parameter] public EventCallback OnCancelar { get; set; }
+
+    private List<ClienteDto> clientes = new();
+    private List<ProductoDto> productos = new();
+
+    private string clienteSearchTerm = "";
+    private bool mostrarResultadosClientes = false;
+    private List<ClienteDto> clientesFiltrados = new();
+
+    private string productoSearchTerm = "";
+    private bool mostrarResultadosProductos = false;
+    private List<ProductoDto> productosFiltrados = new();
+
+
+
+    private DetalleFacturaDto? activeSearchRow;
+
+    private string _clienteSearchTerm
+    {
+        get => clienteSearchTerm;
+        set
+        {
+            clienteSearchTerm = value;
+            FiltrarClientes();
+        }
+    }
+
+    private async Task CerrarBusquedaCliente()
+    {
+        await Task.Delay(100);
+        mostrarResultadosClientes = false;
+    }
+
+    private async Task CerrarBusquedaProductoRow()
+    {
+        await Task.Delay(100);
+        activeSearchRow = null;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = (await ClienteService.GetClientesAsync()).ToList();
+        productos = (await ProductoService.GetProductosAsync()).ToList();
+    }
+
+    private void FiltrarClientes()
+    {
+        if (string.IsNullOrWhiteSpace(clienteSearchTerm))
+        {
+            // Show first 5 clients if search is empty (default suggestions)
+            clientesFiltrados = clientes.Take(5).ToList();
+            mostrarResultadosClientes = true;
+            return;
+        }
+
+        var term = clienteSearchTerm.ToLower();
+        clientesFiltrados = clientes
+            .Where(c => c.NombreCompleto.ToLower().Contains(term) || 
+                        c.Num_Documento.Contains(term) ||
+                        c.Telefono.Contains(term))
+            .Take(5)
+            .ToList();
+        
+        mostrarResultadosClientes = true;
+    }
+
+    private void SeleccionarCliente(ClienteDto cliente)
+    {
+        Factura.Id_Cli_Per = cliente.Id_Cli;
+        Factura.ClienteNombre = cliente.NombreCompleto;
+        clienteSearchTerm = cliente.NombreCompleto; // Mostrar nombre seleccionado
+        mostrarResultadosClientes = false;
+    }
+
+    private void FiltrarProductosRow(DetalleFacturaDto detalle, string? term)
+    {
+        activeSearchRow = detalle;
+        
+        // Exclude products already selected in OTHER rows
+        var selectedProductIds = Factura.Detalles
+            .Where(d => d != detalle && d.Id_Pro_Per != 0)
+            .Select(d => d.Id_Pro_Per)
+            .ToHashSet();
+
+        var query = productos.Where(p => !selectedProductIds.Contains(p.Id_Pro));
+
+        if (!string.IsNullOrWhiteSpace(term))
+        {
+            var lowerTerm = term.ToLower();
+            query = query.Where(p => p.Nom_Pro.ToLower().Contains(lowerTerm));
+        }
+        
+        productosFiltrados = query.Take(5).ToList();
+        mostrarResultadosProductos = true;
+    }
+
+    private async Task SeleccionarProductoRow(DetalleFacturaDto detalle, ProductoDto producto)
+    {
+        // Check availability
+        if (producto.StockTotal <= 0)
+        {
+            // Optional: alert user
+        }
+
+        detalle.Id_Pro_Per = producto.Id_Pro;
+        detalle.ProductoNombre = producto.Nom_Pro;
+        detalle.Precio_Venta_Unit = producto.Precio_Venta;
+        
+        // Default quantity 1 if not set
+        if (detalle.Cantidad_Comprada <= 0) detalle.Cantidad_Comprada = 1;
+
+        // Get Discount
+        var desc = await DescuentoService.GetDescuentoActivoAsync(producto.Id_Pro);
+        detalle.Porcentaje_Descuento = desc?.Porcentaje ?? 0;
+
+        // FIFO Lote logic
+        var loteDisponible = producto.Lotes?
+            .Where(l => l.Cantidad_Disponible > 0)
+            .OrderBy(l => l.Fec_Ent)
+            .FirstOrDefault();
+        
+        if (loteDisponible != null)
+        {
+            detalle.Id_Lote_Per = loteDisponible.Id_Lote;
+        }
+
+        // Close search
+        activeSearchRow = null;
+        mostrarResultadosProductos = false;
+
+        CalcularTotales();
+        StateHasChanged();
+    }
+
+    private void AgregarLineaVacia()
+    {
+        Factura.Detalles.Add(new DetalleFacturaDto { Cantidad_Comprada = 1 });
+    }
+
+    // Deprecated: AgregarProductoAFactura replaced by SeleccionarProductoRow
+
+
+
+    private void ActualizarCantidad(DetalleFacturaDto detalle, object? value)
+    {
+        if (int.TryParse(value?.ToString(), out int cant) && cant > 0)
+        {
+            detalle.Cantidad_Comprada = cant;
+            CalcularTotales();
+            StateHasChanged();
+        }
+    }
+
+    private void CalcularTotales()
+    {
+        decimal subtotalBruto = 0;
+        decimal totalDescuentos = 0;
+
+        foreach (var d in Factura.Detalles)
+        {
+            var brutoLinea = d.Cantidad_Comprada * d.Precio_Venta_Unit;
+            var descuentoLinea = brutoLinea * (d.Porcentaje_Descuento / 100m);
+
+            subtotalBruto += brutoLinea;
+            totalDescuentos += descuentoLinea;
+        }
+
+        Factura.Tot_Descuento = totalDescuentos;
+        Factura.Tot_Fac_Sin_IVA = subtotalBruto - totalDescuentos;
+        Factura.IVA_Fac = Factura.Tot_Fac_Sin_IVA * 0.12m;
+        Factura.Tot_Fac_Con_IVA = Factura.Tot_Fac_Sin_IVA + Factura.IVA_Fac;
+    }
+
+    private async Task OnSubmit()
+    {
+        CalcularTotales();
+        await OnGuardar.InvokeAsync();
+    }
+}
