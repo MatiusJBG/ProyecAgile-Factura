@@ -8,6 +8,7 @@ namespace Core.Interfaces.Facturacion
     {
         Task<Factura?> GetFacturaWithDetailsAsync(int id);
         Task<IEnumerable<Factura>> GetFacturasWithClienteAsync();
+        Task<(IEnumerable<Factura> Items, int TotalCount)> GetFacturasPagedAsync(int page, int pageSize, string searchTerm = "", string estado = "");
     }
 }
 

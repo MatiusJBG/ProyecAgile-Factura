@@ -46,7 +46,7 @@
     font-weight: 400;
 }
 
-/* Tarjetas de resumen */
+/* Tarjetas de resumen - Diseño Estático y Elegante con Icono */
 .summary-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -56,67 +56,54 @@
 
 .summary-card {
     background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem 1.5rem;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
+    gap: 1.25rem;
     border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.summary-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+/* Iconos circulares */
+.card-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
 
-.summary-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-    border-color: #cbd5e1;
+.card-icon-wrapper.blue-icon {
+    background-color: #eff6ff;
+    color: #3b82f6;
 }
 
-.summary-card:hover::before {
-    opacity: 1;
-}
-
-.summary-card.blue::before {
-    background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
-}
-
-.summary-card.green::before {
-    background: linear-gradient(90deg, #0f766e 0%, #0d9488 100%);
+.card-icon-wrapper.green-icon {
+    background-color: #f0fdf4;
+    color: #10b981;
 }
 
 .card-content {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    flex: 1;
+    justify-content: center;
 }
 
 .card-label {
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 0.85rem;
+    font-weight: 500;
     color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
 }
 
 .card-value {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #1e293b;
-    line-height: 1;
+    color: #0f172a;
+    line-height: 1.1;
 }
 
 /* Navegación por pestañas */
@@ -163,56 +150,88 @@
     align-items: center;
     gap: 1.5rem;
     margin-bottom: 2rem;
+    flex-wrap: wrap;
+    /* Para responsive */
 }
 
-.search-box {
+/* Buscador Estilizado */
+.search-wrapper {
     position: relative;
     flex: 1;
     max-width: 500px;
 }
 
-.search-input {
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.search-input-styled {
     width: 100%;
-    padding: 0.875rem 1.25rem;
+    padding: 0.875rem 1rem 0.875rem 2.75rem;
+    /* Padding izquierdo para icono */
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     font-size: 0.95rem;
     color: #1e293b;
-    transition: all 0.3s ease;
     background: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
-.search-input:focus {
+.search-input-styled:focus {
     outline: none;
-    border-color: #1e293b;
-    box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.1);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.search-input::placeholder {
+.search-input-styled::placeholder {
     color: #94a3b8;
 }
 
-.filter-buttons {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+/* Selector Filtro Estilizado */
+.filter-wrapper {
+    position: relative;
+    min-width: 220px;
 }
 
-.filter-buttons select {
-    padding: 0.75rem 1rem;
+.filter-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    pointer-events: none;
+}
+
+.form-select-styled {
+    width: 100%;
+    padding: 0.875rem 2.5rem 0.875rem 2.75rem;
+    /* Padding para icono y flecha default */
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
     color: #1e293b;
-    background: white;
+    background-color: white;
     cursor: pointer;
     transition: all 0.3s ease;
+    appearance: none;
+    /* Eliminar estilo default */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
-.filter-buttons select:focus {
+.form-select-styled:focus {
     outline: none;
-    border-color: #1e293b;
-    box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.1);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 /* Tabla de Facturas */
@@ -322,16 +341,17 @@
 }
 
 .action-icon-button {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: white;
     border: 1px solid #e2e8f0;
-    border-radius: 6px;
+    border-radius: 8px;
+    /* Radio similar a inputs */
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     padding: 0;
 }
 
@@ -340,6 +360,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+/* Estilo View (Azul) */
 .action-icon-button.view-btn {
     color: #3b82f6;
     background-color: rgba(59, 130, 246, 0.05);
@@ -352,16 +373,30 @@
     border-color: #3b82f6;
 }
 
-.action-icon-button.edit-btn {
-    color: #d97706;
-    background-color: rgba(245, 158, 11, 0.05);
-    border-color: rgba(245, 158, 11, 0.2);
+/* Estilo Firmar (Indigo - Similar formato) */
+.action-icon-button.sign-btn {
+    color: #6366f1;
+    background-color: rgba(99, 102, 241, 0.05);
+    border-color: rgba(99, 102, 241, 0.2);
 }
 
-.action-icon-button.edit-btn:hover {
-    background-color: #d97706;
+.action-icon-button.sign-btn:hover {
+    background-color: #6366f1;
     color: white;
-    border-color: #d97706;
+    border-color: #6366f1;
+}
+
+/* Estilo Validar (Teal - Similar formato) */
+.action-icon-button.verify-btn {
+    color: #0d9488;
+    background-color: rgba(13, 148, 136, 0.05);
+    border-color: rgba(13, 148, 136, 0.2);
+}
+
+.action-icon-button.verify-btn:hover {
+    background-color: #0d9488;
+    color: white;
+    border-color: #0d9488;
 }
 
 /* Sección de contenido */
@@ -502,4 +537,82 @@
         width: 28px;
         height: 28px;
     }
+}
+
+/* Paginación Premium */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 0.5rem;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    color: #1e293b;
+    transform: translateY(-1px);
+}
+
+.pagination-btn.active {
+    background: #1e293b;
+    color: white;
+    border-color: #1e293b;
+    box-shadow: 0 4px 6px rgba(30, 41, 59, 0.2);
+}
+
+.pagination-btn.prev-next {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    width: 50px;
+}
+
+.pagination-btn.prev-next:hover:not(:disabled) {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f1f5f9;
+    color: #94a3b8;
+    border-color: #e2e8f0;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pagination-ellipsis {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 30px;
+    height: 40px;
+    padding-bottom: 8px;
+    color: #94a3b8;
+    font-weight: 700;
+    letter-spacing: 2px;
 }

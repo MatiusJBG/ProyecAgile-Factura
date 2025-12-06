@@ -30,40 +30,106 @@
             Nueva Factura
         </button>
     </div>
-
     <!-- Contenido condicional según la vista -->
     @if (currentView == "lista")
     {
         <!-- Tarjetas de resumen -->
         <div class="summary-cards">
-            <div class="summary-card blue">
+            <div class="summary-card">
+                <div class="card-icon-wrapper blue-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-receipt" viewBox="0 0 16 16">
+                        <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zm.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0l-.509-.51z"/>
+                        <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 1 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 1 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 1 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 1 1 0 1h-1a.5.5 0 0 1-.5-.5z"/>
+                    </svg>
+                </div>
                 <div class="card-content">
                     <span class="card-label">Total Facturas</span>
-                    <span class="card-value">@facturas.Count</span>
+                    <span class="card-value">@totalCount</span>
                 </div>
             </div>
-            <div class="summary-card green">
+            <div class="summary-card">
+                <div class="card-icon-wrapper green-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cash-coin" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z"/>
+                        <path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.09-1.1l-.296-.075c-.501-.126-.88-.281-.88-.76 0-.376.364-.63.834-.63.499 0 .863.266.915.688h.459c-.055-.719-.527-1.17-1.29-1.233v-.44h-.375v.442c-.876.061-1.363.513-1.363 1.153 0 .616.398.908 1.09 1.076l.288.075c.547.135.936.31.936.776 0 .428-.406.67-.936.67-.557 0-.915-.316-.957-.75h-.466zm1.144-.015c.66.155 1.145.45 1.145 1.034 0 .622-.524 1.122-1.145 1.122V11.93z"/>
+                        <path fill-rule="evenodd" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path fill-rule="evenodd" d="M4 11a2 2 0 1 1 2 2 2 2 0 0 1-2-2zm2-1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                    </svg>
+                </div>
                 <div class="card-content">
                     <span class="card-label">Cobrado</span>
-                    <span class="card-value">@facturas.Where(f => f.Estado == EstadoFactura.Pagada).Sum(f => f.Tot_Fac_Con_IVA):C</span>
+                    <span class="card-value">$ @facturas.Where(f => f.Estado == EstadoFactura.Pagada).Sum(f => f.Tot_Fac_Con_IVA).ToString("N2")</span>
                 </div>
             </div>
         </div>
 
         <!-- Filtros y búsqueda -->
         <div class="search-filter-bar">
-            <div class="search-box">
-                <input type="text" class="search-input" placeholder="Buscar por cliente..." @bind="searchTerm" @bind:event="oninput" @bind:after="Filtrar" />
+            <!-- Buscador con Icono -->
+            <div class="search-wrapper">
+                <span class="search-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                </span>
+                <input type="text" 
+                       class="search-input-styled" 
+                       placeholder="Buscar por ID, Cliente o Documento..." 
+                       @bind="searchTerm" 
+                       @bind:event="oninput" 
+                       @onkeyup="OnSearchInput" />
             </div>
-            <div class="filter-buttons">
-                <select @bind="filtroEstado" @bind:after="Filtrar">
-                    <option value="">Todos los estados</option>
+            
+            <!-- Selector de Estado -->
+            <div class="filter-wrapper">
+                <span class="filter-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
+                    </svg>
+                </span>
+                <select class="form-select-styled" @onchange="OnEstadoChanged">
+                    <option value="">Todos los Estados</option>
                     <option value="Pendiente">Pendiente</option>
                     <option value="Pagada">Pagada</option>
-                    <option value="Vencida">Vencida</option>
+                    <option value="Anulada">Anulada</option>
                 </select>
             </div>
         </div>
+
+        <!-- Paginación Superior -->
+        @if (totalPages > 1)
+        {
+            <div class="pagination-container top-pagination">
+                <button class="pagination-btn prev-next" @onclick="() => CambiarPagina(currentPage - 1)" disabled="@(currentPage == 1)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                    </svg>
+                </button>
+
+                <div class="page-numbers">
+                    @foreach (var p in GetPageNumbers())
+                    {
+                        @if (p == -1)
+                        {
+                            <span class="pagination-ellipsis">...</span>
+                        }
+                        else
+                        {
+                            <button class="pagination-btn number @(p == currentPage ? "active" : "")" 
+                                    @onclick="() => CambiarPagina(p)">
+                                @p
+                            </button>
+                        }
+                    }
+                </div>
+
+                <button class="pagination-btn prev-next" @onclick="() => CambiarPagina(currentPage + 1)" disabled="@(currentPage == totalPages)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </button>
+            </div>
+        }
 
         <!-- Tabla -->
         <div class="table-container">
@@ -79,13 +145,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var f in facturasFiltradas)
+                    @foreach (var f in facturas)
                     {
                         <tr>
                             <td class="text-center"><strong>@f.Id_Fac</strong></td>
                             <td>@f.ClienteNombre</td>
                             <td class="text-center">@f.Fec_Fac.ToString("dd/MM/yyyy")</td>
-                            <td class="text-end">@f.Tot_Fac_Con_IVA:C</td>
+                            <td class="text-end">$ @f.Tot_Fac_Con_IVA.ToString("N2")</td>
                             <td class="text-center">
                                 <span class="status-badge @GetEstadoClass(f.Estado)">@f.Estado</span>
                             </td>
@@ -97,20 +163,18 @@
                                             <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
                                         </svg>
                                     </button>
-                                    <button class="action-icon-button edit-btn" @onclick="() => EditarFactura(f)" title="Editar">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                                        </svg>
-                                    </button>
+                                    
+                                    <!-- Botón Firmar (Icono Pluma/Firma Mejorado) -->
                                     <button class="action-icon-button sign-btn" @onclick="() => FirmarFactura(f.Id_Fac)" title="Firmar Electrónicamente">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
-                                            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
+                                            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001z"/>
                                         </svg>
                                     </button>
+
+                                    <!-- Botón Validar (Icono Check/Certificado Mejorado) -->
                                     <button class="action-icon-button verify-btn" @onclick="() => ValidarFirma(f.Id_Fac)" title="Validar Firma">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shield-check" viewBox="0 0 16 16">
-                                            <path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.55.55 0 0 0 .101.025.615.615 0 0 0 .1-.025c.076-.023.174-.061.294-.118.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.115.291 7.204 0 8 0s1.885.291 2.928.56c1.11.283 2.253.67 2.91 1.178.573.443.803 1.092.68 1.927C14.293 5.981 12.938 9.443 11.303 11.5c-1.662 2.09-3.924 3.757-5.936 4.57-.69.275-1.453.275-2.143 0-2.012-.813-4.274-2.48-5.936-4.57C-1.638 9.442-.293 5.981.555 3.665c.123-.835.353-1.484.926-1.927.657-.508 1.8-.895 2.91-1.178z"/>
-                                            <path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                                            <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -132,32 +196,70 @@
 
 @code {
     private List<FacturaModel> facturas = new();
-    private List<FacturaModel> facturasFiltradas = new();
     private string searchTerm = "";
     private string filtroEstado = "";
     private string currentView = "lista";
     private FacturaModel facturaActual = new();
 
+    // Paginación
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalPages = 0;
+    private int totalCount = 0;
+
+    // Debounce Timer con nombre calificado para evitar conflictos
+    private System.Timers.Timer _debounceTimer;
+
     protected override async Task OnInitializedAsync()
     {
-        facturas = await FacturaService.GetFacturasAsync();
-        Filtrar();
+        _debounceTimer = new System.Timers.Timer(500); // 500ms delay
+        _debounceTimer.AutoReset = false;
+        _debounceTimer.Elapsed += OnSearchDebounceElapsed;
+        
+        await CargarFacturas();
     }
 
-    private void Filtrar()
+    private async Task CargarFacturas()
     {
-        var query = facturas.AsEnumerable();
+        var result = await FacturaService.GetFacturasAsync(currentPage, pageSize, searchTerm, filtroEstado);
+        facturas = result.Items;
+        totalCount = result.TotalCount;
+        totalPages = result.TotalPages;
+    }
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
+    private void OnSearchInput(KeyboardEventArgs e)
+    {
+        // Reiniciar timer cada vez que el usuario teclea
+        _debounceTimer.Stop();
+        _debounceTimer.Start();
+    }
+
+    private async void OnSearchDebounceElapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        // Ejecutar búsqueda después del delay (en el hilo UI)
+        await InvokeAsync(async () => 
         {
-            query = query.Where(f =>
-                f.ClienteNombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
-        }
+            currentPage = 1;
+            await CargarFacturas();
+            StateHasChanged();
+        });
+    }
 
-        if (!string.IsNullOrEmpty(filtroEstado))
-            query = query.Where(f => f.Estado.ToString() == filtroEstado);
+    private async Task OnEstadoChanged(ChangeEventArgs e)
+    {
+        filtroEstado = e.Value?.ToString() ?? "";
+        currentPage = 1;
+        await CargarFacturas();
+    }
+    
+    /* Método OnSearchChanged original eliminado en favor de Debounce */
 
-        facturasFiltradas = query.ToList();
+    private async Task CambiarPagina(int nuevaPagina)
+    {
+        if (nuevaPagina < 1 || nuevaPagina > totalPages) return;
+        
+        currentPage = nuevaPagina;
+        await CargarFacturas();
     }
 
     private void ChangeView(string view)
@@ -186,8 +288,7 @@
         else
             await FacturaService.UpdateAsync(facturaActual);
 
-        facturas = await FacturaService.GetFacturasAsync();
-        Filtrar();
+        await CargarFacturas();
         ChangeView("lista");
     }
     
@@ -223,5 +324,47 @@
         {
             await JS.InvokeVoidAsync("alert", $"Error al validar: {ex.Message}");
         }
+    }
+
+    private IEnumerable<int> GetPageNumbers()
+    {
+        var pages = new List<int>();
+        var gap = 2; // Rango alrededor de la página actual
+
+        if (totalPages <= 7)
+        {
+            // Mostrar todas si son pocas
+            for (int i = 1; i <= totalPages; i++)
+                pages.Add(i);
+        }
+        else
+        {
+            // Siempre mostrar la primera
+            pages.Add(1);
+
+            if (currentPage > gap + 2)
+            {
+                pages.Add(-1); // Elipse inicial
+            }
+
+            // Rango alrededor de actual
+            var start = Math.Max(2, currentPage - gap);
+            var end = Math.Min(totalPages - 1, currentPage + gap);
+
+            for (int i = start; i <= end; i++)
+            {
+                pages.Add(i);
+            }
+
+            if (currentPage < totalPages - (gap + 1))
+            {
+                pages.Add(-1); // Elipse final
+            }
+
+            // Siempre mostrar la última
+            pages.Add(totalPages);
+        }
+
+        return pages;
     }
 }

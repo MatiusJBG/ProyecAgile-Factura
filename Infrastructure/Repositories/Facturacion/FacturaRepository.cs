@@ -32,6 +32,51 @@ namespace Infrastructure.Repositories.Facturacion
                 .ToListAsync();
         }
 
+        public async Task<(IEnumerable<Factura> Items, int TotalCount)> GetFacturasPagedAsync(int page, int pageSize, string searchTerm = "", string estado = "")
+        {
+            var query = _dbSet
+                .Include(f => f.Cliente)
+                .Include(f => f.Detalles)
+                    .ThenInclude(d => d.Producto)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var searchLower = searchTerm.ToLower();
+                var isDate = DateTime.TryParse(searchTerm, out var searchDate);
+                var isNumber = int.TryParse(searchTerm, out var searchNumber);
+                
+                query = query.Where(f => 
+                    f.Id_Fac.ToString().Contains(searchTerm) || // Buscar por ID Factura
+                    f.Cliente.Nombre.ToLower().Contains(searchLower) || 
+                    (f.Cliente.Apellido != null && f.Cliente.Apellido.ToLower().Contains(searchLower)) ||
+                    f.Cliente.Num_Documento.Contains(searchTerm) || // Buscar por Documento/Cédula
+                    (isDate && f.Fec_Fac.Date == searchDate.Date) || // Buscar por Fecha Exacta
+                    (isNumber && (f.Fec_Fac.Year == searchNumber || f.Fec_Fac.Month == searchNumber || f.Fec_Fac.Day == searchNumber)) // Buscar por Año, Mes o Día
+                );
+            }
+
+            // Filtro de estado eliminado temporalmente por falta de propiedad en Entidad
+            /*
+            if (!string.IsNullOrWhiteSpace(estado) && Enum.TryParse<Core.Enums.Facturacion.EstadoFactura>(estado, out var estadoEnum))
+            {
+                query = query.Where(f => f.Estado == estadoEnum);
+            }
+            */
+
+            // Ordenar por fecha descendente por defecto
+            // Ordenar por fecha descendente por defecto, y luego por ID para estabilidad
+            query = query.OrderByDescending(f => f.Fec_Fac).ThenByDescending(f => f.Id_Fac);
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+
         public override async Task<Factura?> GetByIdAsync(int id)
         {
             return await GetFacturaWithDetailsAsync(id);

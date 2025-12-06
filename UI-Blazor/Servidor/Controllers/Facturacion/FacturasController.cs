@@ -1,6 +1,7 @@
 using Application.DTOs.Factura;
 using Application.Services.Facturacion;
 using Microsoft.AspNetCore.Mvc;
+using Application.DTOs.Common;
 
 namespace UI_Blazor.Servidor.Controllers
 {
@@ -18,16 +19,20 @@ namespace UI_Blazor.Servidor.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FacturaDto>>> GetFacturas()
+        public async Task<ActionResult<PagedResult<FacturaDto>>> GetFacturas(
+            [FromQuery] int page = 1, 
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string searchTerm = "",
+            [FromQuery] string estado = "")
         {
             try
             {
-                var facturas = await _facturaService.GetAllFacturasAsync();
-                return Ok(facturas);
+                var result = await _facturaService.GetFacturasPagedAsync(page, pageSize, searchTerm, estado);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener facturas");
+                _logger.LogError(ex, "Error al obtener facturas paginadas");
                 return StatusCode(500, "Error interno del servidor");
             }
         }

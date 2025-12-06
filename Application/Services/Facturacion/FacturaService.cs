@@ -1,4 +1,5 @@
 using Application.Common;
+using Application.DTOs.Common;
 using Application.DTOs.Factura;
 using Application.DTOs.Producto;
 using Core.Entities.Clientes; using Core.Entities.Facturacion; using Core.Entities.Inventario; using Core.Entities.Auth; using Core.Entities.Certificados; using Core.Entities.Common;
@@ -28,6 +29,19 @@ namespace Application.Services.Facturacion
         {
             var facturas = await _facturaRepository.GetFacturasWithClienteAsync();
             return facturas.Select(MapToDto);
+        }
+
+        public async Task<PagedResult<FacturaDto>> GetFacturasPagedAsync(int page, int pageSize, string searchTerm = "", string estado = "")
+        {
+            var (items, totalCount) = await _facturaRepository.GetFacturasPagedAsync(page, pageSize, searchTerm, estado);
+            
+            return new PagedResult<FacturaDto>
+            {
+                Items = items.Select(MapToDto).ToList(),
+                TotalCount = totalCount,
+                PageNumber = page,
+                PageSize = pageSize
+            };
         }
 
         public async Task<FacturaDto?> GetFacturaByIdAsync(int id)
