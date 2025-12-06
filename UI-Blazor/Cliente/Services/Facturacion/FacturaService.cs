@@ -1,11 +1,12 @@
 using Application.DTOs.Factura;
+using Application.DTOs.Common;
 using System.Net.Http.Json;
 
 namespace Cliente.Services.Facturacion
 {
     public interface IFacturaService
     {
-        Task<List<FacturaDto>> GetFacturasAsync();
+        Task<PagedResult<FacturaDto>> GetFacturasAsync(int page = 1, int pageSize = 10, string searchTerm = "", string estado = "");
         Task<FacturaDto?> GetFacturaAsync(int id);
         Task<FacturaDto> CreateAsync(FacturaDto factura);
         Task UpdateAsync(FacturaDto factura);
@@ -19,16 +20,17 @@ namespace Cliente.Services.Facturacion
 
         public FacturaService(HttpClient http) => _http = http;
 
-        public async Task<List<FacturaDto>> GetFacturasAsync()
+        public async Task<PagedResult<FacturaDto>> GetFacturasAsync(int page = 1, int pageSize = 10, string searchTerm = "", string estado = "")
         {
             try
             {
-                return await _http.GetFromJsonAsync<List<FacturaDto>>(BaseUrl) ?? new();
+                var url = $"{BaseUrl}?page={page}&pageSize={pageSize}&searchTerm={searchTerm}&estado={estado}";
+                return await _http.GetFromJsonAsync<PagedResult<FacturaDto>>(url) ?? new PagedResult<FacturaDto>();
             }
             catch
             {
-                // Retorna lista vacía si backend no disponible (para desarrollo)
-                return new List<FacturaDto>();
+                // Retorna resultado vacío en caso de error
+                return new PagedResult<FacturaDto>();
             }
         }
 
