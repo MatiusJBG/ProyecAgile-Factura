@@ -134,13 +134,16 @@
 
 .tab-btn:hover {
     color: #1e293b;
-    background: rgba(30, 41, 59, 0.05);
+    background: #f1f5f9;
 }
 
 .tab-btn.active {
     color: #1e293b;
     border-bottom-color: #1e293b;
-    background: rgba(30, 41, 59, 0.05);
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    border-left: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
 }
 
 /* Barra de búsqueda y filtros */
