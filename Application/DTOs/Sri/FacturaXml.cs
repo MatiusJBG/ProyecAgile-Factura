@@ -67,8 +67,9 @@ namespace Application.DTOs.Sri
         // tarifa is optional in TotalImpuesto? It is present in DetalleImpuesto.
         // Checking user snippet: user sets baseImponible and valor. 
         // Some XSDs require tarifa here too, but user snippet commented it out. I'll add it as optional property just in case.
-        [XmlElement(IsNullable = false)]
-        public string tarifa { get; set; } 
+        // tarifa is NOT allowed in TotalImpuesto in standard SRI XSD 1.0.0/1.1.0
+        // [XmlElement(IsNullable = false)]
+        // public string tarifa { get; set; }  
     }
 
     public class DetalleFacturaXml

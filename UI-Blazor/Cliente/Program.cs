@@ -8,6 +8,7 @@ using Cliente.Services.Inventario;
 using Cliente.Services.Auth;
 using Cliente.Services.Certificados;
 using Cliente.Services.Common;
+using Cliente.Services.Sri;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -20,6 +21,7 @@ builder.Services.AddScoped<IImagenService, ImagenService>();
 builder.Services.AddScoped<FacturaService>();
 builder.Services.AddScoped<IDescuentoService, DescuentoService>();
 builder.Services.AddScoped<FirmaElectronicaHttpClient>();
+builder.Services.AddScoped<SriService>();
 builder.Services.AddScoped<CertificadoHttpClient>();
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 builder.Services.AddScoped<IAuthService, AuthService>();

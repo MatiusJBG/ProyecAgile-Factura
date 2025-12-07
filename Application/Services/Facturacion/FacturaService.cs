@@ -55,9 +55,16 @@ namespace Application.Services.Facturacion
             // Validar que el cliente existe
             var cliente = await EntityValidator.GetOrThrowAsync<Cliente, IClienteRepository>(_clienteRepository, facturaDto.Id_Cli_Per, "Cliente");
 
+            // Validar que existan detalles
+            if (facturaDto.Detalles == null || !facturaDto.Detalles.Any() || facturaDto.Detalles.All(d => d.Id_Pro_Per == 0))
+            {
+                throw new BusinessValidationException("La factura debe tener al menos un producto válido.");
+            }
+
             // Validar y actualizar stock de lotes
             foreach (var detalle in facturaDto.Detalles)
             {
+                if (detalle.Id_Pro_Per == 0) continue; // Skip invalid lines if any (should act as filter or blocker) check above blocks all 0.
                 var lote = await EntityValidator.GetOrThrowAsync<Lote, ILoteRepository>(_loteRepository, detalle.Id_Lote_Per, "Lote");
 
                 if (lote.Cantidad_Disponible < detalle.Cantidad_Comprada)

@@ -40,7 +40,9 @@ namespace Infrastructure.Services.Facturacion
             var ptoEmi = "001";
             var secuencial = factura.Id_Fac.ToString().PadLeft(9, '0'); // Usar ID factura como secuencial por ahora
 
-            var claveAcceso = GenerarClaveAcceso(factura.Fec_Fac, "01", rucEmisor, "1", estab + ptoEmi, secuencial, "12345678", "1");
+            var rnd = new Random();
+            var codigoNumerico = rnd.Next(10000000, 99999999).ToString();
+            var claveAcceso = GenerarClaveAcceso(factura.Fec_Fac, "01", rucEmisor, "1", estab + ptoEmi, secuencial, codigoNumerico, "1");
 
             var infoTrib = new InfoTributariaXml
             {
@@ -66,8 +68,7 @@ namespace Infrastructure.Services.Facturacion
                     codigo = "2", // IVA
                     codigoPorcentaje = CODIGO_PORCENTAJE_PARA_PRUEBAS,
                     baseImponible = (factura.Tot_Fac_Sin_IVA ?? 0m).ToString("0.00", ci),
-                    valor = (factura.IVA_Fac ?? 0m).ToString("0.00", ci),
-                    tarifa = "15.00"
+                    valor = (factura.IVA_Fac ?? 0m).ToString("0.00", ci)
                 });
             }
             else
@@ -77,8 +78,7 @@ namespace Infrastructure.Services.Facturacion
                     codigo = "2", // IVA
                     codigoPorcentaje = "0", // 0%
                     baseImponible = (factura.Tot_Fac_Sin_IVA ?? 0m).ToString("0.00", ci),
-                    valor = "0.00",
-                    tarifa = "0.00"
+                    valor = "0.00"
                 });
             }
 
@@ -113,18 +113,18 @@ namespace Infrastructure.Services.Facturacion
                     codigo = "2",
                     codigoPorcentaje = factura.IVA_Fac > 0 ? CODIGO_PORCENTAJE_PARA_PRUEBAS : "0",
                     tarifa = factura.IVA_Fac > 0 ? 15.00M : 0.00M,
-                    baseImponible = (decimal)d.Precio_Venta_Total,
-                    valor = factura.IVA_Fac > 0 ? (decimal)d.Precio_Venta_Total * IVA_RATE_PARA_PRUEBAS : 0
+                    baseImponible = Math.Round((decimal)d.Precio_Venta_Total, 2),
+                    valor = Math.Round(factura.IVA_Fac > 0 ? (decimal)d.Precio_Venta_Total * IVA_RATE_PARA_PRUEBAS : 0, 2)
                 };
 
                 return new DetalleFacturaXml
                 {
                     codigoPrincipal = d.Id_Pro_Per.ToString(),
-                    descripcion = "Producto " + d.Id_Pro_Per, // Deberíamos incluir nombre producto en DetalleFactura o join
-                    cantidad = (decimal)d.Cantidad_Comprada,
-                    precioUnitario = (decimal)d.Precio_Venta_Unit,
-                    descuento = (decimal)((d.Precio_Venta_Unit * d.Cantidad_Comprada) * (d.Porcentaje_Descuento / 100)),
-                    precioTotalSinImpuesto = (decimal)d.Precio_Venta_Total,
+                    descripcion = "Producto " + d.Id_Pro_Per, 
+                    cantidad = Math.Round((decimal)d.Cantidad_Comprada, 6), // Allow up to 6 decimals for quantity
+                    precioUnitario = Math.Round((decimal)d.Precio_Venta_Unit, 6), // Allow up to 6 decimals for unit price
+                    descuento = Math.Round((decimal)((d.Precio_Venta_Unit * d.Cantidad_Comprada) * (d.Porcentaje_Descuento / 100)), 2),
+                    precioTotalSinImpuesto = Math.Round((decimal)d.Precio_Venta_Total, 2),
                     impuesto = new List<ImpuestoDetalleXml> { impuesto }
                 };
             }).ToList();
@@ -179,9 +179,10 @@ namespace Infrastructure.Services.Facturacion
             return digitoVerificador;
         }
 
-        public byte[] GenerarXmlBytes(Factura factura)
+        public FacturaXmlResult GenerarXmlResult(Factura factura)
         {
             var facturaXml = MapToXmlModel(factura);
+            var claveAcceso = facturaXml.InfoTributaria.claveAcceso;
             
             // Fix: remove namespaces to keep it clean or add SRI namespaces as required
             var ns = new XmlSerializerNamespaces();
@@ -200,7 +201,15 @@ namespace Infrastructure.Services.Facturacion
             {
                 serializer.Serialize(writer, facturaXml, ns);
             }
-            return ms.ToArray();
+            
+            return new FacturaXmlResult 
+            { 
+                XmlBytes = ms.ToArray(),
+                ClaveAcceso = claveAcceso
+            };
         }
+
+        // Maintain backward compatibility if needed, or just redirect
+        public byte[] GenerarXmlBytes(Factura factura) => GenerarXmlResult(factura).XmlBytes;
     }
 }

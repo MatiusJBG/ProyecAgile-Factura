@@ -51,6 +51,7 @@ builder.Services.AddScoped<ICertificadoService, CertificadoService>();
 builder.Services.AddScoped<FacturaXmlService>();
 builder.Services.AddHttpClient<SriRecepcionClient>();
 builder.Services.AddHttpClient<SriAutorizacionClient>();
+builder.Services.AddScoped<IRideService, RideService>();
 
 // Registrar sistema de caché en archivos
 builder.Services.AddSingleton<IFileCacheService, FileCacheService>();
