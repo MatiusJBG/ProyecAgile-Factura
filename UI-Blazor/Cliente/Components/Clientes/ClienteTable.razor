@@ -4,9 +4,8 @@
     <div class="table-header">
         <span class="header-item id_cli">ID</span>
         <span class="header-item nombre">Nombre / Razón Social</span>
-        <span class="header-item tipo-doc">Tipo Documento</span>
+        <span class="header-item tipo-doc">Documento</span>
         <span class="header-item identificacion">Identificación</span>
-        <span class="header-item contacto">Contacto (Email)</span>
         <span class="header-item estado">Estado</span>
         <span class="header-item acciones">Acciones</span>
     </div>
@@ -31,7 +30,6 @@
                         <span class="type-tag @cliente.Tipo_Documento.ToString().ToLower()">@cliente.Tipo_Documento</span>
                     </span>
                     <span class="row-item identificacion">@cliente.Num_Documento</span>
-                    <span class="row-item contacto">@cliente.Correo</span>
                     <span class="row-item estado">
                         <span class="status-badge @(cliente.Activo ? "active" : "inactive")">
                             @(cliente.Activo ? "Activo" : "Inactivo")

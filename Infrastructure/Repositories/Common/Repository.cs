@@ -33,15 +33,54 @@ namespace Infrastructure.Repositories.Common
 
         public virtual async Task<T> AddAsync(T entity)
         {
-            await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+            try
+            {
+                Console.WriteLine($"[REPO] AddAsync - INICIO para {typeof(T).Name}");
+                await _dbSet.AddAsync(entity);
+                
+                Console.WriteLine($"[REPO] AddAsync - Llamando SaveChangesAsync...");
+                var affected = await _context.SaveChangesAsync();
+                Console.WriteLine($"[REPO] AddAsync - SaveChangesAsync COMPLETADO. Filas afectadas: {affected}");
+                
+                if (affected == 0)
+                {
+                    Console.WriteLine($"[REPO WARNING] SaveChangesAsync retornó 0 filas afectadas!");
+                }
+                
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[REPO ERROR] AddAsync falló: {ex.Message}");
+                Console.WriteLine($"[REPO ERROR] InnerException: {ex.InnerException?.Message}");
+                Console.WriteLine($"[REPO ERROR] Stack: {ex.StackTrace}");
+                throw;
+            }
         }
 
         public virtual async Task UpdateAsync(T entity)
         {
-            _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            try
+            {
+                Console.WriteLine($"[REPO] UpdateAsync - INICIO para {typeof(T).Name}");
+                _dbSet.Update(entity);
+                
+                Console.WriteLine($"[REPO] UpdateAsync - Llamando SaveChangesAsync...");
+                var affected = await _context.SaveChangesAsync();
+                Console.WriteLine($"[REPO] UpdateAsync - SaveChangesAsync COMPLETADO. Filas afectadas: {affected}");
+                
+                if (affected == 0)
+                {
+                    Console.WriteLine($"[REPO WARNING] SaveChangesAsync retornó 0 filas afectadas!");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[REPO ERROR] UpdateAsync falló: {ex.Message}");
+                Console.WriteLine($"[REPO ERROR] InnerException: {ex.InnerException?.Message}");
+                Console.WriteLine($"[REPO ERROR] Stack: {ex.StackTrace}");
+                throw;
+            }
         }
 
         public virtual async Task DeleteAsync(T entity)

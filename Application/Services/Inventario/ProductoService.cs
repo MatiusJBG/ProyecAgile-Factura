@@ -23,15 +23,9 @@ namespace Application.Services.Inventario
             _fileCache = fileCache;
         }
 
+        // Para tablas paginadas - SIEMPRE desde BD, sin caché
         public async Task<IEnumerable<ProductoDto>> GetAllProductosAsync()
         {
-            // Try cache first
-            var cached = await _fileCache.GetProductosCacheAsync();
-            if (cached.Any())
-            {
-                return cached;
-            }
-
             var productos = await _productoRepository.GetProductosWithStockAsync();
             var dtos = new List<ProductoDto>();
             
@@ -42,6 +36,38 @@ namespace Application.Services.Inventario
             }
             
             return dtos;
+        }
+
+        // Para búsquedas/autocomplete - USA caché para performance
+        public async Task<IEnumerable<ProductoDto>> SearchProductosAsync(string searchTerm = "")
+        {
+            var cached = await _fileCache.GetProductosCacheAsync();
+            
+            if (!cached.Any())
+            {
+                var fromDb = await _productoRepository.GetProductosWithStockAsync();
+                var dtos = new List<ProductoDto>();
+                
+                foreach (var producto in fromDb)
+                {
+                    var precio = await _precioRepository.GetCurrentPriceAsync(producto.Id_Pro);
+                    dtos.Add(MapToDto(producto, precio));
+                }
+                
+                cached = dtos;
+                await _fileCache.SaveProductosCacheAsync(cached);
+            }
+            
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLowerInvariant();
+                return cached.Where(p => 
+                    p.Nom_Pro.ToLowerInvariant().Contains(searchTerm) ||
+                    p.Marca.ToLowerInvariant().Contains(searchTerm) ||
+                    p.Tip_Pro.ToLowerInvariant().Contains(searchTerm));
+            }
+            
+            return cached;
         }
 
         public async Task<ProductoDto?> GetProductoByIdAsync(int id)

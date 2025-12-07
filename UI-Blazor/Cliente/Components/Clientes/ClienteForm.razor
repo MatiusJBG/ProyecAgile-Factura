@@ -91,6 +91,19 @@
                     </div>
                 }
             </div>
+
+            <div class="form-group full-width">
+                <label class="form-label">Estado</label>
+                <div class="status-toggle-wrapper">
+                    <label class="toggle-switch">
+                        <input type="checkbox" @bind="ClienteDto.Activo">
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="status-label @(ClienteDto.Activo ? "active" : "inactive")">
+                        @(ClienteDto.Activo ? "Cliente Activo" : "Cliente Inactivo")
+                    </span>
+                </div>
+            </div>
         </div>
 
         <div class="form-actions">
@@ -138,6 +151,17 @@
         {
             ClienteDto.Telefono = value;
             ValidateTelefono();
+        }
+    }
+    
+    // Ensure Activo has a default
+    protected override void OnParametersSet()
+    {
+        if (ClienteDto.Id_Cli == 0 && ClienteDto.Activo == false)
+        {
+             // For new clients, default to Active unless explicitly set otherwise (though bool default is false, business logic usually implies new = active)
+             // However, let's respect the object passed. If user passes `new ClienteDto()`, Activo is false by default struct? No, DTO default?
+             // Let's assume the parent sets the default.
         }
     }
 

@@ -5,7 +5,8 @@ namespace Cliente.Services.Inventario
 {
     public interface IProductoService
     {
-        Task<List<ProductoDto>> GetProductosAsync();
+        Task<List<ProductoDto>> GetProductosAsync();         // Para tablas
+        Task<List<ProductoDto>> SearchProductosAsync(string searchTerm = "");  // Para autocomplete
         Task<ProductoDto?> GetProductoByIdAsync(int id);
         Task<ProductoDto?> GetProductoByNombreAsync(string nombre);
         Task<ProductoDto> CreateProductoAsync(ProductoDto producto);
@@ -21,6 +22,7 @@ namespace Cliente.Services.Inventario
 
         public ProductoService(HttpClient http) => _http = http;
 
+        // Para tablas paginadas
         public async Task<List<ProductoDto>> GetProductosAsync()
         {
             try
@@ -29,7 +31,22 @@ namespace Cliente.Services.Inventario
             }
             catch
             {
-                // Retorna lista vacía si backend no disponible (para desarrollo)
+                return new List<ProductoDto>();
+            }
+        }
+
+        // Para autocomplete/búsquedas
+        public async Task<List<ProductoDto>> SearchProductosAsync(string searchTerm = "")
+        {
+            try
+            {
+                var url = string.IsNullOrWhiteSpace(searchTerm) 
+                    ? $"{BaseUrl}/search" 
+                    : $"{BaseUrl}/search?q={Uri.EscapeDataString(searchTerm)}";
+                return await _http.GetFromJsonAsync<List<ProductoDto>>(url) ?? new();
+            }
+            catch
+            {
                 return new List<ProductoDto>();
             }
         }

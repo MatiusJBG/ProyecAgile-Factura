@@ -51,6 +51,21 @@ namespace UI_Blazor.Servidor.Controllers
             }
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<ClienteDto>>> SearchClientes([FromQuery] string q = "")
+        {
+            try
+            {
+                var clientes = await _clienteService.SearchClientesAsync(q);
+                return Ok(clientes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al buscar clientes");
+                return StatusCode(500, "Error interno del servidor");
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<ClienteDto>> CreateCliente([FromBody] ClienteDto clienteDto)
         {
