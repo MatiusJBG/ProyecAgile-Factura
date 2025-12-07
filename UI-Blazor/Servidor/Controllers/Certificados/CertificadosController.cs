@@ -11,10 +11,12 @@ namespace UI_Blazor.Servidor.Controllers
     public class CertificadosController : ControllerBase
     {
         private readonly ICertificadoService _certificadoService;
+        private readonly ILogger<CertificadosController> _logger;
 
-        public CertificadosController(ICertificadoService certificadoService)
+        public CertificadosController(ICertificadoService certificadoService, ILogger<CertificadosController> logger)
         {
             _certificadoService = certificadoService;
+            _logger = logger;
         }
 
         // GET: api/Certificados
@@ -75,6 +77,7 @@ namespace UI_Blazor.Servidor.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al subir certificado: {Message}", ex.Message);
                 return BadRequest(new { error = ex.Message });
             }
         }

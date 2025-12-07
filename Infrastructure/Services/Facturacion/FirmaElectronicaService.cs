@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Xml;
+using System.Security.Cryptography.Xml;
 
 namespace Infrastructure.Services.Facturacion
 {
@@ -206,6 +207,53 @@ namespace Infrastructure.Services.Facturacion
 
             byte[] signature = rsa.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
             return Convert.ToBase64String(signature);
+        }
+        public byte[] FirmarXmlSri(byte[] xmlBytes, X509Certificate2 certificado)
+        {
+            var doc = new XmlDocument();
+            // Preserve whitespace true is important for signature validity
+            doc.PreserveWhitespace = true; 
+            
+            using (var ms = new MemoryStream(xmlBytes))
+            {
+                doc.Load(ms);
+            }
+
+            var signedXml = new SignedXml(doc) { SigningKey = certificado.GetRSAPrivateKey() };
+
+            // Referencia al nodo raíz - ID debe coincidir con el atributo id del root
+            // FacturaXml pone id="comprobante"
+            var reference = new Reference { Uri = "#comprobante" };
+            reference.AddTransform(new XmlDsigEnvelopedSignatureTransform());
+            reference.AddTransform(new XmlDsigC14NTransform());
+            
+            signedXml.AddReference(reference);
+
+            var keyInfo = new KeyInfo();
+            keyInfo.AddClause(new KeyInfoX509Data(certificado));
+            signedXml.KeyInfo = keyInfo;
+
+            signedXml.ComputeSignature();
+
+            var xmlDigitalSignature = signedXml.GetXml();
+            doc.DocumentElement.AppendChild(doc.ImportNode(xmlDigitalSignature, true));
+
+            using (var msOutput = new MemoryStream())
+            {
+                // SRI prefiere UTF8 sin BOM
+                var settings = new XmlWriterSettings 
+                { 
+                    Encoding = new UTF8Encoding(false), 
+                    Indent = false // Avoid re-indenting which breaks signature? SignedXml works on DOM, Save might reformat.
+                    // PreserveWhitespace=true should handle it.
+                };
+                
+                using (var writer = XmlWriter.Create(msOutput, settings))
+                {
+                    doc.Save(writer);
+                }
+                return msOutput.ToArray();
+            }
         }
     }
 }
