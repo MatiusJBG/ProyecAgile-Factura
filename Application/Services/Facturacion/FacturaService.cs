@@ -135,6 +135,11 @@ namespace Application.Services.Facturacion
                 Tot_Fac_Sin_IVA = factura.Tot_Fac_Sin_IVA ?? 0,
                 IVA_Fac = factura.IVA_Fac ?? 0,
                 Tot_Fac_Con_IVA = factura.Tot_Fac_Con_IVA ?? 0,
+                
+                Estado = factura.Estado,
+                ClaveAcceso = factura.ClaveAcceso,
+                MensajeError = factura.MensajeError,
+
                 ClienteNombre = factura.Cliente.Tipo_Cliente == TipoCliente.EMPRESA
                     ? factura.Cliente.Nombre
                     : $"{factura.Cliente.Nombre} {factura.Cliente.Apellido}".Trim(),
@@ -157,6 +162,8 @@ namespace Application.Services.Facturacion
             {
                 Fec_Fac = dto.Fec_Fac,
                 Id_Cli_Per = dto.Id_Cli_Per,
+                ClaveAcceso = dto.ClaveAcceso,
+                MensajeError = dto.MensajeError,
                 Detalles = dto.Detalles.Select(d => new DetalleFactura
                 {
                     Id_Lote_Per = d.Id_Lote_Per,

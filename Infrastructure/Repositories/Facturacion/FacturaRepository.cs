@@ -56,13 +56,10 @@ namespace Infrastructure.Repositories.Facturacion
                 );
             }
 
-            // Filtro de estado eliminado temporalmente por falta de propiedad en Entidad
-            /*
-            if (!string.IsNullOrWhiteSpace(estado) && Enum.TryParse<Core.Enums.Facturacion.EstadoFactura>(estado, out var estadoEnum))
+            if (!string.IsNullOrWhiteSpace(estado) && Enum.TryParse<Core.Enums.Facturacion.EstadoFactura>(estado, true, out var estadoEnum))
             {
                 query = query.Where(f => f.Estado == estadoEnum);
             }
-            */
 
             // Ordenar por fecha descendente por defecto
             // Ordenar por fecha descendente por defecto, y luego por ID para estabilidad
@@ -85,6 +82,14 @@ namespace Infrastructure.Repositories.Facturacion
         public override async Task<IEnumerable<Factura>> GetAllAsync()
         {
             return await GetFacturasWithClienteAsync();
+        }
+
+        public async Task<Factura?> GetByClaveAccesoAsync(string claveAcceso)
+        {
+            return await _dbSet
+                .Include(f => f.Cliente)
+                .Include(f => f.Detalles)
+                .FirstOrDefaultAsync(f => f.ClaveAcceso == claveAcceso);
         }
     }
 }
