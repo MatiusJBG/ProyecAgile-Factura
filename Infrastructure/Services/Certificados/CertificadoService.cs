@@ -45,7 +45,8 @@ namespace Infrastructure.Services.Certificados
             X509Certificate2 cert;
             try
             {
-                cert = new X509Certificate2(archivoBytes, password, X509KeyStorageFlags.Exportable);
+                // Intentar cargar con EphemeralKeySet y Exportable para asegurar uso con SignedXml
+                cert = new X509Certificate2(archivoBytes, password, X509KeyStorageFlags.EphemeralKeySet | X509KeyStorageFlags.Exportable);
             }
             catch (Exception ex)
             {
@@ -167,8 +168,8 @@ namespace Infrastructure.Services.Certificados
                 password = _configuration["FirmaElectronica:CertPassword"] ?? "";
             }
 
-            // Cargar el certificado con flags que permiten la exportación y uso de la clave privada
-            return new X509Certificate2(rutaCompleta, password, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.MachineKeySet);
+            // Cargar el certificado con flags que permiten la exportación y uso de la clave privada (Ephemeral para evitar problemas de store)
+            return new X509Certificate2(rutaCompleta, password, X509KeyStorageFlags.EphemeralKeySet | X509KeyStorageFlags.Exportable);
         }
 
         public async Task EliminarCertificadoAsync(int idCertificado)
