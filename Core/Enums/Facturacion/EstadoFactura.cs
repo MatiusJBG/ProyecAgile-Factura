@@ -6,7 +6,11 @@ namespace Core.Enums.Facturacion
         Pagada,
         Vencida,
         Anulada,
-        NotaCredito
+        NotaCredito,
+        Enviada,
+        Autorizada,
+        Devuelta,
+        NoEnviada
     }
 }
 

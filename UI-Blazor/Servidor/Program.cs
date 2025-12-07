@@ -5,7 +5,7 @@ using Application.Services.Auth;
 using Core.Interfaces.Clientes; using Core.Interfaces.Facturacion; using Core.Interfaces.Inventario; using Core.Interfaces.Auth; using Core.Interfaces.Certificados; using Core.Interfaces.Common;
 using Infrastructure.Data;
 using Infrastructure.Repositories.Clientes; using Infrastructure.Repositories.Facturacion; using Infrastructure.Repositories.Inventario; using Infrastructure.Repositories.Auth; using Infrastructure.Repositories.Certificados; using Infrastructure.Repositories.Common;
-using Infrastructure.Services.Facturacion; using Infrastructure.Services.Certificados; using Infrastructure.Services; using Infrastructure.Services.Sri;
+using Infrastructure.Services.Facturacion; using Infrastructure.Services.Certificados; using Infrastructure.Services; using Infrastructure.Services.Sri; using Infrastructure.Services.Common;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +56,9 @@ builder.Services.AddScoped<IRideService, RideService>();
 // Registrar sistema de caché en archivos
 builder.Services.AddSingleton<IFileCacheService, FileCacheService>();
 builder.Services.AddHostedService<FileCacheWorker>();
+
+// Registrar servicio de Email
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Configurar JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "ClaveSecretaSuperSeguraParaDesarrollo12345";

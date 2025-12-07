@@ -10,6 +10,14 @@ namespace Core.Entities.Facturacion
         public decimal? Tot_Fac_Sin_IVA { get; set; }
         public decimal? IVA_Fac { get; set; }
         public decimal? Tot_Fac_Con_IVA { get; set; }
+        
+        // Estado de la factura
+        public Core.Enums.Facturacion.EstadoFactura Estado { get; set; } = Core.Enums.Facturacion.EstadoFactura.NoEnviada;
+
+        // Clave de Acceso generada
+        public string? ClaveAcceso { get; set; }
+
+        public string? MensajeError { get; set; } // Para guardar mensajes de error del SRI
 
         // Navigation properties
         public Cliente Cliente { get; set; } = null!;

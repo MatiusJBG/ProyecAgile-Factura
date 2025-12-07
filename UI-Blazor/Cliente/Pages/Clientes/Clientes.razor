@@ -56,12 +56,14 @@
             }
         </div>
     }
-    else if (currentView == "nuevo")
+    else if (currentView == "nuevo" || currentView == "editar")
     {
         <div class="content-section">
             <ClienteForm 
                 ClienteDto="nuevoCliente" 
-                OnSave="HandleSubmitNuevoCliente" 
+                Title="@(currentView == "editar" ? "Editar Cliente" : "Nuevo Cliente")"
+                Subtitle="@(currentView == "editar" ? "Modifique la información del cliente" : "Complete la información del nuevo cliente")"
+                OnSave="HandleSubmitCliente" 
                 OnCancel='() => ChangeView("lista")' 
             />
         </div>
@@ -285,12 +287,28 @@
         ApplyFilters();
     }
 
-    private async Task HandleSubmitNuevoCliente()
+    private async Task HandleSubmitCliente()
     {
-        await ClienteService.CreateClienteAsync(nuevoCliente);
-        await LoadClienteDtos();
-        ChangeView("lista");
-        Console.WriteLine($"ClienteDto guardado: {nuevoCliente.NombreCompleto}");
+        try
+        {
+            if (nuevoCliente.Id_Cli == 0)
+            {
+                await ClienteService.CreateClienteAsync(nuevoCliente);
+            }
+            else
+            {
+                await ClienteService.UpdateClienteAsync(nuevoCliente);
+            }
+
+            await LoadClienteDtos();
+            ChangeView("lista");
+            Console.WriteLine($"Cliente guardado: {nuevoCliente.NombreCompleto}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al guardar cliente: {ex.Message}");
+            // Sería ideal mostrar un mensaje de error en la UI aquí
+        }
     }
 
     private async Task HandleViewClient(int clientId)
@@ -308,27 +326,23 @@
         var cliente = await ClienteService.GetClienteByIdAsync(clientId);
         if (cliente != null)
         {
-            // Crear una copia para no modificar el original hasta guardar
-            clienteParaEditar = new ClienteDto
-            {
-                Id_Cli = cliente.Id_Cli,
-                Tipo_Cliente = cliente.Tipo_Cliente,
-                Tipo_Documento = cliente.Tipo_Documento,
-                Num_Documento = cliente.Num_Documento,
-                Nombre = cliente.Nombre,
-                Apellido = cliente.Apellido,
-                Direccion = cliente.Direccion,
-                Correo = cliente.Correo,
-                Telefono = cliente.Telefono,
-                Activo = cliente.Activo
-            };
-            showEditModal = true;
+            nuevoCliente = cliente;
+            currentView = "editar";
         }
     }
 
-    private void HandleDeleteClient(int clientId)
+    private async Task HandleDeleteClient(int clientId)
     {
-        Console.WriteLine($"Eliminar cliente: {clientId}");
+        try
+        {
+            await ClienteService.DeleteClienteAsync(clientId);
+            await LoadClienteDtos();
+            Console.WriteLine($"Cliente eliminado: {clientId}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar cliente: {ex.Message}");
+        }
     }
 
     private void CerrarModalVer()
@@ -337,6 +351,7 @@
         clienteParaVer = null;
     }
 
+    // El modal de edición simple ya no se usa, reemplazado por formulario completo
     private void CerrarModalEditar()
     {
         showEditModal = false;
@@ -345,11 +360,7 @@
 
     private async Task GuardarEdicion()
     {
-        if (clienteParaEditar != null)
-        {
-            await ClienteService.UpdateClienteAsync(clienteParaEditar);
-            await LoadClienteDtos();
-            CerrarModalEditar();
-        }
+        // Deprecated
+        await Task.CompletedTask;
     }
 }

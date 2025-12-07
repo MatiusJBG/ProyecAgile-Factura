@@ -4,11 +4,13 @@ using Infrastructure.Services.Sri;
 using Core.Interfaces.Facturacion;
 using Core.Entities.Facturacion;
 using Core.Interfaces.Certificados;
-using Core.Entities.Facturacion;
+
 using System.Text.Json;
 
 namespace UI_Blazor.Servidor.Controllers
 {
+using Core.Interfaces.Common;
+
     [ApiController]
     [Route("api/[controller]")]
     public class SriController : ControllerBase
@@ -19,8 +21,8 @@ namespace UI_Blazor.Servidor.Controllers
         private readonly SriAutorizacionClient _sriAutorizacionClient;
         private readonly IFacturaRepository _facturaRepository;
         private readonly ICertificadoService _certificadoService;
-
         private readonly IRideService _rideService;
+        private readonly IEmailService _emailService;
 
         public SriController(
             FacturaXmlService facturaXmlService,
@@ -29,7 +31,8 @@ namespace UI_Blazor.Servidor.Controllers
             SriAutorizacionClient sriAutorizacionClient,
             IFacturaRepository facturaRepository,
             ICertificadoService certificadoService,
-            IRideService rideService)
+            IRideService rideService,
+            IEmailService emailService)
         {
             _facturaXmlService = facturaXmlService;
             _firmaElectronicaService = firmaElectronicaService;
@@ -38,6 +41,7 @@ namespace UI_Blazor.Servidor.Controllers
             _facturaRepository = facturaRepository;
             _certificadoService = certificadoService;
             _rideService = rideService;
+            _emailService = emailService;
         }
 
         [HttpPost("enviar/{idFactura}")]
@@ -68,8 +72,29 @@ namespace UI_Blazor.Servidor.Controllers
                 {
                     respuestaRecepcion.ClaveAcceso = resultadoXml.ClaveAcceso;
                 }
+                
+                // 7. Actualizar Estado Factura en DB
+                factura.ClaveAcceso = respuestaRecepcion.ClaveAcceso;
+                
+                if (respuestaRecepcion.Estado == "RECIBIDA")
+                {
+                    factura.Estado = Core.Enums.Facturacion.EstadoFactura.Enviada;
+                    factura.MensajeError = null;
+                }
+                else if (respuestaRecepcion.Estado == "DEVUELTA")
+                {
+                     factura.Estado = Core.Enums.Facturacion.EstadoFactura.Devuelta;
+                     factura.MensajeError = respuestaRecepcion.Mensajes;
+                }
+                else
+                {
+                    factura.Estado = Core.Enums.Facturacion.EstadoFactura.NoEnviada;
+                    factura.MensajeError = "SRI: " + respuestaRecepcion.Estado;
+                }
+                
+                await _facturaRepository.UpdateAsync(factura);
 
-                // 7. Retornar respuesta
+                // 8. Retornar respuesta
                 return Ok(new { stage = "Recepcion", response = respuestaRecepcion });
             }
             catch (Exception ex)
@@ -84,6 +109,52 @@ namespace UI_Blazor.Servidor.Controllers
              try
             {
                 var resultado = await _sriAutorizacionClient.AutorizarAsync(claveAcceso);
+                
+                // Actualizar DB
+                var factura = await _facturaRepository.GetByClaveAccesoAsync(claveAcceso);
+                if (factura != null)
+                {
+                    if (resultado.Estado == "AUTORIZADO")
+                    {
+                        factura.Estado = Core.Enums.Facturacion.EstadoFactura.Autorizada;
+                        factura.MensajeError = null;
+
+                        // ENVIAR EMAIL AUTOMÁTICAMENTE
+                        if (!string.IsNullOrEmpty(factura.Cliente.Correo))
+                        {
+                            try
+                            {
+                                DateTime fechaAuth = DateTime.Now;
+                                if (DateTime.TryParse(resultado.FechaAutorizacion, out var parsedDate))
+                                {
+                                    fechaAuth = parsedDate;
+                                }
+
+                                var pdfBytes = _rideService.GenerateRidePdf(factura, claveAcceso, fechaAuth);
+                                await _emailService.SendEmailAsync(
+                                    factura.Cliente.Correo,
+                                    $"Factura Electrónica {factura.Id_Fac} - AUTORIZADA",
+                                    $"<p>Estimado {factura.Cliente.Nombre},</p><p>Adjunto encontrará su factura electrónica número {factura.Id_Fac}.</p><p>Estado: AUTORIZADA</p>",
+                                    pdfBytes,
+                                    $"Factura-{factura.Id_Fac}.pdf"
+                                );
+                            }
+                            catch (Exception ex)
+                            {
+                                // Loguear error de email pero no fallar la autorización
+                                factura.MensajeError += " (Error envío email: " + ex.Message + ")";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Si no autorizada, puede ser rechazada o en proceso, asumimos Devuelta/Rechazada
+                        factura.Estado = Core.Enums.Facturacion.EstadoFactura.Devuelta;
+                        factura.MensajeError = resultado.Mensajes;
+                    }
+                    await _facturaRepository.UpdateAsync(factura);
+                }
+                
                 return Ok(resultado);
             }
             catch (Exception ex)
