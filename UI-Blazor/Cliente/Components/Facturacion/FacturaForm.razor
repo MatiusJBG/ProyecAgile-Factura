@@ -8,6 +8,8 @@
 @inject IProductoService ProductoService
 @inject IDescuentoService DescuentoService
 
+@inject IJSRuntime JS
+
 <div class="factura-form-container">
     <div class="form-header-section">
         <h3 class="modal-title">@(Factura.Id_Fac == 0 ? "Nueva Factura" : "Editar Factura")</h3>
@@ -240,7 +242,7 @@
                             <span class="value">- @Factura.Tot_Descuento.ToString("C")</span>
                         </div>
                         <div class="total-row">
-                            <span class="label">IVA (12%)</span>
+                            <span class="label">IVA (15%)</span>
                             <span class="value">@Factura.IVA_Fac.ToString("C")</span>
                         </div>
                         <div class="total-divider"></div>
@@ -300,13 +302,13 @@
 
     private async Task CerrarBusquedaCliente()
     {
-        await Task.Delay(100);
+        await Task.Delay(250); // Increased delay to allow click event
         mostrarResultadosClientes = false;
     }
 
     private async Task CerrarBusquedaProductoRow()
     {
-        await Task.Delay(100);
+        await Task.Delay(250); // Increased delay to allow click event
         activeSearchRow = null;
     }
 
@@ -441,13 +443,29 @@
 
         Factura.Tot_Descuento = totalDescuentos;
         Factura.Tot_Fac_Sin_IVA = subtotalBruto - totalDescuentos;
-        Factura.IVA_Fac = Factura.Tot_Fac_Sin_IVA * 0.12m;
+        Factura.IVA_Fac = Factura.Tot_Fac_Sin_IVA * 0.15m;
         Factura.Tot_Fac_Con_IVA = Factura.Tot_Fac_Sin_IVA + Factura.IVA_Fac;
     }
 
     private async Task OnSubmit()
     {
+        // 1. Limpiar líneas vacías o inválidas (Producto no seleccionado o Cantidad 0)
+        var lineasValidas = Factura.Detalles
+            .Where(d => d.Id_Pro_Per != 0 && d.Cantidad_Comprada > 0)
+            .ToList();
+        
+        // 2. Validar que quede al menos una línea
+        if (!lineasValidas.Any())
+        {
+            await JS.InvokeVoidAsync("alert", "Debe agregar al menos un producto a la factura.");
+            return;
+        }
+
+        // 3. Actualizar la factura con las líneas limpias
+        Factura.Detalles = lineasValidas;
         CalcularTotales();
+        
+        // 4. Proceder
         await OnGuardar.InvokeAsync();
     }
 }

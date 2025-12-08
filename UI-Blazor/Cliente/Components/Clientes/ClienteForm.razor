@@ -71,7 +71,20 @@
 
             <div class="form-group">
                 <label class="form-label">Email *</label>
-                <input type="email" class="form-control" @bind="ClienteDto.Correo" placeholder="ejemplo@correo.com" required />
+                <input type="email" class="form-control @(!isEmailValid ? "is-invalid" : "")" 
+                       @bind-value="EmailInput" @bind-value:event="oninput"
+                       placeholder="ejemplo@correo.com" required />
+                @if (!string.IsNullOrEmpty(emailValidationMessage))
+                {
+                    <div class="text-danger small mt-1">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        @emailValidationMessage
+                    </div>
+                }
             </div>
 
             <div class="form-group">
@@ -110,7 +123,7 @@
             <button type="button" class="btn btn-secondary" @onclick="OnCancel">
                 Cancelar
             </button>
-            <button type="submit" class="btn btn-primary" disabled="@(!isDocumentValid || !isPhoneValid)">
+            <button type="submit" class="btn btn-primary" disabled="@(!isDocumentValid || !isPhoneValid || !isEmailValid)">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <polyline points="17 21 17 13 7 13 7 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -131,8 +144,10 @@
 
     private string? validationMessage;
     private string? phoneValidationMessage;
+    private string? emailValidationMessage;
     private bool isDocumentValid = true;
     private bool isPhoneValid = true;
+    private bool isEmailValid = true;
 
     private string DocumentoInput
     {
@@ -165,6 +180,16 @@
         }
     }
 
+    private string EmailInput
+    {
+        get => ClienteDto.Correo;
+        set
+        {
+            ClienteDto.Correo = value;
+            ValidateEmail();
+        }
+    }
+
     private TipoDocumento SelectedTipoDocumento
     {
         get => ClienteDto.Tipo_Documento;
@@ -179,6 +204,28 @@
     {
         ValidateDocumento();
         ValidateTelefono();
+        ValidateEmail();
+    }
+
+    private void ValidateEmail()
+    {
+        emailValidationMessage = null;
+        isEmailValid = true;
+        string email = ClienteDto.Correo;
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+             emailValidationMessage = "El correo es obligatorio.";
+             isEmailValid = false;
+             return;
+        }
+
+        // Basic Regex for email
+        if (!System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+        {
+            emailValidationMessage = "Formato de correo inválido.";
+            isEmailValid = false;
+        }
     }
 
     private void ValidateTelefono()
@@ -264,8 +311,9 @@
     {
         ValidateDocumento();
         ValidateTelefono();
+        ValidateEmail();
         
-        if (!isDocumentValid || !isPhoneValid) return;
+        if (!isDocumentValid || !isPhoneValid || !isEmailValid) return;
         
         await OnSave.InvokeAsync();
     }

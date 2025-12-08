@@ -16,6 +16,9 @@ namespace Application.DTOs.Factura
         // Estado
         public EstadoFactura Estado { get; set; } = EstadoFactura.Pendiente;
         
+        public string? ClaveAcceso { get; set; }
+        public string? MensajeError { get; set; }
+        
         // Para display en UI
         public string ClienteNombre { get; set; } = string.Empty;
         

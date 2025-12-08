@@ -11,6 +11,8 @@ namespace Core.Entities.Clientes
         public string Nombre { get; set; } = string.Empty;
         public string? Apellido { get; set; }
         public string? Direccion { get; set; }
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "El correo es obligatorio.")]
+        [System.ComponentModel.DataAnnotations.EmailAddress(ErrorMessage = "Formato de correo inválido.")]
         public string? Correo { get; set; }
         public string? Telefono { get; set; }
         public bool Activo { get; set; } = true;

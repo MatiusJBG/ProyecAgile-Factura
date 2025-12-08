@@ -27,6 +27,11 @@ namespace Core.Interfaces.Facturacion
         /// Genera el XML de una factura para firma
         /// </summary>
         string GenerarXmlFactura(Factura factura);
+
+        /// <summary>
+        /// Firma un XML (bytes) usando XAdES-BES (Enveloped) para el SRI
+        /// </summary>
+        byte[] FirmarXmlSri(byte[] xmlBytes, System.Security.Cryptography.X509Certificates.X509Certificate2 certificado);
     }
 }
 
