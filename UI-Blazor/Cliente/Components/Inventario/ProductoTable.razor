@@ -36,7 +36,7 @@
                             </span>
                         </td>
                         <td>@producto.Marca</td>
-                        <td>@producto.Precio_Venta.ToString("C")</td>
+                        <td>$@producto.Precio_Venta.ToString("N2")</td>
                         <td class="text-center">
                             @if (producto.Lotes != null && producto.Lotes.Any())
                             {

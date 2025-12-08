@@ -17,7 +17,7 @@
 
         <!-- Características Generales -->
         <div class="form-section-box">
-            <h4 class="section-subtitle">Información del ProductoDto</h4>
+            <h4 class="section-subtitle">Información del Producto</h4>
             
             <div class="form-grid">
                 <div class="form-column-left">
@@ -42,7 +42,7 @@
                 <div class="form-column-right">
                     <div class="form-row-inline">
                         <div class="form-group">
-                            <label>Tipo de ProductoDto *</label>
+                            <label>Tipo de Producto *</label>
                             <input type="text" 
                                    class="form-control" 
                                    @bind="Model.Tip_Pro" 
@@ -53,7 +53,7 @@
 
                     <div class="form-row-inline">
                         <div class="form-group">
-                            <label>Nombre del ProductoDto *</label>
+                            <label>Nombre del Producto *</label>
                             <input type="text" 
                                    class="form-control wide-input" 
                                    @bind="Model.Nom_Pro" 
@@ -93,8 +93,7 @@
         <!-- Información de LoteDtos y Precios -->
         <div class="form-section-box lote-section">
             <h4 class="section-subtitle">
-                📦 Información de LoteDto Inicial
-                <span class="info-badge">Tabla separada: lotes</span>
+                📦 Información del Lote
             </h4>
             
             <div class="form-grid-2col">
@@ -148,7 +147,7 @@
 
             <div class="lote-info-display">
                 <div class="calculated-info">
-                    <span class="info-label">Costo Total del LoteDto:</span>
+                    <span class="info-label">Costo Total del Lote:</span>
                     <span class="info-value">
                         $@((Model.Cantidad_Recibida.GetValueOrDefault() * Model.Precio_Unitario.GetValueOrDefault()).ToString("N2"))
                     </span>
@@ -158,7 +157,7 @@
 
         <!-- Botones de acción -->
         <div class="form-actions">
-            <button type="submit" class="btn btn-guardar">Guardar ProductoDto</button>
+            <button type="submit" class="btn btn-guardar">Guardar Producto</button>
             <button type="button" class="btn btn-cancelar" @onclick="() => OnCancelar.InvokeAsync()">Cancelar</button>
         </div>
     </form>
