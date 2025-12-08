@@ -37,6 +37,21 @@ namespace UI_Blazor.Servidor.Controllers
             }
         }
 
+        [HttpGet("stats")]
+        public async Task<ActionResult<FacturaStatsDto>> GetStats()
+        {
+            try
+            {
+                var stats = await _facturaService.GetEstadisticasAsync();
+                return Ok(stats);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener estadísticas de facturas");
+                return StatusCode(500, "Error interno del servidor");
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<FacturaDto>> GetFactura(int id)
         {

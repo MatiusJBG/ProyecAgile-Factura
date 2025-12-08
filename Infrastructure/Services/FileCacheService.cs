@@ -62,6 +62,22 @@ namespace Infrastructure.Services
             }
         }
 
+        public Task InvalidateClientesCacheAsync()
+        {
+            try
+            {
+                if (File.Exists(_clienteCachePath))
+                {
+                    File.Delete(_clienteCachePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error invalidating client cache: {ex.Message}");
+            }
+            return Task.CompletedTask;
+        }
+
         public async Task SaveProductosCacheAsync(IEnumerable<ProductoDto> productos)
         {
             try
@@ -90,6 +106,22 @@ namespace Infrastructure.Services
             {
                 return Enumerable.Empty<ProductoDto>();
             }
+        }
+
+        public Task InvalidateProductosCacheAsync()
+        {
+            try
+            {
+                if (File.Exists(_productoCachePath))
+               {
+                    File.Delete(_productoCachePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error invalidating product cache: {ex.Message}");
+            }
+            return Task.CompletedTask;
         }
 
         public Task<bool> IsCacheValidAsync()

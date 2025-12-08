@@ -10,10 +10,10 @@
         <div class="form-grid">
             <div class="form-group">
                 <label class="form-label">Tipo de ClienteDto *</label>
-                <select class="form-control" @bind="ClienteDto.Tipo_Cliente">
-                    <option value="@TipoCliente.PERSONA">Persona Natural (CI)</option>
-                    <option value="@TipoCliente.EMPRESA">Empresa (RUC)</option>
-                    <option value="@TipoCliente.EXTRANJERO">Extranjero (Pasaporte)</option>
+                <select class="form-control" @bind="SelectedTipoCliente">
+                    <option value="@TipoCliente.PERSONA">Persona Natural</option>
+                    <option value="@TipoCliente.EMPRESA">Empresa</option>
+                    <option value="@TipoCliente.EXTRANJERO">Extranjero</option>
                 </select>
             </div>
 
@@ -37,9 +37,11 @@
                 </div>
             }
 
+
+
             <div class="form-group">
-                <label class="form-label">Tipo de Documento *</label>
-                <select class="form-control" @bind="SelectedTipoDocumento">
+                <label class="form-label">Tipo de Documento</label>
+                <select class="form-control" value="@ClienteDto.Tipo_Documento" disabled>
                     <option value="@TipoDocumento.CEDULA">Cédula</option>
                     <option value="@TipoDocumento.RUC">RUC</option>
                     <option value="@TipoDocumento.PASAPORTE">Pasaporte</option>
@@ -104,6 +106,19 @@
                     </div>
                 }
             </div>
+
+            <div class="form-group full-width">
+                <label class="form-label">Estado</label>
+                <div class="status-toggle-wrapper">
+                    <label class="toggle-switch">
+                        <input type="checkbox" @bind="ClienteDto.Activo">
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="status-label @(ClienteDto.Activo ? "active" : "inactive")">
+                        @(ClienteDto.Activo ? "Cliente Activo" : "Cliente Inactivo")
+                    </span>
+                </div>
+            </div>
         </div>
 
         <div class="form-actions">
@@ -116,7 +131,7 @@
                     <polyline points="17 21 17 13 7 13 7 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <polyline points="7 3 7 8 15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Guardar ClienteDto
+                @SubmitButtonText
             </button>
         </div>
     </form>
@@ -128,6 +143,7 @@
     [Parameter] public string Subtitle { get; set; } = "Complete la información del cliente";
     [Parameter] public EventCallback OnSave { get; set; }
     [Parameter] public EventCallback OnCancel { get; set; }
+    [Parameter] public string SubmitButtonText { get; set; } = "Guardar Cliente";
 
     private string? validationMessage;
     private string? phoneValidationMessage;
@@ -141,7 +157,24 @@
         get => ClienteDto.Num_Documento;
         set
         {
-            ClienteDto.Num_Documento = value;
+            // Input Sanitation
+            if (string.IsNullOrEmpty(value)) 
+            {
+                ClienteDto.Num_Documento = value;
+            }
+            else
+            {
+                if (ClienteDto.Tipo_Documento == TipoDocumento.PASAPORTE)
+                {
+                    // Alphanumeric only (letters and numbers), no spaces or special chars
+                    ClienteDto.Num_Documento = System.Text.RegularExpressions.Regex.Replace(value, "[^a-zA-Z0-9]", "");
+                }
+                else
+                {
+                    // Numbers only for CEDULA and RUC
+                    ClienteDto.Num_Documento = new string(value.Where(char.IsDigit).ToArray());
+                }
+            }
             ValidateDocumento();
         }
     }
@@ -155,6 +188,17 @@
             ValidateTelefono();
         }
     }
+    
+    // Ensure Activo has a default
+    protected override void OnParametersSet()
+    {
+        if (ClienteDto.Id_Cli == 0 && ClienteDto.Activo == false)
+        {
+             // For new clients, default to Active unless explicitly set otherwise (though bool default is false, business logic usually implies new = active)
+             // However, let's respect the object passed. If user passes `new ClienteDto()`, Activo is false by default struct? No, DTO default?
+             // Let's assume the parent sets the default.
+        }
+    }
 
     private string EmailInput
     {
@@ -166,14 +210,31 @@
         }
     }
 
-    private TipoDocumento SelectedTipoDocumento
+    private TipoCliente SelectedTipoCliente
     {
-        get => ClienteDto.Tipo_Documento;
+        get => ClienteDto.Tipo_Cliente;
         set
         {
-            ClienteDto.Tipo_Documento = value;
-            ValidateDocumento();
+            ClienteDto.Tipo_Cliente = value;
+            UpdateTipoDocumento(value);
         }
+    }
+
+    private void UpdateTipoDocumento(TipoCliente tipoCliente)
+    {
+        switch (tipoCliente)
+        {
+            case TipoCliente.PERSONA:
+                ClienteDto.Tipo_Documento = TipoDocumento.CEDULA;
+                break;
+            case TipoCliente.EMPRESA:
+                ClienteDto.Tipo_Documento = TipoDocumento.RUC;
+                break;
+            case TipoCliente.EXTRANJERO:
+                ClienteDto.Tipo_Documento = TipoDocumento.PASAPORTE;
+                break;
+        }
+        ValidateDocumento(); // Re-validate with new type
     }
 
     protected override void OnInitialized()

@@ -1,4 +1,4 @@
-/* Contenedor de tarjetas de resumen */
+/* Contenedor de tarjetas de resumen - Estilo Estático como Factura */
 .summary-cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -6,117 +6,70 @@
     margin-bottom: 2rem;
 }
 
-/* Tarjeta de resumen */
+/* Tarjeta de resumen - Diseño simple y estático */
 .summary-card {
     background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem 1.5rem;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
+    gap: 1.25rem;
     border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.summary-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #1e293b, #475569);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.summary-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-    border-color: #cbd5e1;
-}
-
-.summary-card:hover::before {
-    opacity: 1;
-}
-
-.card-blue::before {
-    background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
-}
-
-.card-green::before {
-    background: linear-gradient(90deg, #0f766e 0%, #0d9488 100%);
-}
-
-.card-purple::before {
-    background: linear-gradient(90deg, #475569 0%, #64748b 100%);
-}
-
-.card-orange::before {
-    background: linear-gradient(90deg, #b45309 0%, #d97706 100%);
-}
-
+/* Iconos circulares - Sin animaciones */
 .card-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 14px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f1f5f9;
-    color: #1e293b;
-    font-size: 2rem;
+    font-size: 1.5rem;
     flex-shrink: 0;
-    transition: all 0.3s ease;
-}
-
-.summary-card:hover .card-icon {
-    transform: scale(1.05);
 }
 
 .card-blue .card-icon {
-    background: #eff6ff;
+    background-color: #eff6ff;
     color: #3b82f6;
 }
 
 .card-green .card-icon {
-    background: #ecfdf5;
+    background-color: #f0fdf4;
     color: #10b981;
 }
 
 .card-purple .card-icon {
-    background: #f1f5f9;
-    color: #475569;
+    background-color: #f3f4f6;
+    color: #6366f1;
 }
 
 .card-orange .card-icon {
-    background: #fff7ed;
+    background-color: #fff7ed;
     color: #f59e0b;
 }
 
+/* Detalles de la tarjeta */
 .card-details {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    justify-content: center;
 }
 
 .card-label {
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 0.85rem;
+    font-weight: 500;
     color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
 }
 
 .card-value {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #1e293b;
-    line-height: 1;
+    color: #0f172a;
+    line-height: 1.1;
 }
 
 /* Responsive */
@@ -124,16 +77,11 @@
     .summary-cards-container {
         grid-template-columns: 1fr;
         gap: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .summary-card {
-        padding: 1.5rem;
-    }
-
-    .card-icon {
-        width: 56px;
-        height: 56px;
-        font-size: 1.75rem;
+        padding: 1.25rem;
     }
 
     .card-value {
@@ -143,21 +91,16 @@
 
 @media (max-width: 480px) {
     .summary-card {
-        padding: 1.5rem;
+        padding: 1.25rem;
     }
 
     .card-icon {
-        width: 56px;
-        height: 56px;
-        font-size: 1.5rem;
-    }
-
-    .card-content h3 {
+        width: 40px;
+        height: 40px;
         font-size: 1.25rem;
     }
 
-    .card-content p {
-        font-size: 0.9rem;
+    .card-value {
+        font-size: 1.25rem;
     }
 }
-

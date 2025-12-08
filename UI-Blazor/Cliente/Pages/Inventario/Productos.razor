@@ -1,13 +1,14 @@
-@page "/productos"
+ï»¿@page "/productos"
 @page "/productos/lista"
 @attribute [Authorize]
 @using Application.DTOs.Producto
 
 @using Cliente.Components
+@using Cliente.Services.Inventario
 
 
-@inject IProductoService ProductoService
-@inject IDescuentoService DescuentoService
+@inject Cliente.Services.Inventario.IProductoService ProductoService
+@inject Cliente.Services.Inventario.IDescuentoService DescuentoService
 @inject NavigationManager NavigationManager
 
 <PageTitle>ProductoDtos</PageTitle>
@@ -16,8 +17,8 @@
     <!-- Header -->
     <div class="page-header">
         <div class="header-title-section">
-            <h2 class="page-title">Gestión de ProductoDtos</h2>
-            <p class="page-subtitle">Administra tu catálogo de productos y servicios</p>
+            <h2 class="page-title">GestiÃ³n de ProductoDtos</h2>
+            <p class="page-subtitle">Administra tu catÃ¡logo de productos y servicios</p>
         </div>
     </div>
 
@@ -25,125 +26,55 @@
     <div class="tabs-navigation">
         <button class="tab-btn @(currentView == "lista" ? "active" : "")" @onclick='() => ChangeView("lista")'>Lista General</button>
         <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>Nuevo ProductoDto</button>
+        @if (productoParaEditar != null)
+        {
+            <button class="tab-btn active" @onclick='() => ChangeView("editar")'>
+                Editar Producto
+            </button>
+        }
         <button class="tab-btn @(currentView == "descuentos" ? "active" : "")" @onclick='() => ChangeView("descuentos")'>Descuentos</button>
     </div>
 
     @if (currentView == "lista")
     {
-        <!-- Search bar -->
-        <div class="search-filter-bar">
-            <div class="search-box">
-                <input type="text"
-                       class="search-input"
-                       placeholder="Buscar por nombre, tipo o marca..."
-                       @bind="searchTerm"
-                       @bind:event="oninput"
-                       @bind:after="ApplyFilters" />
-                @if (!string.IsNullOrEmpty(searchTerm))
-                {
-                    <button class="clear-btn" @onclick="ClearSearch" title="Limpiar búsqueda">×</button>
-                }
-            </div>
-            <div class="filter-buttons">
-                <div class="filter-info">
-                    Mostrando <strong>@productosFiltrados.Count</strong> de <strong>@productos.Count</strong> productos
-                </div>
-            </div>
-        </div>
+                    <!-- Tabla de Productos (Componente Extraido con Paginacion) -->
+            <ProductoTable Productos="productosPaginaActual"
+                           CurrentPage="currentPage"
+                           TotalPages="totalPages"
+                           OnPageChanged="CambiarPagina"
+                           OnView="VerProductoDto"
+                           OnEdit="EditarProductoDto"
+                           OnDelete="EliminarProductoDto"
+                           OnAddBatch="AgregarLote">
+                <ToolBarContent>
+                     <!-- Search bar -->
+                    <div class="search-filter-bar compact">
+                        <div class="search-box">
+                            <span class="search-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                </svg>
+                            </span>
+                            <input type="text"
+                                   class="search-input has-icon"
+                                   placeholder="Buscar por nombre, tipo o marca..."
+                                   @bind="searchTerm"
+                                   @bind:event="oninput"
+                                   @bind:after="ApplyFilters" />
+                            @if (!string.IsNullOrEmpty(searchTerm))
+                            {
+                                <button class="clear-btn" @onclick="ClearSearch" title="Limpiar bÃºsqueda">âœ•</button>
+                            }
+                        </div>
+                        <div class="filter-buttons">
+                            <div class="filter-info">
+                                <strong>@productosFiltrados.Count</strong> / <strong>@productos.Count</strong>
+                            </div>
+                        </div>
+                    </div>
+                </ToolBarContent>
+            </ProductoTable>
 
-        <!-- Products table -->
-        <div class="productos-table-container">
-            <table class="productos-table">
-                <thead>
-                    <tr>
-                        <th style="width: 60px;">ID</th>
-                        <th>Nombre</th>
-                        <th style="width: 120px;">Tipo</th>
-                        <th style="width: 120px;">Marca</th>
-                        <th style="width: 120px;">Precio Venta</th>
-                        <th style="width: 130px;">Fecha Entrada</th>
-                        <th style="width: 140px;">Stock (Rec/Disp)</th>
-                        <th style="width: 100px;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (productosFiltrados != null && productosFiltrados.Any())
-                    {
-                        @foreach (var producto in productosFiltrados)
-                        {
-                            <tr>
-                                <td class="text-center"><strong>@producto.Id_Pro</strong></td>
-                                <td><strong>@producto.Nom_Pro</strong></td>
-                                <td><span class="tipo-badge @(producto.Tip_Pro == "Bien" ? "bien" : "servicio")">@producto.Tip_Pro</span></td>
-                                <td>@producto.Marca</td>
-                                <td class="precio-col">@producto.Precio_Venta.ToString("C")</td>
-                                <td class="text-center">
-                                    @if (producto.Lotes != null && producto.Lotes.Any())
-                                    {
-                                        @producto.Lotes.First().Fec_Ent.ToString("dd/MM/yyyy")
-                                    }
-                                    else
-                                    {
-                                        <span style="color: #999;">-</span>
-                                    }
-                                </td>
-                                <td class="stock-col">
-                                    @if (producto.Lotes != null && producto.Lotes.Any())
-                                    {
-                                        var totalRecibido = producto.Lotes.Sum(l => l.Cantidad_Recibida);
-                                        var totalDisponible = producto.Lotes.Sum(l => l.Cantidad_Disponible);
-                                        <span>@totalRecibido / @totalDisponible</span>
-                                    }
-                                    else
-                                    {
-                                        <span>0 / 0</span>
-                                    }
-                                </td>
-                                <td class="actions-col">
-                                    <button class="action-btn-icon view" @onclick='() => VerProductoDto(producto.Id_Pro)' title="Ver">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                    </button>
-                                    <button class="action-btn-icon edit" @onclick='() => EditarProductoDto(producto.Id_Pro)' title="Editar">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                    <button class="action-btn-icon delete" @onclick='() => EliminarProductoDto(producto.Id_Pro)' title="Eliminar">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                    <button class="action-btn-icon add-batch" @onclick='() => AgregarLote(producto.Id_Pro)' title="Agregar Lote">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                                        </svg>
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="8">
-                                <div class="no-data">
-                                    <div class="empty-state">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                                        </svg>
-                                        <p>No se encontraron productos</p>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
     }
     else if (currentView == "nuevo")
     {
@@ -151,159 +82,256 @@
             <div class="form-container">
                 <div class="form-header">
                     <h3 class="form-title">Nuevo ProductoDto</h3>
-                    <p class="form-subtitle">Complete la información del producto</p>
+                    <p class="form-subtitle">Complete la informaciÃ³n del producto</p>
                 </div>
                 <ProductoForm Model="productoActual" OnGuardar="GuardarProductoDto" OnCancelar='() => ChangeView("lista")' />
             </div>
         </div>
+    }
+        else if (currentView == "editar" && productoParaEditar != null)
+    {
+         <div class="content-section">
+             <div class="form-container">
+                 <div class="form-header">
+                     <h3 class="form-title">Editar Producto</h3>
+                     <p class="form-subtitle">Modificando: @productoParaEditar.Nom_Pro</p>
+                 </div>
+                 <ProductoForm Model="productoParaEditar" OnGuardar="HandleSubmitEditProduct" OnCancelar="CancelarEdicion" />
+             </div>
+         </div>
     }
     else if (currentView == "descuentos")
     {
         <div class="content-section">
             <div class="form-container">
                 <div class="form-header">
-                    <h3 class="form-title">Gestión de Descuentos</h3>
-                    <p class="form-subtitle">Asigne descuentos a sus productos</p>
+                    <h3 class="form-title">GestiÃ³n de Descuentos</h3>
+                    <p class="form-subtitle">Asigne y administre descuentos para sus productos</p>
                 </div>
                 
-                <!-- Tabla de productos con descuentos activos -->
-                <div class="descuentos-activos-section mb-4">
-                    <h4>ProductoDtos con Descuentos Activos</h4>
-                    @if (todosLosDescuentos.Any())
-                    {
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ProductoDto</th>
-                                    <th>Motivo</th>
-                                    <th>Descuento %</th>
-                                    <th>Fecha Inicio</th>
-                                    <th>Fecha Fin</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var desc in todosLosDescuentos)
-                                {
-                                    var producto = productos.FirstOrDefault(p => p.Id_Pro == desc.Id_Pro_Per);
-                                    <tr>
-                                        <td><strong>@(producto?.Nom_Pro ?? "ProductoDto no encontrado")</strong></td>
-                                        <td>@desc.Motivo</td>
-                                        <td><span class="badge bg-success">@desc.Porcentaje%</span></td>
-                                        <td>@desc.FechaInicio.ToShortDateString()</td>
-                                        <td>@(desc.FechaFin?.ToShortDateString() ?? "Sin límite")</td>
-                                        <td>
-                                            <span class="badge @(desc.Activo ? "bg-success" : "bg-secondary")">
-                                                @(desc.Activo ? "Activo" : "Inactivo")
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-danger" @onclick="() => EliminarDescuentoGlobal(desc.Id_Desc)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                                                  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                                                </svg>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info">
-                            No hay productos con descuentos activos actualmente.
-                        </div>
-                    }
-                </div>
-
-                <hr class="my-4" />
-                
-                <div class="descuento-form-grid">
-                    <div class="form-group">
-                        <label>ProductoDto</label>
-                        <select class="form-control" @onchange="OnProductoDtoDescuentoChanged">
-                            <option value="">Seleccione un producto...</option>
-                            @foreach (var prod in productos)
+                <!-- 1. BUSCADOR DE PRODUCTO (AUTOCOMPLETE) -->
+                <div class="discount-selector-section">
+                    <div class="form-group search-container-discount">
+                        <label class="form-label">Buscar Producto (CachÃ© Local)</label>
+                        <div class="autocomplete-wrapper">
+                            <span class="search-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                </svg>
+                            </span>
+                            <input type="text" 
+                                   class="search-input-discount has-icon" 
+                                   placeholder="Escribe para buscar..." 
+                                   @bind="searchTermDescuento" 
+                                   @bind:event="oninput"
+                                   @onkeyup="FiltrarProductosDescuento" 
+                                   @onfocusout="OcultarResultadosDescuento" />
+                            
+                            @if (mostrarResultadosDescuento && productosFiltradosDescuento.Any())
                             {
-                                <option value="@prod.Id_Pro">@prod.Nom_Pro</option>
+                                <ul class="autocomplete-results">
+                                    @foreach (var prod in productosFiltradosDescuento)
+                                    {
+                                        <li @onclick="() => SeleccionarProductoDescuento(prod)" @onmousedown:preventDefault>
+                                            <span class="result-name">@prod.Nom_Pro</span>
+                                            <span class="result-brand">@prod.Marca</span>
+                                        </li>
+                                    }
+                                </ul>
                             }
-                        </select>
+                            else if (mostrarResultadosDescuento && !string.IsNullOrEmpty(searchTermDescuento))
+                            {
+                                <div class="autocomplete-no-results">
+                                    No se encontraron productos
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
 
+                <!-- 2. FORMULARIO Y TABLA DEL PRODUCTO SELECCIONADO -->
                 @if (productoSeleccionadoDescuento != null)
                 {
-                    <div class="descuentos-list-section mt-4">
-                        <h4>Descuentos para: @productoSeleccionadoDescuento.Nom_Pro</h4>
+                    <div class="selected-product-section">
+                        <h4 class="section-title">Descuentos para: <strong>@productoSeleccionadoDescuento.Nom_Pro</strong></h4>
                         
                         <!-- Formulario Nuevo Descuento -->
-                        <div class="new-discount-box p-3 border rounded mb-3 bg-light">
-                            <h5>Agregar Nuevo Descuento</h5>
-                            <div class="row">
-                                <div class="col-md-3">
+                        <div class="new-discount-form">
+                            <h5 class="form-section-label">Agregar Nuevo Descuento</h5>
+                            <div class="discount-form-grid">
+                                <div class="form-group">
                                     <label>Porcentaje (%)</label>
                                     <input type="number" class="form-control" @bind="nuevoDescuento.Porcentaje" min="0" max="100" />
                                 </div>
-                                <div class="col-md-4">
+                                <div class="form-group">
                                     <label>Motivo</label>
                                     <input type="text" class="form-control" @bind="nuevoDescuento.Motivo" placeholder="Ej. Oferta Verano" />
                                 </div>
-                                <div class="col-md-3">
+                                <div class="form-group">
                                     <label>Fecha Fin (Opcional)</label>
                                     <input type="date" class="form-control" @bind="nuevoDescuento.FechaFin" />
                                 </div>
-                                <div class="col-md-2 d-flex align-items-end">
-                                    <button class="btn btn-primary w-100" @onclick="GuardarDescuento">Agregar</button>
+                                <div class="form-group align-end">
+                                    <button class="btn-primary" @onclick="GuardarDescuento">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M12 8a.5.5 0 0 1-.5.5h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0v3h3a.5.5 0 0 1 .5.5z"/>
+                                        </svg>
+                                        Agregar
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Lista de Descuentos Existentes -->
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Motivo</th>
-                                    <th>%</th>
-                                    <th>Inicio</th>
-                                    <th>Fin</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var desc in descuentosProductoDto)
-                                {
+                        <!-- Tabla de Descuentos del Producto -->
+                        <div class="product-discounts-table">
+                            <table class="descuentos-table">
+                                <thead>
                                     <tr>
-                                        <td>@desc.Motivo</td>
-                                        <td>@desc.Porcentaje%</td>
-                                        <td>@desc.FechaInicio.ToShortDateString()</td>
-                                        <td>@(desc.FechaFin?.ToShortDateString() ?? "-")</td>
-                                        <td>
-                                            <span class="badge @(desc.Activo ? "bg-success" : "bg-secondary")">
-                                                @(desc.Activo ? "Activo" : "Inactivo")
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-danger" @onclick="() => EliminarDescuento(desc.Id_Desc)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                                                  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                                                </svg>
-                                            </button>
-                                        </td>
+                                        <th>Motivo</th>
+                                        <th>%</th>
+                                        <th>Inicio</th>
+                                        <th>Fin</th>
+                                        <th>Estado</th>
+                                        <th class="text-center">Acciones</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @if (descuentosProductoDto.Any())
+                                    {
+                                        @foreach (var desc in descuentosProductoDto)
+                                        {
+                                            <tr>
+                                                <td>@desc.Motivo</td>
+                                                <td><span class="badge-percentage">@desc.Porcentaje%</span></td>
+                                                <td>@desc.FechaInicio.ToShortDateString()</td>
+                                                <td>@(desc.FechaFin?.ToShortDateString() ?? "-")</td>
+                                                <td>
+                                                    <span class="status-badge @(desc.Activo ? "active" : "inactive")">
+                                                        @(desc.Activo ? "Activo" : "Inactivo")
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button class="action-btn delete" @onclick="() => EliminarDescuento(desc.Id_Desc)" title="Eliminar">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                                          <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="no-data">No hay descuentos configurados para este producto</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 }
+
+                <hr class="section-divider" />
+
+                <!-- 3. TABLA DE TODOS LOS DESCUENTOS ACTIVOS (CON PAGINACIÃ“N) -->
+                <div class="all-discounts-section">
+                    <h4 class="section-title">Todos los Descuentos Activos</h4>
+                    
+                    @if (descuentosPaginados.Any())
+                    {
+                        <div class="descuentos-table-container">
+                            <table class="descuentos-table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Motivo</th>
+                                        <th>Descuento %</th>
+                                        <th>Fecha Inicio</th>
+                                        <th>Fecha Fin</th>
+                                        <th>Estado</th>
+                                        <th class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var desc in descuentosPaginados)
+                                    {
+                                        var producto = productos.FirstOrDefault(p => p.Id_Pro == desc.Id_Pro_Per);
+                                        <tr>
+                                            <td><strong>@(producto?.Nom_Pro ?? "Producto no encontrado")</strong></td>
+                                            <td>@desc.Motivo</td>
+                                            <td><span class="badge-percentage">@desc.Porcentaje%</span></td>
+                                            <td>@desc.FechaInicio.ToShortDateString()</td>
+                                            <td>@(desc.FechaFin?.ToShortDateString() ?? "Sin lÃ­mite")</td>
+                                            <td>
+                                                <span class="status-badge @(desc.Activo ? "active" : "inactive")">
+                                                    @(desc.Activo ? "Activo" : "Inactivo")
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="action-btn delete" @onclick="() => EliminarDescuentoGlobal(desc.Id_Desc)" title="Eliminar">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                                    </svg>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- PaginaciÃ³n -->
+                        <div class="pagination-controls">
+                            <div class="pagination-info">
+                                Mostrando @((descuentosCurrentPage - 1) * descuentosPageSize + 1) - @(Math.Min(descuentosCurrentPage * descuentosPageSize, todosLosDescuentos.Count)) de @todosLosDescuentos.Count descuentos
+                            </div>
+                            <div class="pagination-buttons">
+                                <button class="pagination-btn prev-next" @onclick="() => CambiarPaginaDescuentos(descuentosCurrentPage - 1)" disabled="@(descuentosCurrentPage == 1)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                                    </svg>
+                                </button>
+
+                                @foreach (var p in GetDescuentosPageNumbers())
+                                {
+                                    @if (p == -1)
+                                    {
+                                        <span class="pagination-ellipsis">...</span>
+                                    }
+                                    else
+                                    {
+                                        <button class="pagination-btn number @(p == descuentosCurrentPage ? "active" : "")" 
+                                                @onclick="() => CambiarPaginaDescuentos(p)">
+                                            @p
+                                        </button>
+                                    }
+                                }
+
+                                <button class="pagination-btn prev-next" @onclick="() => CambiarPaginaDescuentos(descuentosCurrentPage + 1)" disabled="@(descuentosCurrentPage == descuentosTotalPages)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                            </svg>
+                            <p>No hay descuentos activos actualmente</p>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     }
-
     <!-- Modal Ver ProductoDto -->
     @if (showViewModal)
     {
@@ -311,7 +339,7 @@
             <div class="modal-content" @onclick:stopPropagation>
                 <div class="modal-header">
                     <h3>Detalles del ProductoDto</h3>
-                    <button class="modal-close-btn" @onclick="CerrarModalVer">×</button>
+                    <button class="modal-close-btn" @onclick="CerrarModalVer">Ã—</button>
                 </div>
                 <div class="modal-body">
                     @if (productoParaVer != null)
@@ -342,7 +370,7 @@
                                 <span>@productoParaVer.StockTotal</span>
                             </div>
                             <div class="detalle-item">
-                                <label>Número de Lotes:</label>
+                                <label>NÃºmero de Lotes:</label>
                                 <span>@productoParaVer.NumLotes</span>
                             </div>
                             @if (productoParaVer.Imagen != null)
@@ -363,7 +391,7 @@
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Fecha Entrada</th>
-                                                    <th>Fecha Expiración</th>
+                                                    <th>Fecha ExpiraciÃ³n</th>
                                                     <th>Cantidad Recibida</th>
                                                     <th>Cantidad Disponible</th>
                                                     <th>Precio Unitario</th>
@@ -396,57 +424,6 @@
         </div>
     }
 
-    <!-- Modal Editar ProductoDto -->
-    @if (showEditModal)
-    {
-        <div class="modal-overlay" @onclick="CerrarModalEditar">
-            <div class="modal-content modal-edit" @onclick:stopPropagation>
-                <div class="modal-header">
-                    <h3>Editar ProductoDto</h3>
-                    <button class="modal-close-btn" @onclick="CerrarModalEditar">×</button>
-                </div>
-                <div class="modal-body">
-                    @if (productoParaEditar != null)
-                    {
-                        <div class="form-edit-grid">
-                            <div class="form-group">
-                                <label>ID:</label>
-                                <input type="text" class="form-control" value="@productoParaEditar.Id_Pro" disabled />
-                            </div>
-                            <div class="form-group">
-                                <label>Nombre:</label>
-                                <input type="text" class="form-control" @bind="productoParaEditar.Nom_Pro" />
-                            </div>
-                            <div class="form-group">
-                                <label>Tipo:</label>
-                                <select class="form-control" @bind="productoParaEditar.Tip_Pro">
-                                    <option value="Bien">Bien</option>
-                                    <option value="Servicio">Servicio</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Marca:</label>
-                                <input type="text" class="form-control" @bind="productoParaEditar.Marca" />
-                            </div>
-                            <div class="form-group">
-                                <label>Precio de Venta:</label>
-                                <input type="number" step="0.01" class="form-control" @bind="productoParaEditar.Precio_Venta" />
-                            </div>
-                            <div class="form-group">
-                                <label>Imagen URL:</label>
-                                <input type="text" class="form-control" @bind="productoParaEditar.Imagen" />
-                            </div>
-                        </div>
-                    }
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-secondary" @onclick="CerrarModalEditar">Cancelar</button>
-                    <button class="btn-primary" @onclick="GuardarEdicion">Guardar Cambios</button>
-                </div>
-            </div>
-        </div>
-    }
-
     <!-- Modal Agregar Lote -->
     @if (showAddBatchModal)
     {
@@ -454,7 +431,7 @@
             <div class="modal-content modal-edit" @onclick:stopPropagation>
                 <div class="modal-header">
                     <h3>Agregar Lote a @productoParaLote?.Nom_Pro</h3>
-                    <button class="modal-close-btn" @onclick="CerrarModalLote">×</button>
+                    <button class="modal-close-btn" @onclick="CerrarModalLote">Ã—</button>
                 </div>
                 <div class="modal-body">
                     <div class="form-edit-grid">
@@ -463,7 +440,7 @@
                             <input type="date" class="form-control" @bind="nuevoLote.Fec_Ent" />
                         </div>
                         <div class="form-group">
-                            <label>Fecha de Expiración:</label>
+                            <label>Fecha de ExpiraciÃ³n:</label>
                             <input type="date" class="form-control" @bind="nuevoLote.Fec_Exp" />
                         </div>
                         <div class="form-group">
@@ -491,6 +468,12 @@
 
 @code {
     private List<ProductoDto> productos = new();
+    private List<ProductoDto> productosPaginaActual = new();
+    
+    // Paginacion
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalPages = 1;
     private List<ProductoDto> productosFiltrados = new();
     private string searchTerm = string.Empty;
     private string currentView = "lista";
@@ -498,7 +481,6 @@
 
     // Variables para modales
     private bool showViewModal = false;
-    private bool showEditModal = false;
     private ProductoDto? productoParaVer;
     private ProductoDto? productoParaEditar;
     
@@ -512,6 +494,83 @@
     private List<DescuentoProductoDto> descuentosProductoDto = new();
     private List<DescuentoProductoDto> todosLosDescuentos = new();
     private DescuentoProductoDto nuevoDescuento = new();
+
+    // Variables para buscador de descuentos
+    private string searchTermDescuento = "";
+    private List<ProductoDto> productosFiltradosDescuento = new();
+    private bool mostrarResultadosDescuento = false;
+
+    private void FiltrarProductosDescuento()
+    {
+        if (string.IsNullOrWhiteSpace(searchTermDescuento))
+        {
+            productosFiltradosDescuento = new();
+            mostrarResultadosDescuento = false;
+        }
+        else
+        {
+            productosFiltradosDescuento = productos
+                .Where(p => p.Nom_Pro.Contains(searchTermDescuento, StringComparison.OrdinalIgnoreCase) ||
+                            p.Marca.Contains(searchTermDescuento, StringComparison.OrdinalIgnoreCase))
+                .Take(10) // Limitar resultados
+                .ToList();
+            mostrarResultadosDescuento = true;
+        }
+    }
+
+    private async Task SeleccionarProductoDescuento(ProductoDto producto)
+    {
+        productoSeleccionadoDescuento = producto;
+        searchTermDescuento = producto.Nom_Pro; 
+        mostrarResultadosDescuento = false;
+        
+        await CargarDescuentos(producto.Id_Pro);
+        nuevoDescuento = new DescuentoProductoDto { Id_Pro_Per = producto.Id_Pro, Activo = true, FechaInicio = DateTime.Today };
+    }
+
+    private async Task OcultarResultadosDescuento()
+    {
+        // PequeÃ±o delay para permitir el click en el item
+        await Task.Delay(200);
+        mostrarResultadosDescuento = false;
+    }
+
+    // Variables para paginaciÃ³n de descuentos
+    private int descuentosCurrentPage = 1;
+    private int descuentosPageSize = 5;
+    private int descuentosTotalPages = 1;
+
+    private List<DescuentoProductoDto> descuentosPaginados => 
+        todosLosDescuentos != null 
+            ? todosLosDescuentos
+                .Skip((descuentosCurrentPage - 1) * descuentosPageSize)
+                .Take(descuentosPageSize)
+                .ToList() 
+            : new List<DescuentoProductoDto>();
+
+    private void CambiarPaginaDescuentos(int pagina)
+    {
+        if (pagina < 1 || pagina > descuentosTotalPages) return;
+        descuentosCurrentPage = pagina;
+        StateHasChanged();
+    }
+
+    private List<int> GetDescuentosPageNumbers()
+    {
+        var pages = new List<int>();
+        for (int i = 1; i <= descuentosTotalPages; i++)
+        {
+            pages.Add(i);
+        }
+        return pages;
+    }
+
+    private void RecalcularPaginacionDescuentos()
+    {
+        descuentosTotalPages = (int)Math.Ceiling((double)todosLosDescuentos.Count / descuentosPageSize);
+        if (descuentosTotalPages < 1) descuentosTotalPages = 1;
+        if (descuentosCurrentPage > descuentosTotalPages) descuentosCurrentPage = 1;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -530,6 +589,13 @@
                 p.Marca.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
         }
         productosFiltrados = filtered.ToList();
+        
+        // Update Pagination
+        totalPages = (int)Math.Ceiling(productosFiltrados.Count / (double)pageSize);
+        if (totalPages < 1) totalPages = 1;
+        if (currentPage > totalPages) currentPage = 1;
+        
+        UpdateCurrentPageData();
     }
 
     private void ClearSearch()
@@ -562,8 +628,15 @@
             catch (Exception ex)
             {
                 Console.WriteLine($"[ChangeView] Error cargando descuentos: {ex.Message}");
+                Console.WriteLine($"[ChangeView] Error cargando descuentos: {ex.Message}");
                 todosLosDescuentos = new();
             }
+            RecalcularPaginacionDescuentos();
+            
+            // Resetear buscador
+            searchTermDescuento = "";
+            productosFiltradosDescuento.Clear();
+            mostrarResultadosDescuento = false;
         }
     }
 
@@ -577,8 +650,7 @@
         {
             await ProductoService.UpdateProductoAsync(productoActual);
         }
-        productos = await ProductoService.GetProductosAsync();
-        ApplyFilters();
+        await LoadProductos();
         ChangeView("lista");
     }
 
@@ -603,7 +675,7 @@
         var producto = await ProductoService.GetProductoByIdAsync(id);
         if (producto != null)
         {
-            // Crear una copia del producto para editar
+            // Clone for editing to avoid mutating list instance
             productoParaEditar = new ProductoDto
             {
                 Id_Pro = producto.Id_Pro,
@@ -616,56 +688,48 @@
                 NumLotes = producto.NumLotes,
                 Lotes = producto.Lotes
             };
-            showEditModal = true;
+            
+            // Switch to Edit Tab
+            currentView = "editar";
+            StateHasChanged();
         }
     }
 
-    private void CerrarModalEditar()
+    private async Task HandleSubmitEditProduct()
     {
-        showEditModal = false;
+        try
+        {
+            if (productoParaEditar != null)
+            {
+                await ProductoService.UpdateProductoAsync(productoParaEditar);
+                await LoadProductos();
+                ChangeView("lista"); 
+                productoParaEditar = null;
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al actualizar producto: {ex.Message}");
+        }
+    }
+    
+    private void CancelarEdicion()
+    {
+        ChangeView("lista");
         productoParaEditar = null;
     }
-
-    private async Task GuardarEdicion()
+    
+    private async Task LoadProductos()
     {
-        if (productoParaEditar != null)
-        {
-            // Aquí se enviaría al backend cuando esté implementado
-            await ProductoService.UpdateProductoAsync(productoParaEditar);
-            
-            // Recargar la lista
-            productos = await ProductoService.GetProductosAsync();
-            ApplyFilters();
-            
-            // Cerrar modal
-            CerrarModalEditar();
-        }
+        productos = await ProductoService.GetProductosAsync();
+        ApplyFilters();
     }
 
     private async Task EliminarProductoDto(int id)
     {
         await ProductoService.DeleteProductoAsync(id);
-        productos = await ProductoService.GetProductosAsync();
-        ApplyFilters();
-    }
-
-    // Lógica de Descuentos
-    private async Task OnProductoDtoDescuentoChanged(ChangeEventArgs e)
-    {
-        if (int.TryParse(e.Value?.ToString(), out int idProductoDto))
-        {
-            productoSeleccionadoDescuento = productos.FirstOrDefault(p => p.Id_Pro == idProductoDto);
-            if (productoSeleccionadoDescuento != null)
-            {
-                await CargarDescuentos(idProductoDto);
-                nuevoDescuento = new DescuentoProductoDto { Id_Pro_Per = idProductoDto, Activo = true, FechaInicio = DateTime.Today };
-            }
-        }
-        else
-        {
-            productoSeleccionadoDescuento = null;
-            descuentosProductoDto.Clear();
-        }
+        await LoadProductos();
     }
 
     private async Task CargarDescuentos(int idProductoDto)
@@ -677,7 +741,7 @@
     {
         if (nuevoDescuento.Porcentaje <= 0 || string.IsNullOrWhiteSpace(nuevoDescuento.Motivo))
         {
-            // Validar (podría mostrar alerta)
+            // Validar (podra mostrar alerta)
             return;
         }
 
@@ -685,7 +749,9 @@
         await CargarDescuentos(nuevoDescuento.Id_Pro_Per);
         
         // Recargar la tabla superior de todos los descuentos
+        // Recargar la tabla superior de todos los descuentos
         todosLosDescuentos = await DescuentoService.GetAllDescuentosAsync();
+        RecalcularPaginacionDescuentos();
         
         // Reset form pero mantener producto
         var idProd = nuevoDescuento.Id_Pro_Per;
@@ -706,9 +772,12 @@
         await DescuentoService.DeleteDescuentoAsync(id);
         
         // Recargar la tabla superior
-        todosLosDescuentos = await DescuentoService.GetAllDescuentosAsync();
         
-        // Si hay un producto seleccionado, recargar sus descuentos también
+        // Recargar la tabla superior
+        todosLosDescuentos = await DescuentoService.GetAllDescuentosAsync();
+        RecalcularPaginacionDescuentos();
+        
+        // Si hay un producto seleccionado, recargar sus descuentos tambin
         if (productoSeleccionadoDescuento != null)
         {
             await CargarDescuentos(productoSeleccionadoDescuento.Id_Pro);
@@ -764,4 +833,22 @@
         
         CerrarModalLote();
     }
+
+    
+    // PAGINATION LOGIC
+    private void CambiarPagina(int nuevaPagina)
+    {
+        if (nuevaPagina < 1 || nuevaPagina > totalPages) return;
+        currentPage = nuevaPagina;
+        UpdateCurrentPageData();
+    }
+    
+    private void UpdateCurrentPageData()
+    {
+        productosPaginaActual = productosFiltrados
+            .Skip((currentPage - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+    }
+
 }

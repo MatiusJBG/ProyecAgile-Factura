@@ -20,18 +20,36 @@ namespace Application.Services.Clientes
             _fileCache = fileCache;
         }
 
+        // Para tablas paginadas - SIEMPRE desde BD, sin caché
         public async Task<IEnumerable<ClienteDto>> GetAllClientesAsync()
         {
-            // Try cache first
-            var cached = await _fileCache.GetClientesCacheAsync();
-            if (cached.Any())
-            {
-                return cached;
-            }
-
-            // Fallback to DB
             var clientes = await _clienteRepository.GetAllAsync();
             return clientes.Select(MapToDto);
+        }
+
+        // Para búsquedas/autocomplete - USA caché para performance
+        public async Task<IEnumerable<ClienteDto>> SearchClientesAsync(string searchTerm = "")
+        {
+            var cached = await _fileCache.GetClientesCacheAsync();
+            
+            if (!cached.Any())
+            {
+                var fromDb = await _clienteRepository.GetAllAsync();
+                cached = fromDb.Select(MapToDto).ToList();
+                await _fileCache.SaveClientesCacheAsync(cached);
+            }
+            
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLowerInvariant();
+                return cached.Where(c => 
+                    c.Nombre.ToLowerInvariant().Contains(searchTerm) ||
+                    c.Apellido.ToLowerInvariant().Contains(searchTerm) ||
+                    c.Num_Documento.Contains(searchTerm) ||
+                    c.Correo.ToLowerInvariant().Contains(searchTerm));
+            }
+            
+            return cached;
         }
 
         public async Task<ClienteDto?> GetClienteByIdAsync(int id)

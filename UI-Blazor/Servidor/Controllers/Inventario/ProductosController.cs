@@ -51,6 +51,21 @@ namespace UI_Blazor.Servidor.Controllers
             }
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> SearchProductos([FromQuery] string q = "")
+        {
+            try
+            {
+                var productos = await _productoService.SearchProductosAsync(q);
+                return Ok(productos);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al buscar productos");
+                return StatusCode(500, "Error interno del servidor");
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<ProductoDto>> CreateProducto([FromBody] ProductoConLoteDto productoDto)
         {

@@ -6,6 +6,7 @@
 
 @inject IClienteService ClienteService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
 <PageTitle>Clientes</PageTitle>
 
@@ -16,14 +17,7 @@
             <h2 class="page-title">Gestión de Clientes</h2>
             <p class="page-subtitle">Administra y visualiza todos tus clientes</p>
         </div>
-        <div class="header-actions">
-            <button class="action-btn export-btn">
-                Exportar CSV
-            </button>
-            <button class="action-btn import-btn">
-                Importar
-            </button>
-        </div>
+
     </div>
 
     <!-- Navegación por pestañas -->
@@ -34,37 +28,121 @@
         <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>
             Añadir Cliente
         </button>
+        @if (clienteParaEditar != null)
+        {
+            <button class="tab-btn active" @onclick='() => ChangeView("editar")'>
+                Editar Cliente
+            </button>
+        }
     </div>
 
     <!-- Contenido condicional según la vista -->
     @if (currentView == "lista")
     {
+        <!-- Summary Cards Component -->
+        <ClienteSummaryCards ClienteDtos="listaClientes" />
+
         <div class="content-section">
-            <ClienteTable ClienteDtos="ClientesFiltrados"
+            <!-- Search and Filter Bar -->
+            <div class="search-filter-bar">
+                <!-- Search -->
+                <div class="search-wrapper">
+                    <span class="search-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                    </span>
+                    <input type="text" 
+                           class="search-input-styled" 
+                           placeholder="Buscar por Nombre, Documento, Email..." 
+                           @bind="searchTerm" 
+                           @bind:event="oninput" 
+                           @onkeyup="OnSearchInput" />
+                </div>
+                
+                <!-- Filter Status -->
+                <div class="filter-wrapper">
+                    <span class="filter-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                            <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
+                        </svg>
+                    </span>
+                    <select class="form-select-styled" @onchange="OnStatusChanged">
+                        <option value="true">Activos</option>
+                        <option value="false">Inactivos</option>
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+            </div>
+
+
+
+            <ClienteTable ClienteDtos="ClientesPaginaActual"
                 OnEditClient="HandleEditClient"
                 OnDeleteClient="HandleDeleteClient"
                 OnViewClient="HandleViewClient"
             />
 
-            @if (ClientesFiltrados.Any())
+            <!-- Pagination Bottom -->
+            @if (totalPages > 1)
             {
-                <div class="pagination-section">
-                    <div class="pagination-info">
-                        Mostrando <strong>@ClientesFiltrados.Count</strong> de <strong>@listaClientes.Count</strong> clientes
+               <div class="pagination-container" style="margin-top: 1.5rem;">
+                    <button class="pagination-btn prev-next" @onclick="() => CambiarPagina(currentPage - 1)" disabled="@(currentPage == 1)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                        </svg>
+                    </button>
+                    
+                    <div class="page-numbers">
+                         @foreach (var p in GetPageNumbers())
+                        {
+                            @if (p == -1)
+                            {
+                                <span class="pagination-ellipsis">...</span>
+                            }
+                            else
+                            {
+                                <button class="pagination-btn number @(p == currentPage ? "active" : "")" 
+                                        @onclick="() => CambiarPagina(p)">
+                                    @p
+                                </button>
+                            }
+                        }
                     </div>
-                </div>
+
+                    <button class="pagination-btn prev-next" @onclick="() => CambiarPagina(currentPage + 1)" disabled="@(currentPage == totalPages)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                    </button>
+               </div> 
             }
+
+
         </div>
     }
-    else if (currentView == "nuevo" || currentView == "editar")
+    else if (currentView == "nuevo")
     {
         <div class="content-section">
             <ClienteForm 
                 ClienteDto="nuevoCliente" 
-                Title="@(currentView == "editar" ? "Editar Cliente" : "Nuevo Cliente")"
-                Subtitle="@(currentView == "editar" ? "Modifique la información del cliente" : "Complete la información del nuevo cliente")"
-                OnSave="HandleSubmitCliente" 
+                Title="@formTitle"
+                Subtitle="@formSubtitle"
+                OnSave="HandleSubmitNuevoCliente" 
                 OnCancel='() => ChangeView("lista")' 
+            />
+        </div>
+    }
+    else if (currentView == "editar" && clienteParaEditar != null)
+    {
+        <div class="content-section">
+            <ClienteForm 
+                ClienteDto="clienteParaEditar" 
+                Title="Editar Cliente"
+                Subtitle="@($"Modificando información de {clienteParaEditar.NombreCompleto}")"
+                SubmitButtonText="Guardar Cambios"
+                OnSave="HandleSubmitEditClient" 
+                OnCancel="CancelarEdicion" 
             />
         </div>
     }
@@ -130,83 +208,52 @@
         </div>
     }
 
-    <!-- Modal Cambiar Estado del Cliente -->
-    @if (showEditModal)
-    {
-        <div class="modal-overlay" @onclick="CerrarModalEditar">
-            <div class="modal-content modal-edit-small" @onclick:stopPropagation>
-                <div class="modal-header">
-                    <h3>Cambiar Estado del Cliente</h3>
-                    <button class="modal-close-btn" @onclick="CerrarModalEditar">×</button>
-                </div>
-                <div class="modal-body">
-                    @if (clienteParaEditar != null)
-                    {
-                        <div class="form-edit-simple">
-                            <div class="cliente-info-display">
-                                <div class="info-row">
-                                    <label>Cliente:</label>
-                                    <span class="cliente-nombre">@clienteParaEditar.NombreCompleto</span>
-                                </div>
-                                <div class="info-row">
-                                    <label>Documento:</label>
-                                    <span>@clienteParaEditar.Tipo_Documento - @clienteParaEditar.Num_Documento</span>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group-estado">
-                                <label>Estado del Cliente:</label>
-                                <div class="estado-options">
-                                    <label class="radio-option @(clienteParaEditar.Activo ? "selected" : "")">
-                                        <input type="radio" name="estado" checked="@clienteParaEditar.Activo" @onchange="@(() => clienteParaEditar.Activo = true)" />
-                                        <span class="radio-label">
-                                            <span class="status-icon activo">?</span>
-                                            Activo
-                                        </span>
-                                    </label>
-                                    <label class="radio-option @(!clienteParaEditar.Activo ? "selected" : "")">
-                                        <input type="radio" name="estado" checked="@(!clienteParaEditar.Activo)" @onchange="@(() => clienteParaEditar.Activo = false)" />
-                                        <span class="radio-label">
-                                            <span class="status-icon inactivo">?</span>
-                                            Inactivo
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-secondary" @onclick="CerrarModalEditar">Cancelar</button>
-                    <button class="btn-primary" @onclick="GuardarEdicion">Guardar Estado</button>
-                </div>
-            </div>
-        </div>
-    }
+
+
+
 </div>
 
 @code {
     private List<ClienteDto> listaClientes { get; set; } = new();
     private List<ClienteDto> ClientesFiltrados { get; set; } = new();
+    private List<ClienteDto> ClientesPaginaActual { get; set; } = new();
+    
     private string searchTerm = string.Empty;
     private TipoCliente? filterTipo = null;
     private bool? filterStatus = true; // Default to Active
+
+    // Pagination State
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalPages = 1;
+    
+    private System.Timers.Timer _debounceTimer;
+
     private string currentView = "lista";
     
     private ClienteDto nuevoCliente = new ClienteDto 
     { 
         Tipo_Cliente = TipoCliente.PERSONA,
-        Tipo_Documento = TipoDocumento.CEDULA
+        Tipo_Documento = TipoDocumento.CEDULA,
+        Activo = true // Default for new clients
     };
 
     // Variables para modales
     private bool showViewModal = false;
-    private bool showEditModal = false;
     private ClienteDto? clienteParaVer;
+    
+    // Logic for Edit Tab
     private ClienteDto? clienteParaEditar;
+
+    private string formTitle = "Nuevo Cliente";
+    private string formSubtitle = "Complete la información del cliente";
 
     protected override async Task OnInitializedAsync()
     {
+        _debounceTimer = new System.Timers.Timer(400); 
+        _debounceTimer.AutoReset = false;
+        _debounceTimer.Elapsed += OnSearchDebounceElapsed;
+        
         await LoadClienteDtos();
     }
 
@@ -221,11 +268,22 @@
         currentView = view;
         if (view == "nuevo")
         {
+            // Reset for New Client
             nuevoCliente = new ClienteDto 
             { 
                 Tipo_Cliente = TipoCliente.PERSONA,
-                Tipo_Documento = TipoDocumento.CEDULA
+                Tipo_Documento = TipoDocumento.CEDULA,
+                Activo = true
             };
+            formTitle = "Nuevo Cliente";
+            formSubtitle = "Complete la información para registrar un nuevo cliente";
+            
+            // Clear edit state when entering new
+            clienteParaEditar = null;
+        }
+        else if (view == "lista")
+        {
+            // Do NOT clear edit state here, so tab remains until Save/Cancel
         }
     }
 
@@ -248,7 +306,25 @@
             tempClienteDtos = FilterBySearchTerm(tempClienteDtos.ToList(), searchTerm);
         }
         
+        // Sorting: Newest First (Desc by ID)
+        tempClienteDtos = tempClienteDtos.OrderByDescending(c => c.Id_Cli);
+        
         ClientesFiltrados = tempClienteDtos.ToList();
+        
+        // Update Pagination
+        totalPages = (int)Math.Ceiling(ClientesFiltrados.Count / (double)pageSize);
+        if (totalPages < 1) totalPages = 1;
+        if (currentPage > totalPages) currentPage = 1;
+        
+        UpdateCurrentPageData();
+    }
+
+    private void UpdateCurrentPageData()
+    {
+        ClientesPaginaActual = ClientesFiltrados
+            .Skip((currentPage - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 
     private List<ClienteDto> FilterBySearchTerm(List<ClienteDto> source, string term)
@@ -269,25 +345,69 @@
         ).ToList();
     }
 
-    private void HandleSearchChanged(string newSearchTerm)
+    private void OnSearchInput(KeyboardEventArgs e)
     {
-        searchTerm = newSearchTerm;
+        _debounceTimer.Stop();
+        _debounceTimer.Start();
+    }
+
+    private async void OnSearchDebounceElapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        await InvokeAsync(() => 
+        {
+            currentPage = 1;
+            ApplyFilters();
+            StateHasChanged();
+        });
+    }
+
+    private void OnStatusChanged(ChangeEventArgs e)
+    {
+        if (string.IsNullOrEmpty(e.Value?.ToString()))
+        {
+            filterStatus = null;
+        }
+        else
+        {
+            filterStatus = bool.Parse(e.Value.ToString());
+        }
+        currentPage = 1;
         ApplyFilters();
     }
 
-    private void HandleFilterByTipoChanged(TipoCliente? newFilter)
+    private void CambiarPagina(int nuevaPagina)
     {
-        filterTipo = newFilter;
-        ApplyFilters();
+        if (nuevaPagina < 1 || nuevaPagina > totalPages) return;
+        currentPage = nuevaPagina;
+        UpdateCurrentPageData();
     }
 
-    private void HandleFilterByStatusChanged(bool? newStatus)
+    private IEnumerable<int> GetPageNumbers()
     {
-        filterStatus = newStatus;
-        ApplyFilters();
+        var pages = new List<int>();
+        var gap = 2;
+
+        if (totalPages <= 7)
+        {
+            for (int i = 1; i <= totalPages; i++) pages.Add(i);
+        }
+        else
+        {
+            pages.Add(1);
+            if (currentPage > gap + 2) pages.Add(-1);
+
+            var start = Math.Max(2, currentPage - gap);
+            var end = Math.Min(totalPages - 1, currentPage + gap);
+
+            for (int i = start; i <= end; i++) pages.Add(i);
+
+            if (currentPage < totalPages - (gap + 1)) pages.Add(-1);
+            pages.Add(totalPages);
+        }
+        return pages;
     }
 
-    private async Task HandleSubmitCliente()
+    private async Task HandleSubmitNuevoCliente()
     {
         try
         {
@@ -299,15 +419,15 @@
             {
                 await ClienteService.UpdateClienteAsync(nuevoCliente);
             }
-
+            
             await LoadClienteDtos();
             ChangeView("lista");
-            Console.WriteLine($"Cliente guardado: {nuevoCliente.NombreCompleto}");
+            StateHasChanged(); // Force UI refresh
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al guardar cliente: {ex.Message}");
-            // Sería ideal mostrar un mensaje de error en la UI aquí
+            Console.Error.WriteLine($"Error al guardar cliente: {ex.Message}");
+            // TODO: Mostrar mensaje de error al usuario
         }
     }
 
@@ -323,14 +443,64 @@
     
     private async Task HandleEditClient(int clientId)
     {
-        var cliente = await ClienteService.GetClienteByIdAsync(clientId);
+        // Try to find in local list first for immediate UI response
+        var cliente = listaClientes.FirstOrDefault(c => c.Id_Cli == clientId);
+        
+        // If not found locally (rare), try fetching
+        if (cliente == null)
+        {
+             cliente = await ClienteService.GetClienteByIdAsync(clientId);
+        }
+
         if (cliente != null)
         {
-            nuevoCliente = cliente;
+            // Clone for editing to avoid mutating list instance directly before save
+            clienteParaEditar = new ClienteDto
+            {
+                Id_Cli = cliente.Id_Cli,
+                Tipo_Cliente = cliente.Tipo_Cliente,
+                Tipo_Documento = cliente.Tipo_Documento,
+                Num_Documento = cliente.Num_Documento,
+                Nombre = cliente.Nombre,
+                Apellido = cliente.Apellido,
+                Direccion = cliente.Direccion,
+                Correo = cliente.Correo,
+                Telefono = cliente.Telefono,
+                Activo = cliente.Activo
+            };
+            
+            // Switch to Edit Tab
             currentView = "editar";
+            StateHasChanged(); // Force re-render to show new tab
         }
     }
 
+    private async Task HandleSubmitEditClient()
+    {
+        try
+        {
+            if (clienteParaEditar != null)
+            {
+                await ClienteService.UpdateClienteAsync(clienteParaEditar);
+                await LoadClienteDtos();
+                ChangeView("lista"); 
+                clienteParaEditar = null; // Clean up edit state
+                StateHasChanged(); // Force UI refresh
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error al actualizar cliente: {ex.Message}");
+            // TODO: Mostrar mensaje de error al usuario
+        }
+    }
+    
+    private void CancelarEdicion()
+    {
+        ChangeView("lista");
+        clienteParaEditar = null;
+    }
+    
     private async Task HandleDeleteClient(int clientId)
     {
         try
@@ -349,18 +519,5 @@
     {
         showViewModal = false;
         clienteParaVer = null;
-    }
-
-    // El modal de edición simple ya no se usa, reemplazado por formulario completo
-    private void CerrarModalEditar()
-    {
-        showEditModal = false;
-        clienteParaEditar = null;
-    }
-
-    private async Task GuardarEdicion()
-    {
-        // Deprecated
-        await Task.CompletedTask;
     }
 }

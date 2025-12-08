@@ -5,7 +5,8 @@ namespace Cliente.Services.Inventario
 {
     public interface IProductoService
     {
-        Task<List<ProductoDto>> GetProductosAsync();
+        Task<List<ProductoDto>> GetProductosAsync();         // Para tablas
+        Task<List<ProductoDto>> SearchProductosAsync(string searchTerm = "");  // Para autocomplete
         Task<ProductoDto?> GetProductoByIdAsync(int id);
         Task<ProductoDto?> GetProductoByNombreAsync(string nombre);
         Task<ProductoDto> CreateProductoAsync(ProductoDto producto);
@@ -21,15 +22,33 @@ namespace Cliente.Services.Inventario
 
         public ProductoService(HttpClient http) => _http = http;
 
+        // Para tablas paginadas
         public async Task<List<ProductoDto>> GetProductosAsync()
         {
             try
             {
                 return await _http.GetFromJsonAsync<List<ProductoDto>>(BaseUrl) ?? new();
             }
-            catch
+            catch (Exception ex)
             {
-                // Retorna lista vacía si backend no disponible (para desarrollo)
+                Console.WriteLine($"[PRODUCTO SERVICE ERROR] GetProductosAsync failed: {ex.Message}");
+                return new List<ProductoDto>();
+            }
+        }
+
+        // Para autocomplete/búsquedas
+        public async Task<List<ProductoDto>> SearchProductosAsync(string searchTerm = "")
+        {
+            try
+            {
+                var url = string.IsNullOrWhiteSpace(searchTerm) 
+                    ? $"{BaseUrl}/search" 
+                    : $"{BaseUrl}/search?q={Uri.EscapeDataString(searchTerm)}";
+                return await _http.GetFromJsonAsync<List<ProductoDto>>(url) ?? new();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[PRODUCTO SERVICE ERROR] GetProductosAsync failed: {ex.Message}");
                 return new List<ProductoDto>();
             }
         }

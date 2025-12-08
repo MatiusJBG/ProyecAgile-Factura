@@ -31,6 +31,16 @@ namespace Application.Services.Facturacion
             return facturas.Select(MapToDto);
         }
 
+        public async Task<FacturaStatsDto> GetEstadisticasAsync()
+        {
+            var (totalCount, totalPagado) = await _facturaRepository.GetFacturaStatsAsync();
+            return new FacturaStatsDto
+            {
+                TotalFacturas = totalCount,
+                TotalCobrado = totalPagado
+            };
+        }
+
         public async Task<PagedResult<FacturaDto>> GetFacturasPagedAsync(int page, int pageSize, string searchTerm = "", string estado = "")
         {
             var (items, totalCount) = await _facturaRepository.GetFacturasPagedAsync(page, pageSize, searchTerm, estado);

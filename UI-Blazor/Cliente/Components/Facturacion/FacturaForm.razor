@@ -314,8 +314,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        clientes = (await ClienteService.GetClientesAsync()).ToList();
-        productos = (await ProductoService.GetProductosAsync()).ToList();
+        // Usar métodos de búsqueda para autocomplete (con caché)
+        clientes = (await ClienteService.SearchClientesAsync()).ToList();
+        productos = (await ProductoService.SearchProductosAsync()).ToList();
     }
 
     private void FiltrarClientes()

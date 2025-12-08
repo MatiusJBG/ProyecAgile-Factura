@@ -8,9 +8,11 @@ namespace Application.Interfaces
     {
         Task SaveClientesCacheAsync(IEnumerable<ClienteDto> clientes);
         Task<IEnumerable<ClienteDto>> GetClientesCacheAsync();
+        Task InvalidateClientesCacheAsync();
         
         Task SaveProductosCacheAsync(IEnumerable<ProductoDto> productos);
         Task<IEnumerable<ProductoDto>> GetProductosCacheAsync();
+        Task InvalidateProductosCacheAsync();
         
         Task<bool> IsCacheValidAsync();
     }

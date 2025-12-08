@@ -10,7 +10,7 @@
 /* Header de la tabla */
 .table-header {
     display: grid;
-    grid-template-columns: 60px 2fr 120px 150px 1.5fr 100px 100px;
+    grid-template-columns: 60px 2fr 120px 150px 100px 100px;
     gap: 1rem;
     padding: 1rem 1.5rem;
     background-color: var(--color-background);
@@ -29,8 +29,7 @@
     justify-content: center;
 }
 
-.header-item.nombre,
-.header-item.contacto {
+.header-item.nombre {
     justify-content: flex-start;
 }
 
@@ -42,7 +41,7 @@
 
 .table-row {
     display: grid;
-    grid-template-columns: 60px 2fr 120px 150px 1.5fr 100px 100px;
+    grid-template-columns: 60px 2fr 120px 150px 100px 100px;
     gap: 1rem;
     padding: 1rem 1.5rem;
     border-bottom: 1px solid var(--color-border);
@@ -67,8 +66,7 @@
     color: var(--color-text);
 }
 
-.row-item.nombre,
-.row-item.contacto {
+.row-item.nombre {
     justify-content: flex-start;
 }
 
@@ -212,15 +210,12 @@
 
     .table-header,
     .table-row {
-        grid-template-columns: 60px 2fr 100px 1fr 100px 80px 100px;
+        grid-template-columns: 60px 2fr 100px 100px 80px 100px;
         gap: 0.75rem;
         padding: 0.875rem 1.25rem;
     }
 
-    .header-item.contacto,
-    .row-item.contacto {
-        display: none;
-    }
+
 }
 
 @media (max-width: 768px) {
@@ -232,7 +227,7 @@
 
     .table-header,
     .table-row {
-        grid-template-columns: 60px 200px 100px 100px 80px 100px;
+        grid-template-columns: 60px 200px 100px 80px 100px;
         min-width: 800px;
         gap: 0.5rem;
         padding: 0.75rem 1rem;
@@ -240,8 +235,6 @@
 
     .header-item.identificacion,
     .row-item.identificacion,
-    .header-item.contacto,
-    .row-item.contacto,
     .header-item.tipo-doc,
     .row-item.tipo-doc {
         display: none;

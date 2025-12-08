@@ -91,5 +91,16 @@ namespace Infrastructure.Repositories.Facturacion
                 .Include(f => f.Detalles)
                 .FirstOrDefaultAsync(f => f.ClaveAcceso == claveAcceso);
         }
+
+        public async Task<(int TotalCount, decimal TotalPagado)> GetFacturaStatsAsync()
+        {
+            var totalCount = await _dbSet.CountAsync();
+            var totalPagado = await _dbSet
+                .Where(f => f.Estado == Core.Enums.Facturacion.EstadoFactura.Pagada || 
+                            f.Estado == Core.Enums.Facturacion.EstadoFactura.Autorizada)
+                .SumAsync(f => f.Tot_Fac_Con_IVA ?? 0);
+            
+            return (totalCount, totalPagado);
+        }
     }
 }
