@@ -117,7 +117,7 @@
                                                             <div class="search-item" @onclick="() => SeleccionarProductoRow(detalle, p)">
                                                                 <div class="d-flex justify-content-between">
                                                                     <span class="fw-bold">@p.Nom_Pro</span>
-                                                                    <span class="price-badge">@p.Precio_Venta.ToString("C")</span>
+                                                                    <span class="price-badge">$@p.Precio_Venta.ToString("N2")</span>
                                                                 </div>
                                                                 <small class="text-muted d-block">Stock: @p.StockTotal</small>
                                                             </div>
@@ -141,7 +141,7 @@
                                     <!-- Precio (Read-only) -->
                                     <td>
                                         <div class="price-display form-control text-end" style="background-color: #e9ecef;">
-                                            @(detalle.Precio_Venta_Unit.ToString("C2"))
+                                            $@(detalle.Precio_Venta_Unit.ToString("N2"))
                                         </div>
                                     </td>
 
@@ -155,7 +155,7 @@
                                     <!-- Total (Read-only) -->
                                     <td class="text-end">
                                         <div class="total-display form-control text-end" style="background-color: #e9ecef; border:none; font-weight:bold;">
-                                            @(detalle.Precio_Venta_Total.ToString("C2"))
+                                            $@(detalle.Precio_Venta_Total.ToString("N2"))
                                         </div>
                                     </td>
 
@@ -235,20 +235,20 @@
                     <div class="totals-grid">
                         <div class="total-row">
                             <span class="label">Subtotal</span>
-                            <span class="value">@Factura.Tot_Fac_Sin_IVA.ToString("C")</span>
+                            <span class="value">$@Factura.Tot_Fac_Sin_IVA.ToString("N2")</span>
                         </div>
                         <div class="total-row discount">
                             <span class="label">Descuento</span>
-                            <span class="value">- @Factura.Tot_Descuento.ToString("C")</span>
+                            <span class="value">- $@Factura.Tot_Descuento.ToString("N2")</span>
                         </div>
                         <div class="total-row">
                             <span class="label">IVA (15%)</span>
-                            <span class="value">@Factura.IVA_Fac.ToString("C")</span>
+                            <span class="value">$@Factura.IVA_Fac.ToString("N2")</span>
                         </div>
                         <div class="total-divider"></div>
                         <div class="total-row grand-total">
                             <span class="label">TOTAL</span>
-                            <span class="value">@Factura.Tot_Fac_Con_IVA.ToString("C")</span>
+                            <span class="value">$@Factura.Tot_Fac_Con_IVA.ToString("N2")</span>
                         </div>
                     </div>
                     

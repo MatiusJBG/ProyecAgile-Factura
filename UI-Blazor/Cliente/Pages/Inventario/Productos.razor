@@ -11,13 +11,13 @@
 @inject Cliente.Services.Inventario.IDescuentoService DescuentoService
 @inject NavigationManager NavigationManager
 
-<PageTitle>ProductoDtos</PageTitle>
+<PageTitle>Productos</PageTitle>
 
 <div class="productos-page">
     <!-- Header -->
     <div class="page-header">
         <div class="header-title-section">
-            <h2 class="page-title">Gestión de ProductoDtos</h2>
+            <h2 class="page-title">Gestión de Productos</h2>
             <p class="page-subtitle">Administra tu catálogo de productos y servicios</p>
         </div>
     </div>
@@ -25,7 +25,7 @@
     <!-- Tab navigation -->
     <div class="tabs-navigation">
         <button class="tab-btn @(currentView == "lista" ? "active" : "")" @onclick='() => ChangeView("lista")'>Lista General</button>
-        <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>Nuevo ProductoDto</button>
+        <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>Nuevo Producto</button>
         @if (productoParaEditar != null)
         {
             <button class="tab-btn active" @onclick='() => ChangeView("editar")'>
@@ -81,7 +81,7 @@
         <div class="content-section">
             <div class="form-container">
                 <div class="form-header">
-                    <h3 class="form-title">Nuevo ProductoDto</h3>
+                    <h3 class="form-title">Nuevo Producto</h3>
                     <p class="form-subtitle">Complete la información del producto</p>
                 </div>
                 <ProductoForm Model="productoActual" OnGuardar="GuardarProductoDto" OnCancelar='() => ChangeView("lista")' />
@@ -332,13 +332,13 @@
             </div>
         </div>
     }
-    <!-- Modal Ver ProductoDto -->
+    <!-- Modal Ver Producto -->
     @if (showViewModal)
     {
         <div class="modal-overlay" @onclick="CerrarModalVer">
             <div class="modal-content" @onclick:stopPropagation>
                 <div class="modal-header">
-                    <h3>Detalles del ProductoDto</h3>
+                    <h3>Detalles del Producto</h3>
                     <button class="modal-close-btn" @onclick="CerrarModalVer">×</button>
                 </div>
                 <div class="modal-body">
