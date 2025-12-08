@@ -17,14 +17,7 @@
             <h2 class="page-title">Gestión de Clientes</h2>
             <p class="page-subtitle">Administra y visualiza todos tus clientes</p>
         </div>
-        <div class="header-actions">
-            <button class="action-btn export-btn">
-                Exportar CSV
-            </button>
-            <button class="action-btn import-btn">
-                Importar
-            </button>
-        </div>
+
     </div>
 
     <!-- Navegación por pestañas -->
@@ -35,7 +28,7 @@
         <button class="tab-btn @(currentView == "nuevo" ? "active" : "")" @onclick='() => ChangeView("nuevo")'>
             Añadir Cliente
         </button>
-        @if (currentView == "editar" && clienteParaEditar != null)
+        @if (clienteParaEditar != null)
         {
             <button class="tab-btn active" @onclick='() => ChangeView("editar")'>
                 Editar Cliente
@@ -46,6 +39,9 @@
     <!-- Contenido condicional según la vista -->
     @if (currentView == "lista")
     {
+        <!-- Summary Cards Component -->
+        <ClienteSummaryCards ClienteDtos="listaClientes" />
+
         <div class="content-section">
             <!-- Search and Filter Bar -->
             <div class="search-filter-bar">
@@ -79,10 +75,18 @@
                 </div>
             </div>
 
-            <!-- Pagination Top (Optional, but good for UX) -->
+
+
+            <ClienteTable ClienteDtos="ClientesPaginaActual"
+                OnEditClient="HandleEditClient"
+                OnDeleteClient="HandleDeleteClient"
+                OnViewClient="HandleViewClient"
+            />
+
+            <!-- Pagination Bottom -->
             @if (totalPages > 1)
             {
-               <div class="pagination-container">
+               <div class="pagination-container" style="margin-top: 1.5rem;">
                     <button class="pagination-btn prev-next" @onclick="() => CambiarPagina(currentPage - 1)" disabled="@(currentPage == 1)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
@@ -114,12 +118,6 @@
                </div> 
             }
 
-            <ClienteTable ClienteDtos="ClientesPaginaActual"
-                OnEditClient="HandleEditClient"
-                OnDeleteClient="HandleDeleteClient"
-                OnViewClient="HandleViewClient"
-            />
-
 
         </div>
     }
@@ -142,6 +140,7 @@
                 ClienteDto="clienteParaEditar" 
                 Title="Editar Cliente"
                 Subtitle="@($"Modificando información de {clienteParaEditar.NombreCompleto}")"
+                SubmitButtonText="Guardar Cambios"
                 OnSave="HandleSubmitEditClient" 
                 OnCancel="CancelarEdicion" 
             />
@@ -284,8 +283,7 @@
         }
         else if (view == "lista")
         {
-            // Clear both edit and new states when returning to list
-            clienteParaEditar = null;
+            // Do NOT clear edit state here, so tab remains until Save/Cancel
         }
     }
 

@@ -8,6 +8,7 @@ namespace Cliente.Services.Facturacion
     {
         Task<PagedResult<FacturaDto>> GetFacturasAsync(int page = 1, int pageSize = 10, string searchTerm = "", string estado = "");
         Task<FacturaDto?> GetFacturaAsync(int id);
+        Task<FacturaStatsDto> GetStatsAsync();
         Task<FacturaDto> CreateAsync(FacturaDto factura);
         Task UpdateAsync(FacturaDto factura);
         Task DeleteAsync(int id);
@@ -20,6 +21,19 @@ namespace Cliente.Services.Facturacion
 
         public FacturaService(HttpClient http) => _http = http;
 
+        public async Task<FacturaStatsDto> GetStatsAsync()
+        {
+            try
+            {
+                return await _http.GetFromJsonAsync<FacturaStatsDto>($"{BaseUrl}/stats") ?? new FacturaStatsDto();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[FACTURA SERVICE ERROR] GetStatsAsync failed: {ex.Message}");
+                return new FacturaStatsDto();
+            }
+        }
+
         public async Task<PagedResult<FacturaDto>> GetFacturasAsync(int page = 1, int pageSize = 10, string searchTerm = "", string estado = "")
         {
             try
@@ -27,9 +41,9 @@ namespace Cliente.Services.Facturacion
                 var url = $"{BaseUrl}?page={page}&pageSize={pageSize}&searchTerm={searchTerm}&estado={estado}";
                 return await _http.GetFromJsonAsync<PagedResult<FacturaDto>>(url) ?? new PagedResult<FacturaDto>();
             }
-            catch
+            catch (Exception ex)
             {
-                // Retorna resultado vacío en caso de error
+                Console.WriteLine($"[FACTURA SERVICE ERROR] GetFacturasAsync failed: {ex.Message}");
                 return new PagedResult<FacturaDto>();
             }
         }

@@ -27,8 +27,9 @@ namespace Cliente.Services.Clientes
             {
                 return await _http.GetFromJsonAsync<List<ClienteDto>>(BaseUrl) ?? new();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"[CLIENTE SERVICE ERROR] GetClientesAsync failed: {ex.Message}");
                 return new List<ClienteDto>();
             }
         }

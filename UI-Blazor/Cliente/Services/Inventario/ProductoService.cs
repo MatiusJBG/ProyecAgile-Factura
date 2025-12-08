@@ -29,8 +29,9 @@ namespace Cliente.Services.Inventario
             {
                 return await _http.GetFromJsonAsync<List<ProductoDto>>(BaseUrl) ?? new();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"[PRODUCTO SERVICE ERROR] GetProductosAsync failed: {ex.Message}");
                 return new List<ProductoDto>();
             }
         }
@@ -45,8 +46,9 @@ namespace Cliente.Services.Inventario
                     : $"{BaseUrl}/search?q={Uri.EscapeDataString(searchTerm)}";
                 return await _http.GetFromJsonAsync<List<ProductoDto>>(url) ?? new();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"[PRODUCTO SERVICE ERROR] GetProductosAsync failed: {ex.Message}");
                 return new List<ProductoDto>();
             }
         }

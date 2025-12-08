@@ -11,6 +11,7 @@ namespace Core.Interfaces.Facturacion
         Task<(IEnumerable<Factura> Items, int TotalCount)> GetFacturasPagedAsync(int page, int pageSize, string searchTerm = "", string estado = "");
         
         Task<Factura?> GetByClaveAccesoAsync(string claveAcceso);
+        Task<(int TotalCount, decimal TotalPagado)> GetFacturaStatsAsync();
     }
 }
 
