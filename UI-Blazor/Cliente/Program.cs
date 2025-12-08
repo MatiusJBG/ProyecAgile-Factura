@@ -10,6 +10,8 @@ using Cliente.Services.Certificados;
 using Cliente.Services.Common;
 using Cliente.Services.Sri;
 
+using Cliente.Services.Reportes;
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
@@ -42,6 +44,7 @@ builder.Services.AddScoped<CertificadoHttpClient>();
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddScoped<IReporteService, ReporteService>();
 builder.Services.AddAuthorizationCore();
 
 await builder.Build().RunAsync();

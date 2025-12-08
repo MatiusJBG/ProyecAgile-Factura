@@ -65,7 +65,7 @@ namespace UI_Blazor.Servidor.Controllers
 
         // GET: api/FirmaElectronica/xml/5
         [HttpGet("xml/{idFactura}")]
-        public async Task<ActionResult<string>> GetXmlFactura(int idFactura)
+        public ActionResult<string> GetXmlFactura(int idFactura)
         {
             try
             {

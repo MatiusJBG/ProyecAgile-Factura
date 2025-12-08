@@ -60,10 +60,10 @@ namespace Infrastructure.Services
                     Tipo_Documento = c.Tipo_Documento,
                     Num_Documento = c.Num_Documento,
                     Nombre = c.Nombre,
-                    Apellido = c.Apellido,
-                    Direccion = c.Direccion,
-                    Telefono = c.Telefono,
-                    Correo = c.Correo,
+                    Apellido = c.Apellido ?? string.Empty,
+                    Direccion = c.Direccion ?? string.Empty,
+                    Telefono = c.Telefono ?? string.Empty,
+                    Correo = c.Correo ?? string.Empty,
                     Activo = c.Activo
                 }).ToList();
 

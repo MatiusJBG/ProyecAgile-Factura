@@ -204,7 +204,7 @@
     private decimal totalCobradoStats = 0;
 
     // Debounce Timer con nombre calificado para evitar conflictos
-    private System.Timers.Timer _debounceTimer;
+    private System.Timers.Timer _debounceTimer = null!;
 
     protected override async Task OnInitializedAsync()
     {

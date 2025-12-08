@@ -22,7 +22,7 @@ namespace Cliente.Services.Sri
                 throw new Exception($"Error al enviar al SRI: {error}");
             }
 
-            return await response.Content.ReadFromJsonAsync<SriRecepcionResponse>();
+            return await response.Content.ReadFromJsonAsync<SriRecepcionResponse>() ?? new SriRecepcionResponse();
         }
 
         public async Task<SriAutorizacionResult> AutorizarFacturaSriAsync(string claveAcceso)
@@ -35,31 +35,31 @@ namespace Cliente.Services.Sri
                 throw new Exception($"Error al autorizar en SRI: {error}");
             }
 
-            return await response.Content.ReadFromJsonAsync<SriAutorizacionResult>();
+            return await response.Content.ReadFromJsonAsync<SriAutorizacionResult>() ?? new SriAutorizacionResult();
         }
     }
 
     public class SriRecepcionResponse
     {
-        public string Stage { get; set; }
-        public SriRecepcionResult Response { get; set; }
+        public string Stage { get; set; } = string.Empty;
+        public SriRecepcionResult Response { get; set; } = new();
     }
 
     public class SriRecepcionResult
     {
-        public string Estado { get; set; }
-        public string ClaveAcceso { get; set; }
-        public string Mensajes { get; set; }
+        public string Estado { get; set; } = string.Empty;
+        public string ClaveAcceso { get; set; } = string.Empty;
+        public string Mensajes { get; set; } = string.Empty;
         // public string RawXml { get; set; } // Ignoramos el XML raw en cliente por ahora
     }
 
     public class SriAutorizacionResult
     {
-        public string Estado { get; set; }
-        public string NumeroAutorizacion { get; set; }
-        public string FechaAutorizacion { get; set; }
-        public string XmlAutorizado { get; set; }
-        public string Mensajes { get; set; }
-        public string RawXml { get; set; }
+        public string Estado { get; set; } = string.Empty;
+        public string NumeroAutorizacion { get; set; } = string.Empty;
+        public string FechaAutorizacion { get; set; } = string.Empty;
+        public string XmlAutorizado { get; set; } = string.Empty;
+        public string Mensajes { get; set; } = string.Empty;
+        public string RawXml { get; set; } = string.Empty;
     }
 }

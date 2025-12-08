@@ -1,0 +1,150 @@
+@using Application.DTOs.Reportes
+@using Cliente.Services.Reportes
+@inject IReporteService ReporteService
+
+<div class="report-section">
+    <h3 class="section-title">Reporte Financiero</h3>
+
+    @if (IsLoading)
+    {
+        <div class="loading-spinner">Cargando reporte financiero...</div>
+    }
+    else if (Reporte == null)
+    {
+        <div class="alert alert-warning">No se pudo cargar la información.</div>
+    }
+    else
+    {
+        <div class="cards-grid">
+            <!-- Flujo de Efectivo -->
+            <div class="summary-card">
+                <div class="card-icon income">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="card-content">
+                    <span class="card-label">Ingresos Totales</span>
+                    <span class="card-value">@Reporte.FlujoEfectivo.TotalIngresos.ToString("C2")</span>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="card-icon expense">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7 7 7-7"/></svg>
+                </div>
+                <div class="card-content">
+                    <span class="card-label">Egresos Totales</span>
+                    <span class="card-value">@Reporte.FlujoEfectivo.TotalEgresos.ToString("C2")</span>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="card-icon profit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div class="card-content">
+                    <span class="card-label">Saldo Neto</span>
+                    <span class="card-value @(Reporte.FlujoEfectivo.SaldoNeto >= 0 ? "text-success" : "text-danger")">
+                        @Reporte.FlujoEfectivo.SaldoNeto.ToString("C2")
+                    </span>
+                </div>
+            </div>
+             <div class="summary-card">
+                <div class="card-icon tax">
+                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <div class="card-content">
+                    <span class="card-label">IVA Recaudado</span>
+                    <span class="card-value">@Reporte.Impuestos.TotalIvaRecaudado.ToString("C2")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-panel">
+                <h4>Rentabilidad</h4>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <span class="stat-label">Ventas Netas</span>
+                        <span class="stat-value">@Reporte.Rentabilidad.IngresosPorVentas.ToString("C2")</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">COGS (Costo Venta)</span>
+                        <span class="stat-value text-danger">-@Reporte.Rentabilidad.CostoBienesVendidos.ToString("C2")</span>
+                    </div>
+                    <div class="stat-item total">
+                        <span class="stat-label">Utilidad Bruta</span>
+                        <span class="stat-value">@Reporte.Rentabilidad.UtilidadBruta.ToString("C2")</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-panel">
+                <h4>Cuentas por Cobrar (Pendientes)</h4>
+                @if(Reporte.CuentasPorCobrar.Any())
+                {
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Estado</th>
+                                <th class="text-end">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var cxc in Reporte.CuentasPorCobrar.Take(5))
+                            {
+                                <tr>
+                                    <td>@cxc.FechaEmision.ToShortDateString()</td>
+                                    <td>@cxc.ClienteNombre</td>
+                                    <td>
+                                        <span class="badge @(cxc.Estado == "Vencida" ? "bg-danger" : "bg-warning")">@cxc.Estado</span>
+                                    </td>
+                                    <td class="text-end">@cxc.MontoPendiente.ToString("C2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if(Reporte.CuentasPorCobrar.Count > 5)
+                    {
+                        <div class="text-center text-muted small">Mostrando 5 de @Reporte.CuentasPorCobrar.Count facturas pendientes</div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">No hay facturas pendientes.</p>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public DateTime? FechaInicio { get; set; }
+    [Parameter] public DateTime? FechaFin { get; set; }
+    
+    private ReporteFinancieroDto? Reporte;
+    private bool IsLoading = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        IsLoading = true;
+        try
+        {
+            Reporte = await ReporteService.GetReporteFinancieroAsync(FechaInicio, FechaFin);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+}

@@ -12,70 +12,64 @@ namespace Application.DTOs.Sri
         public string version { get; set; } = "1.0.0";
 
         [XmlElement("infoTributaria")]
-        public InfoTributariaXml InfoTributaria { get; set; }
+        public InfoTributariaXml InfoTributaria { get; set; } = new();
 
         [XmlElement("infoFactura")]
-        public InfoFacturaXml InfoFactura { get; set; }
+        public InfoFacturaXml InfoFactura { get; set; } = new();
 
         [XmlArray("detalles")]
         [XmlArrayItem("detalle")]
-        public List<DetalleFacturaXml> Detalles { get; set; }
+        public List<DetalleFacturaXml> Detalles { get; set; } = new();
     }
 
     public class InfoTributariaXml
     {
-        public string ambiente { get; set; }
-        public string tipoEmision { get; set; }
-        public string razonSocial { get; set; }
-        public string nombreComercial { get; set; }
-        public string ruc { get; set; }
-        public string claveAcceso { get; set; }
-        public string codDoc { get; set; }
-        public string estab { get; set; }
-        public string ptoEmi { get; set; }
-        public string secuencial { get; set; }
-        public string dirMatriz { get; set; }
+        public string ambiente { get; set; } = string.Empty;
+        public string tipoEmision { get; set; } = string.Empty;
+        public string razonSocial { get; set; } = string.Empty;
+        public string nombreComercial { get; set; } = string.Empty;
+        public string ruc { get; set; } = string.Empty;
+        public string claveAcceso { get; set; } = string.Empty;
+        public string codDoc { get; set; } = string.Empty;
+        public string estab { get; set; } = string.Empty;
+        public string ptoEmi { get; set; } = string.Empty;
+        public string secuencial { get; set; } = string.Empty;
+        public string dirMatriz { get; set; } = string.Empty;
     }
 
     public class InfoFacturaXml
     {
-        public string fechaEmision { get; set; }
-        public string dirEstablecimiento { get; set; }
+        public string fechaEmision { get; set; } = string.Empty;
+        public string dirEstablecimiento { get; set; } = string.Empty;
         // public string contribuyenteEspecial { get; set; } // Opcional
-        public string obligadoContabilidad { get; set; } = "NO"; // Default or mapped
-        public string tipoIdentificacionComprador { get; set; }
-        public string razonSocialComprador { get; set; }
-        public string identificacionComprador { get; set; }
-        public string totalSinImpuestos { get; set; }
-        public string totalDescuento { get; set; }
+        public string obligadoContabilidad { get; set; } = "NO"; 
+        public string tipoIdentificacionComprador { get; set; } = string.Empty;
+        public string razonSocialComprador { get; set; } = string.Empty;
+        public string identificacionComprador { get; set; } = string.Empty;
+        public string totalSinImpuestos { get; set; } = string.Empty;
+        public string totalDescuento { get; set; } = string.Empty;
 
         [XmlArray("totalConImpuestos")]
         [XmlArrayItem("totalImpuesto")]
-        public List<TotalImpuestoXml> TotalConImpuestos { get; set; }
+        public List<TotalImpuestoXml> TotalConImpuestos { get; set; } = new();
 
-        public string propina { get; set; }
-        public string importeTotal { get; set; }
-        public string moneda { get; set; }
+        public string propina { get; set; } = "0.00";
+        public string importeTotal { get; set; } = string.Empty;
+        public string moneda { get; set; } = "DOLAR";
     }
 
     public class TotalImpuestoXml
     {
-        public string codigo { get; set; }
-        public string codigoPorcentaje { get; set; }
-        public string baseImponible { get; set; }
-        public string valor { get; set; }
-        // tarifa is optional in TotalImpuesto? It is present in DetalleImpuesto.
-        // Checking user snippet: user sets baseImponible and valor. 
-        // Some XSDs require tarifa here too, but user snippet commented it out. I'll add it as optional property just in case.
-        // tarifa is NOT allowed in TotalImpuesto in standard SRI XSD 1.0.0/1.1.0
-        // [XmlElement(IsNullable = false)]
-        // public string tarifa { get; set; }  
+        public string codigo { get; set; } = string.Empty;
+        public string codigoPorcentaje { get; set; } = string.Empty;
+        public string baseImponible { get; set; } = string.Empty;
+        public string valor { get; set; } = string.Empty;
     }
 
     public class DetalleFacturaXml
     {
-        public string codigoPrincipal { get; set; }
-        public string descripcion { get; set; }
+        public string codigoPrincipal { get; set; } = string.Empty;
+        public string descripcion { get; set; } = string.Empty;
         public decimal cantidad { get; set; }
         public decimal precioUnitario { get; set; }
         public decimal descuento { get; set; }
@@ -83,13 +77,13 @@ namespace Application.DTOs.Sri
 
         [XmlArray("impuestos")]
         [XmlArrayItem("impuesto")]
-        public List<ImpuestoDetalleXml> impuesto { get; set; }
+        public List<ImpuestoDetalleXml> impuesto { get; set; } = new();
     }
 
     public class ImpuestoDetalleXml
     {
-        public string codigo { get; set; }
-        public string codigoPorcentaje { get; set; }
+        public string codigo { get; set; } = string.Empty;
+        public string codigoPorcentaje { get; set; } = string.Empty;
         public decimal tarifa { get; set; }
         public decimal baseImponible { get; set; }
         public decimal valor { get; set; }

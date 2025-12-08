@@ -68,21 +68,25 @@ namespace Infrastructure.Services.Sri
 
             if (autorizacionNode != null)
             {
-                result.Estado = autorizacionNode["estado"]?.InnerText;
-                result.NumeroAutorizacion = autorizacionNode["numeroAutorizacion"]?.InnerText;
-                result.FechaAutorizacion = autorizacionNode["fechaAutorizacion"]?.InnerText;
-                result.XmlAutorizado = autorizacionNode["comprobante"]?.InnerText;
+                result.Estado = autorizacionNode["estado"]?.InnerText ?? string.Empty;
+                result.NumeroAutorizacion = autorizacionNode["numeroAutorizacion"]?.InnerText ?? string.Empty;
+                result.FechaAutorizacion = autorizacionNode["fechaAutorizacion"]?.InnerText ?? string.Empty;
+                result.XmlAutorizado = autorizacionNode["comprobante"]?.InnerText ?? string.Empty;
 
                 var mensajesNode = autorizacionNode.SelectSingleNode("mensajes");
                 if (mensajesNode != null)
                 {
                     var sb = new StringBuilder();
-                    foreach (XmlNode msgNode in mensajesNode.SelectNodes("mensaje"))
+                    var msgNodes = mensajesNode.SelectNodes("mensaje");
+                    if (msgNodes != null)
+                    {
+                        foreach (XmlNode msgNode in msgNodes)
                     {
                         string id = msgNode["identificador"]?.InnerText ?? "";
                         string ms = msgNode["mensaje"]?.InnerText ?? "";
                         string info = msgNode["informacionAdicional"]?.InnerText ?? "";
                         sb.AppendLine($"[{id}] {ms} ({info})".Trim());
+                    }
                     }
                     result.Mensajes = sb.ToString();
                 }
@@ -99,11 +103,11 @@ namespace Infrastructure.Services.Sri
 
     public class SriAutorizacionResult
     {
-        public string Estado { get; set; }
-        public string NumeroAutorizacion { get; set; }
-        public string FechaAutorizacion { get; set; }
-        public string XmlAutorizado { get; set; }
-        public string Mensajes { get; set; }
-        public string RawXml { get; set; }
+        public string Estado { get; set; } = string.Empty;
+        public string NumeroAutorizacion { get; set; } = string.Empty;
+        public string FechaAutorizacion { get; set; } = string.Empty;
+        public string XmlAutorizado { get; set; } = string.Empty;
+        public string Mensajes { get; set; } = string.Empty;
+        public string RawXml { get; set; } = string.Empty;
     }
 }

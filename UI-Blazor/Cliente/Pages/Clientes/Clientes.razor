@@ -227,7 +227,7 @@
     private int pageSize = 10;
     private int totalPages = 1;
     
-    private System.Timers.Timer _debounceTimer;
+    private System.Timers.Timer _debounceTimer = null!;
 
     private string currentView = "lista";
     
@@ -369,7 +369,7 @@
         }
         else
         {
-            filterStatus = bool.Parse(e.Value.ToString());
+            filterStatus = bool.Parse(e.Value?.ToString() ?? "false");
         }
         currentPage = 1;
         ApplyFilters();

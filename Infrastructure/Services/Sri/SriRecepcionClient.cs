@@ -17,8 +17,7 @@ namespace Infrastructure.Services.Sri
             _endpointUrl = configuration["Sri:RecepcionUrl"] 
                            ?? "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline";
 
-            // Aseguramos TLS 1.2
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
         }
 
         public async Task<SriRecepcionResult> EnviarComprobanteAsync(byte[] xmlFirmado)
@@ -43,8 +42,8 @@ namespace Infrastructure.Services.Sri
                 Content = new StringContent(soapEnvelope, Encoding.UTF8, "text/xml")
             };
 
-            HttpResponseMessage response = null;
-            string responseBody = null;
+            HttpResponseMessage response = default!;
+            string responseBody = string.Empty;
 
             try
             {
@@ -53,7 +52,7 @@ namespace Infrastructure.Services.Sri
                 
                 response.EnsureSuccessStatusCode();
 
-                return ParseRecepcionResponse(responseBody);
+                return ParseRecepcionResponse(responseBody ?? string.Empty);
             }
             catch (HttpRequestException ex)
             {
@@ -97,7 +96,7 @@ namespace Infrastructure.Services.Sri
 
             // Buscar clave de acceso
             var claveNode = doc.SelectSingleNode("//*[local-name()='claveAcceso']");
-            result.ClaveAcceso = claveNode?.InnerText;
+            result.ClaveAcceso = claveNode?.InnerText ?? string.Empty;
 
             // Mensajes
             var mensajesNodes = doc.SelectNodes("//*[local-name()='mensaje']");
@@ -132,8 +131,8 @@ namespace Infrastructure.Services.Sri
 
     public class SriRecepcionResult
     {
-        public string Estado { get; set; }
-        public string ClaveAcceso { get; set; }
-        public string Mensajes { get; set; }
+        public string Estado { get; set; } = string.Empty;
+        public string ClaveAcceso { get; set; } = string.Empty;
+        public string Mensajes { get; set; } = string.Empty;
     }
 }

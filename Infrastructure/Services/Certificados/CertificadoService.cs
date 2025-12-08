@@ -46,7 +46,9 @@ namespace Infrastructure.Services.Certificados
             try
             {
                 // Intentar cargar con EphemeralKeySet y Exportable para asegurar uso con SignedXml
+#pragma warning disable SYSLIB0057
                 cert = new X509Certificate2(archivoBytes, password, X509KeyStorageFlags.EphemeralKeySet | X509KeyStorageFlags.Exportable);
+#pragma warning restore SYSLIB0057
             }
             catch (Exception ex)
             {
@@ -169,7 +171,9 @@ namespace Infrastructure.Services.Certificados
             }
 
             // Cargar el certificado con flags que permiten la exportación y uso de la clave privada (Ephemeral para evitar problemas de store)
+#pragma warning disable SYSLIB0057
             return new X509Certificate2(rutaCompleta, password, X509KeyStorageFlags.EphemeralKeySet | X509KeyStorageFlags.Exportable);
+#pragma warning restore SYSLIB0057
         }
 
         public async Task EliminarCertificadoAsync(int idCertificado)

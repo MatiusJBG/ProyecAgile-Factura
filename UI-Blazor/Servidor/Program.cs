@@ -7,6 +7,7 @@ using Infrastructure.Data;
 using Infrastructure.Repositories.Clientes; using Infrastructure.Repositories.Facturacion; using Infrastructure.Repositories.Inventario; using Infrastructure.Repositories.Auth; using Infrastructure.Repositories.Certificados; using Infrastructure.Repositories.Common;
 using Infrastructure.Services.Facturacion; using Infrastructure.Services.Certificados; using Infrastructure.Services; using Infrastructure.Services.Sri; using Infrastructure.Services.Common;
 using Application.Interfaces;
+using Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -41,6 +42,7 @@ builder.Services.AddScoped<LoteService>();
 builder.Services.AddScoped<FacturaService>();
 builder.Services.AddScoped<DescuentoService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IReporteService, ReporteService>();
 
 // Registrar servicios de firma electrónica (de Infrastructure)
 builder.Services.AddScoped<IFirmaElectronicaService, FirmaElectronicaService>();

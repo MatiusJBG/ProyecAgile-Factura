@@ -175,9 +175,9 @@ namespace Infrastructure.Services.Facturacion
 
             // Totales
             xmlWriter.WriteStartElement("Totales");
-            xmlWriter.WriteElementString("Subtotal", ((decimal)factura.Tot_Fac_Sin_IVA).ToString("F2"));
-            xmlWriter.WriteElementString("IVA", ((decimal)factura.IVA_Fac).ToString("F2"));
-            xmlWriter.WriteElementString("Total", ((decimal)factura.Tot_Fac_Con_IVA).ToString("F2"));
+            xmlWriter.WriteElementString("Subtotal", factura.Tot_Fac_Sin_IVA.GetValueOrDefault().ToString("F2"));
+            xmlWriter.WriteElementString("IVA", factura.IVA_Fac.GetValueOrDefault().ToString("F2"));
+            xmlWriter.WriteElementString("Total", factura.Tot_Fac_Con_IVA.GetValueOrDefault().ToString("F2"));
             xmlWriter.WriteEndElement();
 
             xmlWriter.WriteEndElement();
@@ -196,8 +196,9 @@ namespace Infrastructure.Services.Facturacion
 
         private string FirmarConCertificado(string contenido, X509Certificate2 certificado)
         {
-            if (certificado.PrivateKey == null)
-                throw new BusinessValidationException("El certificado no tiene clave privada");
+            using var rsaKey = certificado.GetRSAPrivateKey();
+            if (rsaKey == null)
+                throw new BusinessValidationException("El certificado no tiene clave privada RSA");
 
             byte[] data = Encoding.UTF8.GetBytes(contenido);
             
@@ -220,7 +221,7 @@ namespace Infrastructure.Services.Facturacion
             // 1. Create SignedXml with proper ID resolution
             var signedXml = new SriSignedXml(doc) { SigningKey = certificado.GetRSAPrivateKey() };
             // SHA256 - Required for 2025 standards
-            signedXml.SignedInfo.SignatureMethod = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+            signedXml.SignedInfo!.SignatureMethod = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
             // Use Exclusive Canonicalization (Robust against namespace issues)
             signedXml.SignedInfo.CanonicalizationMethod = SignedXml.XmlDsigExcC14NTransformUrl;
             signedXml.Signature.Id = "Signature-SRI";
@@ -238,7 +239,11 @@ namespace Infrastructure.Services.Facturacion
             var kix = new KeyInfoX509Data(certificado);
             kix.AddSubjectName(certificado.Subject);
             keyInfo.AddClause(kix);
-            keyInfo.AddClause(new RSAKeyValue(certificado.GetRSAPrivateKey()));
+            var rsaKey = certificado.GetRSAPrivateKey();
+            if (rsaKey != null)
+            {
+                keyInfo.AddClause(new RSAKeyValue(rsaKey));
+            }
             signedXml.KeyInfo = keyInfo;
 
             // 4. XAdES-BES Construction (DOM-based for namespace hygiene)
@@ -307,6 +312,7 @@ namespace Infrastructure.Services.Facturacion
 
             // 5. Add XAdES Object to SignedXml
             var objectNode = new DataObject();
+            if (xadesDoc.DocumentElement == null) throw new InvalidOperationException("XAdES DocumentElement is null");
             var importedQualProps = doc.ImportNode(xadesDoc.DocumentElement, true);
             var dummy = doc.CreateElement("dummy");
             dummy.AppendChild(importedQualProps);
@@ -327,7 +333,10 @@ namespace Infrastructure.Services.Facturacion
             signedXml.ComputeSignature();
             var xmlDigitalSignature = signedXml.GetXml();
             
-            doc.DocumentElement.AppendChild(doc.ImportNode(xmlDigitalSignature, true));
+            if (doc.DocumentElement != null)
+            {
+                doc.DocumentElement.AppendChild(doc.ImportNode(xmlDigitalSignature, true));
+            }
 
             using (var msOutput = new MemoryStream())
             {
@@ -353,8 +362,10 @@ namespace Infrastructure.Services.Facturacion
             _externalElements.Add(element);
         }
 
-        public override XmlElement GetIdElement(XmlDocument document, string idValue)
+        public override XmlElement? GetIdElement(XmlDocument? document, string idValue)
         {
+            if (document == null) return null;
+
             // First check standard document
             var elem = base.GetIdElement(document, idValue);
             if (elem != null) return elem;

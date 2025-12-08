@@ -145,12 +145,12 @@ namespace Infrastructure.Services.Facturacion
                        decimal subtotal15 = (factura.IVA_Fac ?? 0) > 0 ? (factura.Tot_Fac_Sin_IVA ?? 0) : 0;
                        decimal subtotal0 = (factura.IVA_Fac ?? 0) == 0 ? (factura.Tot_Fac_Sin_IVA ?? 0) : 0;
                        
-                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("SUBTOTAL 15%").FontSize(8); r.ConstantColumn(60).Text(subtotal15.ToString("F2")).FontSize(8).AlignRight(); });
-                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("SUBTOTAL 0%").FontSize(8); r.ConstantColumn(60).Text(subtotal0.ToString("F2")).FontSize(8).AlignRight(); });
-                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("SUBTOTAL NO IVA").FontSize(8); r.ConstantColumn(60).Text("0.00").FontSize(8).AlignRight(); });
-                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("SUBTOTAL SIN IMPUESTOS").FontSize(8); r.ConstantColumn(60).Text((factura.Tot_Fac_Sin_IVA ?? 0).ToString("F2")).FontSize(8).AlignRight(); });
-                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("IVA 15%").FontSize(8); r.ConstantColumn(60).Text((factura.IVA_Fac ?? 0).ToString("F2")).FontSize(8).AlignRight(); });
-                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("VALOR TOTAL").FontSize(8).Bold(); r.ConstantColumn(60).Text((factura.Tot_Fac_Con_IVA ?? 0).ToString("F2")).FontSize(8).AlignRight().Bold(); });
+                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("SUBTOTAL 15%").FontSize(8); r.ConstantItem(60).Text(subtotal15.ToString("F2")).FontSize(8).AlignRight(); });
+                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("SUBTOTAL 0%").FontSize(8); r.ConstantItem(60).Text(subtotal0.ToString("F2")).FontSize(8).AlignRight(); });
+                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("SUBTOTAL NO IVA").FontSize(8); r.ConstantItem(60).Text("0.00").FontSize(8).AlignRight(); });
+                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("SUBTOTAL SIN IMPUESTOS").FontSize(8); r.ConstantItem(60).Text((factura.Tot_Fac_Sin_IVA ?? 0).ToString("F2")).FontSize(8).AlignRight(); });
+                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("IVA 15%").FontSize(8); r.ConstantItem(60).Text((factura.IVA_Fac ?? 0).ToString("F2")).FontSize(8).AlignRight(); });
+                       c.Item().BorderBottom(1).Padding(2).Row(r => { r.RelativeItem().Text("VALOR TOTAL").FontSize(8).Bold(); r.ConstantItem(60).Text((factura.Tot_Fac_Con_IVA ?? 0).ToString("F2")).FontSize(8).AlignRight().Bold(); });
                     });
                 });
             });

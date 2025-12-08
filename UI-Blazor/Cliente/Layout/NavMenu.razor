@@ -84,6 +84,21 @@
             </NavLink>
         </div>
 
+        <div class="nav-section">
+            <span class="section-title">REPORTES</span>
+            
+            <NavLink class="nav-item" href="reportes">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M18 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6 20v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <span class="nav-text">Panel de Control</span>
+            </NavLink>
+        </div>
+
     </nav>
 
     <div class="sidebar-footer">
@@ -116,7 +131,7 @@
 
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
-            username = user.Identity.Name;
+            username = user.Identity.Name ?? string.Empty;
             
             if (string.IsNullOrEmpty(username))
             {
